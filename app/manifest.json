@@ -1,0 +1,23 @@
+{
+  "name": "Florida Real Estate Sales Associate Course",
+  "short_name": "FL Real Estate Course",
+  "description": "63 hour pre-license education course for sales associates, approved by Florida Real Estate Commission",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a1a2e",
+  "theme_color": "#0a1a2e",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
+
