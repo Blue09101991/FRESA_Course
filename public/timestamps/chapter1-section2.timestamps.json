@@ -1,0 +1,327 @@
+{
+  "text": " Many industries rely on real estate activity because buying, selling, and building properties create demand for services like construction, architecture, banking, insurance, home improvement, and property management, making real estate a central driver of economic activity.",
+  "segments": [
+    {
+      "id": 0,
+      "seek": 0,
+      "start": 0.1,
+      "end": 5.06,
+      "text": " Many industries rely on real estate activity because buying, selling, and building properties",
+      "tokens": [
+        50364,
+        5126,
+        13284,
+        10687,
+        322,
+        957,
+        9749,
+        5191,
+        570,
+        6382,
+        11,
+        6511,
+        11,
+        293,
+        2390,
+        7221,
+        50624
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.17450851660508376,
+      "compression_ratio": 1.5930232558139534,
+      "no_speech_prob": 0.01166982389986515,
+      "confidence": 0.935,
+      "words": [
+        {
+          "text": "Many",
+          "start": 0.1,
+          "end": 0.28,
+          "confidence": 0.914
+        },
+        {
+          "text": "industries",
+          "start": 0.28,
+          "end": 0.86,
+          "confidence": 0.999
+        },
+        {
+          "text": "rely",
+          "start": 0.86,
+          "end": 1.3,
+          "confidence": 0.999
+        },
+        {
+          "text": "on",
+          "start": 1.3,
+          "end": 1.56,
+          "confidence": 0.998
+        },
+        {
+          "text": "real",
+          "start": 1.56,
+          "end": 1.8,
+          "confidence": 0.994
+        },
+        {
+          "text": "estate",
+          "start": 1.8,
+          "end": 2.06,
+          "confidence": 0.957
+        },
+        {
+          "text": "activity",
+          "start": 2.06,
+          "end": 2.58,
+          "confidence": 0.971
+        },
+        {
+          "text": "because",
+          "start": 2.58,
+          "end": 2.96,
+          "confidence": 0.762
+        },
+        {
+          "text": "buying,",
+          "start": 2.96,
+          "end": 3.36,
+          "confidence": 0.926
+        },
+        {
+          "text": "selling,",
+          "start": 3.68,
+          "end": 3.98,
+          "confidence": 0.946
+        },
+        {
+          "text": "and",
+          "start": 4.24,
+          "end": 4.26,
+          "confidence": 0.87
+        },
+        {
+          "text": "building",
+          "start": 4.26,
+          "end": 4.52,
+          "confidence": 0.945
+        },
+        {
+          "text": "properties",
+          "start": 4.52,
+          "end": 5.06,
+          "confidence": 0.908
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "seek": 0,
+      "start": 5.2,
+      "end": 10.93,
+      "text": " create demand for services like construction, architecture, banking, insurance, home improvement,",
+      "tokens": [
+        50624,
+        1884,
+        4733,
+        337,
+        3328,
+        411,
+        6435,
+        11,
+        9482,
+        11,
+        18261,
+        11,
+        7214,
+        11,
+        1280,
+        10444,
+        11,
+        50920
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.17450851660508376,
+      "compression_ratio": 1.5930232558139534,
+      "no_speech_prob": 0.01166982389986515,
+      "confidence": 0.934,
+      "words": [
+        {
+          "text": "create",
+          "start": 5.2,
+          "end": 5.48,
+          "confidence": 0.988
+        },
+        {
+          "text": "demand",
+          "start": 5.48,
+          "end": 5.86,
+          "confidence": 0.991
+        },
+        {
+          "text": "for",
+          "start": 5.86,
+          "end": 6.12,
+          "confidence": 0.999
+        },
+        {
+          "text": "services",
+          "start": 6.12,
+          "end": 6.56,
+          "confidence": 0.998
+        },
+        {
+          "text": "like",
+          "start": 6.56,
+          "end": 6.84,
+          "confidence": 0.971
+        },
+        {
+          "text": "construction,",
+          "start": 6.84,
+          "end": 7.4,
+          "confidence": 0.983
+        },
+        {
+          "text": "architecture,",
+          "start": 7.78,
+          "end": 8.26,
+          "confidence": 0.935
+        },
+        {
+          "text": "banking,",
+          "start": 8.6,
+          "end": 8.96,
+          "confidence": 0.926
+        },
+        {
+          "text": "insurance,",
+          "start": 9.26,
+          "end": 9.8,
+          "confidence": 0.931
+        },
+        {
+          "text": "home",
+          "start": 10.1,
+          "end": 10.38,
+          "confidence": 0.818
+        },
+        {
+          "text": "improvement,",
+          "start": 10.38,
+          "end": 10.93,
+          "confidence": 0.764
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "seek": 0,
+      "start": 10.93,
+      "end": 15.92,
+      "text": " and property management, making real estate a central driver of economic activity.",
+      "tokens": [
+        50920,
+        293,
+        4707,
+        4592,
+        11,
+        1455,
+        957,
+        9749,
+        257,
+        5777,
+        6787,
+        295,
+        4836,
+        5191,
+        13,
+        51204
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.17450851660508376,
+      "compression_ratio": 1.5930232558139534,
+      "no_speech_prob": 0.01166982389986515,
+      "confidence": 0.987,
+      "words": [
+        {
+          "text": "and",
+          "start": 10.93,
+          "end": 11.36,
+          "confidence": 0.934
+        },
+        {
+          "text": "property",
+          "start": 11.36,
+          "end": 11.74,
+          "confidence": 0.997
+        },
+        {
+          "text": "management,",
+          "start": 11.74,
+          "end": 12.32,
+          "confidence": 0.999
+        },
+        {
+          "text": "making",
+          "start": 12.58,
+          "end": 13.0,
+          "confidence": 0.992
+        },
+        {
+          "text": "real",
+          "start": 13.0,
+          "end": 13.3,
+          "confidence": 0.979
+        },
+        {
+          "text": "estate",
+          "start": 13.3,
+          "end": 13.64,
+          "confidence": 0.983
+        },
+        {
+          "text": "a",
+          "start": 13.64,
+          "end": 13.86,
+          "confidence": 0.981
+        },
+        {
+          "text": "central",
+          "start": 13.86,
+          "end": 14.22,
+          "confidence": 0.993
+        },
+        {
+          "text": "driver",
+          "start": 14.22,
+          "end": 14.62,
+          "confidence": 0.998
+        },
+        {
+          "text": "of",
+          "start": 14.62,
+          "end": 14.86,
+          "confidence": 0.999
+        },
+        {
+          "text": "economic",
+          "start": 14.86,
+          "end": 15.34,
+          "confidence": 0.995
+        },
+        {
+          "text": "activity.",
+          "start": 15.34,
+          "end": 15.92,
+          "confidence": 0.999
+        }
+      ]
+    }
+  ],
+  "language": "en",
+  "speech_activity": [
+    {
+      "start": 0.0,
+      "end": 16.28
+    }
+  ]
+}

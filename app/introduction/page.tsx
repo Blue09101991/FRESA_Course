@@ -1,0 +1,75 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import MrListings from "@/components/MrListings";
+import AudioPlayer from "@/components/AudioPlayer";
+import StarsBackground from "@/components/StarsBackground";
+import TableOfContents from "@/components/TableOfContents";
+
+export default function IntroductionPage() {
+  const router = useRouter();
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  const introText = "Hello, future real estate professional. My name is Mr Listings. Welcome to my 63 hour pre-license education course for sales associates, approved by Florida Real Estate Commission.";
+
+  const handleContinue = () => {
+    // Navigate immediately without delay for better performance
+    router.push("/chapter-1");
+  };
+
+  const menuItems = [
+    { id: "intro", title: "Introduction", path: "/introduction" },
+    { id: "chapter1", title: "Chapter 1. The Real Estate Business", path: "/chapter-1" },
+  ];
+
+  return (
+    <main className="min-h-screen bg-gradient-to-b from-[#0a1a2e] via-[#1e3a5f] to-[#0a1a2e] relative overflow-hidden">
+      <StarsBackground />
+
+      {/* Table of Contents */}
+      <TableOfContents items={menuItems} currentPath="/introduction" />
+
+      {/* Concentric circles */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] md:w-[600px] md:h-[600px] pointer-events-none">
+        <div className="absolute inset-0 rounded-full border border-blue-500/20 animate-pulse" />
+        <div className="absolute inset-[50px] rounded-full border border-blue-500/15 animate-pulse" style={{ animationDelay: "0.5s" }} />
+        <div className="absolute inset-[100px] rounded-full border border-blue-500/10 animate-pulse" style={{ animationDelay: "1s" }} />
+      </div>
+
+      <div className="relative z-10 min-h-screen flex flex-col items-center justify-center p-4 md:p-8 md:ml-64">
+        {/* Mr Listings Character - Center */}
+        <div className={`mb-8 transition-all duration-1000 ${isAnimating ? 'scale-75 translate-x-[-200px] translate-y-[-200px] opacity-0' : 'scale-100 opacity-100'}`}>
+          <MrListings size="large" />
+        </div>
+
+        {/* Text Box */}
+        <div className="w-full max-w-2xl mb-8 animate-slide-up">
+          <div className="relative">
+            <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-blue-400 rotate-45" />
+            <div className="bg-[#1e3a5f] border border-blue-500/30 rounded-2xl p-6 md:p-8 shadow-2xl">
+              <AudioPlayer
+                text={introText}
+                audioUrl="/audio/intro.mp3"
+                timestampsUrl="/timestamps/intro.timestamps.json"
+                autoPlay={true}
+                onComplete={() => {
+                  // Audio completed, don't replay
+                }}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Continue Button */}
+        <button
+          onClick={handleContinue}
+          className="bg-[#3b82f6] hover:bg-[#2563eb] text-white font-semibold py-4 px-12 rounded-xl text-lg transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl animate-pulse-glow"
+        >
+          Let&apos;s Go!
+        </button>
+      </div>
+    </main>
+  );
+}
+

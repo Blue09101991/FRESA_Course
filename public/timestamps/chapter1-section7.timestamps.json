@@ -1,0 +1,1109 @@
+{
+  "text": " There are five major sales specialties. One, residential properties housing with four units or fewer or vacant land zone for four units or less. This includes single-family homes, townhouses, condos, or multi-family units with four units or fewer. Two, commercial properties are income-producing properties. For example, offices, retail centers, et cetera. Three, industrial properties are buildings where manufacturing of products takes place, warehouses for storing products, and distribution facilities. Four, agricultural properties are farms and land of more than 10 acres. Five, businesses, the sale of business opportunities. This all of business opportunities. This often includes the sale of stock or assets personal property rather than just land.",
+  "segments": [
+    {
+      "id": 0,
+      "seek": 0,
+      "start": 0.1,
+      "end": 2.08,
+      "text": " There are five major sales specialties.",
+      "tokens": [
+        50364,
+        821,
+        366,
+        1732,
+        2563,
+        5763,
+        2121,
+        6097,
+        13,
+        50484
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.12579284336255944,
+      "compression_ratio": 1.8068181818181819,
+      "no_speech_prob": 0.03786948695778847,
+      "confidence": 0.95,
+      "words": [
+        {
+          "text": "There",
+          "start": 0.1,
+          "end": 0.2,
+          "confidence": 0.87
+        },
+        {
+          "text": "are",
+          "start": 0.2,
+          "end": 0.34,
+          "confidence": 0.996
+        },
+        {
+          "text": "five",
+          "start": 0.34,
+          "end": 0.64,
+          "confidence": 0.874
+        },
+        {
+          "text": "major",
+          "start": 0.64,
+          "end": 1.06,
+          "confidence": 0.993
+        },
+        {
+          "text": "sales",
+          "start": 1.06,
+          "end": 1.4,
+          "confidence": 0.992
+        },
+        {
+          "text": "specialties.",
+          "start": 1.4,
+          "end": 2.08,
+          "confidence": 0.967
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "seek": 0,
+      "start": 2.44,
+      "end": 6.0,
+      "text": " One, residential properties housing with four units or fewer",
+      "tokens": [
+        50484,
+        1485,
+        11,
+        17389,
+        7221,
+        6849,
+        365,
+        1451,
+        6815,
+        420,
+        13366,
+        50676
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.12579284336255944,
+      "compression_ratio": 1.8068181818181819,
+      "no_speech_prob": 0.03786948695778847,
+      "confidence": 0.855,
+      "words": [
+        {
+          "text": "One,",
+          "start": 2.44,
+          "end": 2.62,
+          "confidence": 0.978
+        },
+        {
+          "text": "residential",
+          "start": 2.8,
+          "end": 3.26,
+          "confidence": 0.943
+        },
+        {
+          "text": "properties",
+          "start": 3.26,
+          "end": 3.8,
+          "confidence": 0.995
+        },
+        {
+          "text": "housing",
+          "start": 3.8,
+          "end": 4.52,
+          "confidence": 0.565
+        },
+        {
+          "text": "with",
+          "start": 4.52,
+          "end": 4.76,
+          "confidence": 0.808
+        },
+        {
+          "text": "four",
+          "start": 4.76,
+          "end": 5.0,
+          "confidence": 0.875
+        },
+        {
+          "text": "units",
+          "start": 5.0,
+          "end": 5.36,
+          "confidence": 0.993
+        },
+        {
+          "text": "or",
+          "start": 5.36,
+          "end": 5.62,
+          "confidence": 0.716
+        },
+        {
+          "text": "fewer",
+          "start": 5.62,
+          "end": 6.0,
+          "confidence": 0.938
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "seek": 0,
+      "start": 6.24,
+      "end": 8.66,
+      "text": " or vacant land zone for four units or less.",
+      "tokens": [
+        50676,
+        420,
+        38890,
+        2117,
+        6668,
+        337,
+        1451,
+        6815,
+        420,
+        1570,
+        13,
+        50816
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.12579284336255944,
+      "compression_ratio": 1.8068181818181819,
+      "no_speech_prob": 0.03786948695778847,
+      "confidence": 0.97,
+      "words": [
+        {
+          "text": "or",
+          "start": 6.24,
+          "end": 6.44,
+          "confidence": 0.997
+        },
+        {
+          "text": "vacant",
+          "start": 6.44,
+          "end": 6.72,
+          "confidence": 0.996
+        },
+        {
+          "text": "land",
+          "start": 6.72,
+          "end": 7.06,
+          "confidence": 0.974
+        },
+        {
+          "text": "zone",
+          "start": 7.06,
+          "end": 7.44,
+          "confidence": 0.813
+        },
+        {
+          "text": "for",
+          "start": 7.44,
+          "end": 7.66,
+          "confidence": 0.993
+        },
+        {
+          "text": "four",
+          "start": 7.66,
+          "end": 7.88,
+          "confidence": 0.983
+        },
+        {
+          "text": "units",
+          "start": 7.88,
+          "end": 8.18,
+          "confidence": 0.997
+        },
+        {
+          "text": "or",
+          "start": 8.18,
+          "end": 8.38,
+          "confidence": 0.996
+        },
+        {
+          "text": "less.",
+          "start": 8.38,
+          "end": 8.66,
+          "confidence": 0.998
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "seek": 0,
+      "start": 9.04,
+      "end": 12.76,
+      "text": " This includes single-family homes, townhouses, condos,",
+      "tokens": [
+        50816,
+        639,
+        5974,
+        2167,
+        12,
+        44433,
+        7388,
+        11,
+        3954,
+        29578,
+        11,
+        2224,
+        329,
+        11,
+        51004
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.12579284336255944,
+      "compression_ratio": 1.8068181818181819,
+      "no_speech_prob": 0.03786948695778847,
+      "confidence": 0.916,
+      "words": [
+        {
+          "text": "This",
+          "start": 9.04,
+          "end": 9.24,
+          "confidence": 0.998
+        },
+        {
+          "text": "includes",
+          "start": 9.24,
+          "end": 9.68,
+          "confidence": 0.997
+        },
+        {
+          "text": "single-family",
+          "start": 9.68,
+          "end": 10.52,
+          "confidence": 0.815
+        },
+        {
+          "text": "homes,",
+          "start": 10.52,
+          "end": 10.86,
+          "confidence": 0.996
+        },
+        {
+          "text": "townhouses,",
+          "start": 11.06,
+          "end": 11.8,
+          "confidence": 0.926
+        },
+        {
+          "text": "condos,",
+          "start": 12.12,
+          "end": 12.76,
+          "confidence": 0.953
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "seek": 0,
+      "start": 12.88,
+      "end": 15.16,
+      "text": " or multi-family units with four units or fewer.",
+      "tokens": [
+        51004,
+        420,
+        4825,
+        12,
+        44433,
+        6815,
+        365,
+        1451,
+        6815,
+        420,
+        13366,
+        13,
+        51152
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.12579284336255944,
+      "compression_ratio": 1.8068181818181819,
+      "no_speech_prob": 0.03786948695778847,
+      "confidence": 0.968,
+      "words": [
+        {
+          "text": "or",
+          "start": 12.88,
+          "end": 13.04,
+          "confidence": 0.999
+        },
+        {
+          "text": "multi-family",
+          "start": 13.04,
+          "end": 13.66,
+          "confidence": 0.912
+        },
+        {
+          "text": "units",
+          "start": 13.66,
+          "end": 13.94,
+          "confidence": 0.998
+        },
+        {
+          "text": "with",
+          "start": 13.94,
+          "end": 14.16,
+          "confidence": 0.986
+        },
+        {
+          "text": "four",
+          "start": 14.16,
+          "end": 14.36,
+          "confidence": 0.992
+        },
+        {
+          "text": "units",
+          "start": 14.36,
+          "end": 14.68,
+          "confidence": 0.995
+        },
+        {
+          "text": "or",
+          "start": 14.68,
+          "end": 14.86,
+          "confidence": 0.985
+        },
+        {
+          "text": "fewer.",
+          "start": 14.86,
+          "end": 15.16,
+          "confidence": 0.999
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "seek": 0,
+      "start": 15.74,
+      "end": 18.9,
+      "text": " Two, commercial properties are income-producing properties.",
+      "tokens": [
+        51152,
+        4453,
+        11,
+        6841,
+        7221,
+        366,
+        5742,
+        12,
+        14314,
+        2175,
+        7221,
+        13,
+        51328
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.12579284336255944,
+      "compression_ratio": 1.8068181818181819,
+      "no_speech_prob": 0.03786948695778847,
+      "confidence": 0.977,
+      "words": [
+        {
+          "text": "Two,",
+          "start": 15.74,
+          "end": 16.0,
+          "confidence": 0.988
+        },
+        {
+          "text": "commercial",
+          "start": 16.32,
+          "end": 16.72,
+          "confidence": 0.996
+        },
+        {
+          "text": "properties",
+          "start": 16.72,
+          "end": 17.3,
+          "confidence": 0.997
+        },
+        {
+          "text": "are",
+          "start": 17.3,
+          "end": 17.56,
+          "confidence": 0.975
+        },
+        {
+          "text": "income-producing",
+          "start": 17.56,
+          "end": 18.44,
+          "confidence": 0.963
+        },
+        {
+          "text": "properties.",
+          "start": 18.44,
+          "end": 18.9,
+          "confidence": 0.991
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "seek": 0,
+      "start": 19.32,
+      "end": 22.42,
+      "text": " For example, offices, retail centers, et cetera.",
+      "tokens": [
+        51328,
+        1171,
+        1365,
+        11,
+        14434,
+        11,
+        10800,
+        10898,
+        11,
+        1030,
+        11458,
+        13,
+        51508
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.12579284336255944,
+      "compression_ratio": 1.8068181818181819,
+      "no_speech_prob": 0.03786948695778847,
+      "confidence": 0.906,
+      "words": [
+        {
+          "text": "For",
+          "start": 19.32,
+          "end": 19.46,
+          "confidence": 0.998
+        },
+        {
+          "text": "example,",
+          "start": 19.46,
+          "end": 19.82,
+          "confidence": 1.0
+        },
+        {
+          "text": "offices,",
+          "start": 20.16,
+          "end": 20.56,
+          "confidence": 0.99
+        },
+        {
+          "text": "retail",
+          "start": 20.88,
+          "end": 21.24,
+          "confidence": 0.988
+        },
+        {
+          "text": "centers,",
+          "start": 21.24,
+          "end": 21.7,
+          "confidence": 0.97
+        },
+        {
+          "text": "et",
+          "start": 21.96,
+          "end": 22.04,
+          "confidence": 0.534
+        },
+        {
+          "text": "cetera.",
+          "start": 22.04,
+          "end": 22.42,
+          "confidence": 0.989
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "seek": 0,
+      "start": 22.92,
+      "end": 24.76,
+      "text": " Three, industrial properties are buildings",
+      "tokens": [
+        51508,
+        6244,
+        11,
+        9987,
+        7221,
+        366,
+        7446,
+        51608
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.12579284336255944,
+      "compression_ratio": 1.8068181818181819,
+      "no_speech_prob": 0.03786948695778847,
+      "confidence": 0.97,
+      "words": [
+        {
+          "text": "Three,",
+          "start": 22.92,
+          "end": 23.1,
+          "confidence": 0.988
+        },
+        {
+          "text": "industrial",
+          "start": 23.34,
+          "end": 23.72,
+          "confidence": 0.991
+        },
+        {
+          "text": "properties",
+          "start": 23.72,
+          "end": 24.2,
+          "confidence": 0.999
+        },
+        {
+          "text": "are",
+          "start": 24.2,
+          "end": 24.46,
+          "confidence": 0.894
+        },
+        {
+          "text": "buildings",
+          "start": 24.46,
+          "end": 24.76,
+          "confidence": 0.98
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "seek": 0,
+      "start": 24.88,
+      "end": 27.0,
+      "text": " where manufacturing of products takes place,",
+      "tokens": [
+        51608,
+        689,
+        11096,
+        295,
+        3383,
+        2516,
+        1081,
+        11,
+        51732
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.12579284336255944,
+      "compression_ratio": 1.8068181818181819,
+      "no_speech_prob": 0.03786948695778847,
+      "confidence": 0.991,
+      "words": [
+        {
+          "text": "where",
+          "start": 24.88,
+          "end": 25.02,
+          "confidence": 0.994
+        },
+        {
+          "text": "manufacturing",
+          "start": 25.02,
+          "end": 25.68,
+          "confidence": 0.995
+        },
+        {
+          "text": "of",
+          "start": 25.68,
+          "end": 26.0,
+          "confidence": 0.978
+        },
+        {
+          "text": "products",
+          "start": 26.0,
+          "end": 26.3,
+          "confidence": 0.998
+        },
+        {
+          "text": "takes",
+          "start": 26.3,
+          "end": 26.58,
+          "confidence": 0.982
+        },
+        {
+          "text": "place,",
+          "start": 26.58,
+          "end": 27.0,
+          "confidence": 0.999
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "seek": 0,
+      "start": 27.4,
+      "end": 28.94,
+      "text": " warehouses for storing products,",
+      "tokens": [
+        51732,
+        17464,
+        29578,
+        337,
+        26085,
+        3383,
+        11,
+        51828
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.12579284336255944,
+      "compression_ratio": 1.8068181818181819,
+      "no_speech_prob": 0.03786948695778847,
+      "confidence": 0.874,
+      "words": [
+        {
+          "text": "warehouses",
+          "start": 27.4,
+          "end": 27.92,
+          "confidence": 0.716
+        },
+        {
+          "text": "for",
+          "start": 27.92,
+          "end": 28.16,
+          "confidence": 0.998
+        },
+        {
+          "text": "storing",
+          "start": 28.16,
+          "end": 28.44,
+          "confidence": 0.999
+        },
+        {
+          "text": "products,",
+          "start": 28.44,
+          "end": 28.94,
+          "confidence": 0.998
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "seek": 2928,
+      "start": 29.34,
+      "end": 30.56,
+      "text": " and distribution facilities.",
+      "tokens": [
+        50364,
+        293,
+        7316,
+        9406,
+        13,
+        50460
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.1678863525390625,
+      "compression_ratio": 1.701219512195122,
+      "no_speech_prob": 0.00022336584515869617,
+      "confidence": 0.999,
+      "words": [
+        {
+          "text": "and",
+          "start": 29.34,
+          "end": 29.44,
+          "confidence": 0.999
+        },
+        {
+          "text": "distribution",
+          "start": 29.44,
+          "end": 29.94,
+          "confidence": 0.998
+        },
+        {
+          "text": "facilities.",
+          "start": 29.94,
+          "end": 30.56,
+          "confidence": 0.998
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "seek": 2928,
+      "start": 31.24,
+      "end": 34.08,
+      "text": " Four, agricultural properties are farms and land",
+      "tokens": [
+        50460,
+        7451,
+        11,
+        19587,
+        7221,
+        366,
+        20366,
+        293,
+        2117,
+        50608
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.1678863525390625,
+      "compression_ratio": 1.701219512195122,
+      "no_speech_prob": 0.00022336584515869617,
+      "confidence": 0.928,
+      "words": [
+        {
+          "text": "Four,",
+          "start": 31.24,
+          "end": 31.52,
+          "confidence": 0.975
+        },
+        {
+          "text": "agricultural",
+          "start": 31.82,
+          "end": 32.36,
+          "confidence": 0.992
+        },
+        {
+          "text": "properties",
+          "start": 32.36,
+          "end": 33.04,
+          "confidence": 0.999
+        },
+        {
+          "text": "are",
+          "start": 33.04,
+          "end": 33.34,
+          "confidence": 0.944
+        },
+        {
+          "text": "farms",
+          "start": 33.34,
+          "end": 33.7,
+          "confidence": 0.983
+        },
+        {
+          "text": "and",
+          "start": 33.7,
+          "end": 33.9,
+          "confidence": 0.685
+        },
+        {
+          "text": "land",
+          "start": 33.9,
+          "end": 34.08,
+          "confidence": 0.97
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "seek": 2928,
+      "start": 34.12,
+      "end": 35.3,
+      "text": " of more than 10 acres.",
+      "tokens": [
+        50608,
+        295,
+        544,
+        813,
+        1266,
+        19852,
+        13,
+        50696
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.1678863525390625,
+      "compression_ratio": 1.701219512195122,
+      "no_speech_prob": 0.00022336584515869617,
+      "confidence": 0.968,
+      "words": [
+        {
+          "text": "of",
+          "start": 34.12,
+          "end": 34.28,
+          "confidence": 0.997
+        },
+        {
+          "text": "more",
+          "start": 34.28,
+          "end": 34.46,
+          "confidence": 0.999
+        },
+        {
+          "text": "than",
+          "start": 34.46,
+          "end": 34.64,
+          "confidence": 0.998
+        },
+        {
+          "text": "10",
+          "start": 34.64,
+          "end": 34.94,
+          "confidence": 0.858
+        },
+        {
+          "text": "acres.",
+          "start": 34.94,
+          "end": 35.3,
+          "confidence": 0.996
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "seek": 2928,
+      "start": 35.88,
+      "end": 38.94,
+      "text": " Five, businesses, the sale of business opportunities.",
+      "tokens": [
+        50696,
+        9436,
+        11,
+        6011,
+        11,
+        264,
+        8680,
+        295,
+        1606,
+        4786,
+        13,
+        50872
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.1678863525390625,
+      "compression_ratio": 1.701219512195122,
+      "no_speech_prob": 0.00022336584515869617,
+      "confidence": 0.985,
+      "words": [
+        {
+          "text": "Five,",
+          "start": 35.88,
+          "end": 36.28,
+          "confidence": 0.984
+        },
+        {
+          "text": "businesses,",
+          "start": 36.66,
+          "end": 37.12,
+          "confidence": 0.989
+        },
+        {
+          "text": "the",
+          "start": 37.56,
+          "end": 37.64,
+          "confidence": 0.959
+        },
+        {
+          "text": "sale",
+          "start": 37.64,
+          "end": 37.88,
+          "confidence": 0.997
+        },
+        {
+          "text": "of",
+          "start": 37.88,
+          "end": 38.04,
+          "confidence": 0.992
+        },
+        {
+          "text": "business",
+          "start": 38.04,
+          "end": 38.3,
+          "confidence": 0.996
+        },
+        {
+          "text": "opportunities.",
+          "start": 38.3,
+          "end": 38.94,
+          "confidence": 0.979
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "seek": 2928,
+      "start": 39.44,
+      "end": 40.84,
+      "text": " This all of business opportunities.",
+      "tokens": [
+        50872,
+        639,
+        439,
+        295,
+        1606,
+        4786,
+        13,
+        50970
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.1678863525390625,
+      "compression_ratio": 1.701219512195122,
+      "no_speech_prob": 0.00022336584515869617,
+      "confidence": 0.976,
+      "words": [
+        {
+          "text": "This",
+          "start": 39.44,
+          "end": 39.6,
+          "confidence": 0.986
+        },
+        {
+          "text": "all",
+          "start": 39.6,
+          "end": 39.76,
+          "confidence": 0.926
+        },
+        {
+          "text": "of",
+          "start": 39.76,
+          "end": 39.92,
+          "confidence": 0.973
+        },
+        {
+          "text": "business",
+          "start": 39.92,
+          "end": 40.18,
+          "confidence": 0.996
+        },
+        {
+          "text": "opportunities.",
+          "start": 40.18,
+          "end": 40.84,
+          "confidence": 0.999
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "seek": 2928,
+      "start": 41.38,
+      "end": 44.8,
+      "text": " This often includes the sale of stock or assets personal property",
+      "tokens": [
+        50970,
+        639,
+        2049,
+        5974,
+        264,
+        8680,
+        295,
+        4127,
+        420,
+        9769,
+        2973,
+        4707,
+        51156
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.1678863525390625,
+      "compression_ratio": 1.701219512195122,
+      "no_speech_prob": 0.00022336584515869617,
+      "confidence": 0.838,
+      "words": [
+        {
+          "text": "This",
+          "start": 41.38,
+          "end": 41.56,
+          "confidence": 0.999
+        },
+        {
+          "text": "often",
+          "start": 41.56,
+          "end": 41.82,
+          "confidence": 0.996
+        },
+        {
+          "text": "includes",
+          "start": 41.82,
+          "end": 42.2,
+          "confidence": 0.998
+        },
+        {
+          "text": "the",
+          "start": 42.2,
+          "end": 42.4,
+          "confidence": 0.995
+        },
+        {
+          "text": "sale",
+          "start": 42.4,
+          "end": 42.62,
+          "confidence": 0.999
+        },
+        {
+          "text": "of",
+          "start": 42.62,
+          "end": 42.78,
+          "confidence": 0.983
+        },
+        {
+          "text": "stock",
+          "start": 42.78,
+          "end": 43.08,
+          "confidence": 0.989
+        },
+        {
+          "text": "or",
+          "start": 43.08,
+          "end": 43.34,
+          "confidence": 0.662
+        },
+        {
+          "text": "assets",
+          "start": 43.34,
+          "end": 43.78,
+          "confidence": 0.98
+        },
+        {
+          "text": "personal",
+          "start": 43.78,
+          "end": 44.26,
+          "confidence": 0.406
+        },
+        {
+          "text": "property",
+          "start": 44.26,
+          "end": 44.8,
+          "confidence": 0.568
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "seek": 2928,
+      "start": 45.1,
+      "end": 46.18,
+      "text": " rather than just land.",
+      "tokens": [
+        51156,
+        2831,
+        813,
+        445,
+        2117,
+        13,
+        51222
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.1678863525390625,
+      "compression_ratio": 1.701219512195122,
+      "no_speech_prob": 0.00022336584515869617,
+      "confidence": 0.992,
+      "words": [
+        {
+          "text": "rather",
+          "start": 45.1,
+          "end": 45.38,
+          "confidence": 0.995
+        },
+        {
+          "text": "than",
+          "start": 45.38,
+          "end": 45.56,
+          "confidence": 0.999
+        },
+        {
+          "text": "just",
+          "start": 45.56,
+          "end": 45.8,
+          "confidence": 0.998
+        },
+        {
+          "text": "land.",
+          "start": 45.8,
+          "end": 46.18,
+          "confidence": 0.976
+        }
+      ]
+    }
+  ],
+  "language": "en",
+  "speech_activity": [
+    {
+      "start": 0.0,
+      "end": 46.44
+    }
+  ]
+}

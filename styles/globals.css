@@ -125,6 +125,32 @@ html {
   }
 }
 
+@keyframes wordHighlight {
+  0% {
+    background-size: 0% 100%;
+    opacity: 0.8;
+  }
+  50% {
+    background-size: 100% 100%;
+    opacity: 1;
+  }
+  100% {
+    background-size: 100% 100%;
+    opacity: 1;
+  }
+}
+
+@keyframes wordGlow {
+  0%, 100% {
+    text-shadow: 0 0 8px rgba(251, 191, 36, 0.6),
+                 0 0 12px rgba(59, 130, 246, 0.4);
+  }
+  50% {
+    text-shadow: 0 0 12px rgba(251, 191, 36, 0.8),
+                 0 0 18px rgba(59, 130, 246, 0.6);
+  }
+}
+
 .animate-glow {
   animation: glow 2s ease-in-out infinite;
 }
@@ -147,5 +173,13 @@ html {
 
 .animate-celebrate {
   animation: celebrate 0.5s ease-in-out infinite;
+}
+
+.animate-word-highlight {
+  animation: wordHighlight 0.3s ease-out forwards;
+}
+
+.animate-word-glow {
+  animation: wordGlow 1.5s ease-in-out infinite;
 }
 
