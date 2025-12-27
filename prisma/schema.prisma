@@ -1,0 +1,81 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      UserRole @default(Student)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  phone     String?
+  username  String   @unique
+}
+
+model Chapter {
+  id                 String              @id @default(cuid())
+  number             Int                 @unique
+  title              String
+  description        String?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  keyTerms           KeyTerm[]
+  learningObjectives LearningObjective[]
+  sections           Section[]
+}
+
+model Section {
+  id            String   @id @default(cuid())
+  chapterId     String
+  sectionNumber Int
+  title         String
+  text          String
+  type          String
+  audioUrl      String?
+  timestampsUrl String?
+  order         Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  chapter       Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+
+  @@unique([chapterId, sectionNumber])
+  @@index([chapterId])
+}
+
+model LearningObjective {
+  id        String   @id @default(cuid())
+  chapterId String
+  text      String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  chapter   Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+
+  @@index([chapterId])
+}
+
+model KeyTerm {
+  id        String   @id @default(cuid())
+  chapterId String
+  term      String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  chapter   Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+
+  @@index([chapterId])
+}
+
+enum UserRole {
+  Admin
+  Developer
+  Editor
+  Student
+}

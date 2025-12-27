@@ -6,6 +6,8 @@ import MrListings from "@/components/MrListings";
 import AudioPlayer from "@/components/AudioPlayer";
 import StarsBackground from "@/components/StarsBackground";
 import TableOfContents from "@/components/TableOfContents";
+import Header from "@/components/Header";
+import AuthGuard from "@/components/AuthGuard";
 
 export default function IntroductionPage() {
   const router = useRouter();
@@ -24,8 +26,10 @@ export default function IntroductionPage() {
   ];
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-[#0a1a2e] via-[#1e3a5f] to-[#0a1a2e] relative overflow-hidden">
-      <StarsBackground />
+    <AuthGuard>
+      <main className="min-h-screen bg-gradient-to-b from-[#0a1a2e] via-[#1e3a5f] to-[#0a1a2e] relative overflow-hidden">
+        <Header />
+        <StarsBackground />
 
       {/* Table of Contents */}
       <TableOfContents items={menuItems} currentPath="/introduction" />
@@ -37,7 +41,7 @@ export default function IntroductionPage() {
         <div className="absolute inset-[100px] rounded-full border border-blue-500/10 animate-pulse" style={{ animationDelay: "1s" }} />
       </div>
 
-      <div className="relative z-10 min-h-screen flex flex-col items-center justify-center p-4 md:p-8 md:ml-64">
+      <div className="relative z-10 min-h-screen flex flex-col items-center justify-center pt-20 pb-8 px-4 md:px-8 md:ml-64 md:pt-24">
         {/* Mr Listings Character - Center */}
         <div className={`mb-8 transition-all duration-1000 ${isAnimating ? 'scale-75 translate-x-[-200px] translate-y-[-200px] opacity-0' : 'scale-100 opacity-100'}`}>
           <MrListings size="large" />
@@ -70,6 +74,7 @@ export default function IntroductionPage() {
         </button>
       </div>
     </main>
+    </AuthGuard>
   );
 }
 

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import MrListings from "@/components/MrListings";
 import StarsBackground from "@/components/StarsBackground";
 import FloatingParticles from "@/components/FloatingParticles";
+import UserMenu from "@/components/UserMenu";
 
 export default function Home() {
   const router = useRouter();
@@ -18,14 +19,49 @@ export default function Home() {
     setTimeout(() => setShowButton(true), 1500);
   }, []);
 
-  const handleGetStarted = () => {
-    router.push("/introduction");
+  const handleGetStarted = async () => {
+    // Check if user is authenticated
+    const token = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("auth-token="))
+      ?.split("=")[1];
+
+    if (!token) {
+      // Store intended destination and redirect to login
+      sessionStorage.setItem("redirectAfterLogin", "/introduction");
+      router.push("/login");
+      return;
+    }
+
+    // Verify token is valid
+    try {
+      const response = await fetch("/api/auth/me", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        router.push("/introduction");
+      } else {
+        sessionStorage.setItem("redirectAfterLogin", "/introduction");
+        router.push("/login");
+      }
+    } catch (err) {
+      sessionStorage.setItem("redirectAfterLogin", "/introduction");
+      router.push("/login");
+    }
   };
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-[#0a1a2e] via-[#1e3a5f] to-[#0a1a2e] relative overflow-hidden flex items-center justify-center">
       {/* Stars background */}
       <StarsBackground />
+
+      {/* User Menu - Top Right */}
+      <div className="absolute top-6 right-6 z-20">
+        <UserMenu />
+      </div>
 
       {/* Concentric circles - animated */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] md:w-[800px] md:h-[800px] pointer-events-none">

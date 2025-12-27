@@ -4,6 +4,8 @@ import { useRouter } from "next/navigation";
 import Quiz, { QuizQuestion } from "@/components/Quiz";
 import { eligibilityQuestions } from "@/lib/quizData";
 import StarsBackground from "@/components/StarsBackground";
+import Header from "@/components/Header";
+import AuthGuard from "@/components/AuthGuard";
 
 export default function EligibilityPage() {
   const router = useRouter();
@@ -25,9 +27,11 @@ export default function EligibilityPage() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-[#0a1a2e] via-[#1e3a5f] to-[#0a1a2e] relative overflow-hidden p-4 md:p-8">
-      {/* Stars background */}
-      <StarsBackground />
+    <AuthGuard>
+      <main className="min-h-screen bg-gradient-to-b from-[#0a1a2e] via-[#1e3a5f] to-[#0a1a2e] relative overflow-hidden p-4 md:p-8">
+        <Header />
+        {/* Stars background */}
+        <StarsBackground />
 
       <div className="relative z-10 min-h-screen flex flex-col items-center justify-center py-8">
         <div className="w-full max-w-4xl">
@@ -38,6 +42,7 @@ export default function EligibilityPage() {
         </div>
       </div>
     </main>
+    </AuthGuard>
   );
 }
 

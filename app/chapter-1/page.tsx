@@ -8,6 +8,8 @@ import Quiz, { QuizQuestion } from "@/components/Quiz";
 import { chapter1Questions } from "@/lib/chapter1Data";
 import StarsBackground from "@/components/StarsBackground";
 import TableOfContents from "@/components/TableOfContents";
+import Header from "@/components/Header";
+import AuthGuard from "@/components/AuthGuard";
 
 // Lazy load AudioPlayer to improve initial page load
 const AudioPlayer = dynamic(() => import("@/components/AudioPlayer"), {
@@ -173,31 +175,36 @@ export default function Chapter1Page() {
 
   if (showQuiz) {
     return (
-      <main className="min-h-screen bg-gradient-to-b from-[#0a1a2e] via-[#1e3a5f] to-[#0a1a2e] relative overflow-hidden p-4 md:p-8 md:ml-64">
-        <StarsBackground />
-        <TableOfContents items={menuItems} currentPath="/chapter-1" />
-        <div className="relative z-10 min-h-screen flex flex-col items-center justify-center py-8">
+      <AuthGuard>
+        <main className="min-h-screen bg-gradient-to-b from-[#0a1a2e] via-[#1e3a5f] to-[#0a1a2e] relative overflow-hidden">
+          <Header />
+          <StarsBackground />
+          <TableOfContents items={menuItems} currentPath="/chapter-1" />
+          <div className="relative z-10 min-h-screen flex flex-col items-center justify-center pt-20 pb-8 px-4 md:px-8 md:ml-64 md:pt-24">
           <h1 className="text-3xl md:text-4xl font-bold text-center mb-8 text-white">
             Chapter 1 Quiz
           </h1>
           <Quiz questions={chapter1Questions} onComplete={handleQuizComplete} />
         </div>
       </main>
+      </AuthGuard>
     );
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-[#0a1a2e] via-[#1e3a5f] to-[#0a1a2e] relative overflow-hidden">
-      <StarsBackground />
-      <TableOfContents items={menuItems} currentPath="/chapter-1" />
+    <AuthGuard>
+      <main className="min-h-screen bg-gradient-to-b from-[#0a1a2e] via-[#1e3a5f] to-[#0a1a2e] relative overflow-hidden">
+        <Header />
+        <StarsBackground />
+        <TableOfContents items={menuItems} currentPath="/chapter-1" />
 
-      <div className="relative z-10 min-h-screen flex flex-col p-4 md:p-8 md:ml-64">
+        <div className="relative z-10 min-h-screen flex flex-col pt-20 pb-8 px-4 md:px-8 md:ml-64 md:pt-24">
         {/* Header */}
-        <div className="mb-6">
-          <div className="absolute top-4 left-4 md:top-8 md:left-8 z-20">
+        <div className="mb-8">
+          <div className="flex justify-center mb-6">
             <MrListings size="small" isLecturing={true} />
           </div>
-          <div className="text-center mt-20 md:mt-24">
+          <div className="text-center">
             <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">
               FLORIDA REAL ESTATE SALES ASSOCIATE COURSE
             </h1>
@@ -289,5 +296,6 @@ export default function Chapter1Page() {
         </div>
       </div>
     </main>
+    </AuthGuard>
   );
 }
