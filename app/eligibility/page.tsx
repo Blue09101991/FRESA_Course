@@ -1,14 +1,45 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Quiz, { QuizQuestion } from "@/components/Quiz";
-import { eligibilityQuestions } from "@/lib/quizData";
 import StarsBackground from "@/components/StarsBackground";
 import Header from "@/components/Header";
 import AuthGuard from "@/components/AuthGuard";
 
 export default function EligibilityPage() {
   const router = useRouter();
+  const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchEligibilityQuestions();
+  }, []);
+
+  const fetchEligibilityQuestions = async () => {
+    try {
+      const response = await fetch("/api/admin/quiz-questions?quizType=eligibility");
+      if (response.ok) {
+        const data = await response.json();
+        if (data.questions && data.questions.length > 0) {
+          setQuizQuestions(data.questions.map((q: any) => ({
+            id: q.id,
+            question: q.question,
+            options: q.options,
+            correctAnswer: q.correctAnswer,
+            explanation: q.explanation,
+          })));
+        } else {
+          // Fallback to empty array - admin needs to add questions
+          console.warn("No eligibility questions found in database");
+        }
+      }
+    } catch (err) {
+      console.error("Error fetching eligibility questions:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleQuizComplete = (score: number, total: number) => {
     // Save progress
@@ -38,7 +69,16 @@ export default function EligibilityPage() {
           <h1 className="text-3xl md:text-4xl font-bold text-center mb-8 text-white">
             Eligibility Quiz
           </h1>
-          <Quiz questions={eligibilityQuestions} onComplete={handleQuizComplete} />
+          {loading ? (
+            <div className="text-white text-center">Loading quiz questions...</div>
+          ) : quizQuestions.length > 0 ? (
+            <Quiz questions={quizQuestions} onComplete={handleQuizComplete} />
+          ) : (
+            <div className="text-white text-center p-8 bg-red-500/10 border border-red-500/30 rounded-lg">
+              <p className="text-lg mb-2">No quiz questions available</p>
+              <p className="text-sm text-gray-400">Please contact an administrator to add eligibility quiz questions.</p>
+            </div>
+          )}
         </div>
       </div>
     </main>

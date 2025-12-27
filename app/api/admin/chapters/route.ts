@@ -16,7 +16,11 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
     }
 
+    // Get all chapters except chapter 0 (introduction chapter)
     const chapters = await prisma.chapter.findMany({
+      where: {
+        number: { not: 0 }, // Exclude chapter 0 (introduction)
+      },
       include: {
         sections: {
           orderBy: { order: 'asc' },

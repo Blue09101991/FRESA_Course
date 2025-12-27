@@ -174,10 +174,50 @@ export default function AdminPage() {
           </div>
         </div>
 
+        {/* Special Pages */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          {/* Introduction Page Editor */}
+          <div className="bg-[#1a1f3a]/90 backdrop-blur-lg rounded-2xl shadow-2xl border border-purple-500/20 p-6">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold text-white">Introduction Page</h2>
+              <Link
+                href="/admin/introduction"
+                className="px-3 py-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-purple-500/50 transition-all duration-300 text-sm"
+              >
+                Edit
+              </Link>
+            </div>
+            <p className="text-gray-400 text-xs">
+              Edit introduction content, text, and audio
+            </p>
+          </div>
+
+          {/* Eligibility Quiz Editor */}
+          <div className="bg-[#1a1f3a]/90 backdrop-blur-lg rounded-2xl shadow-2xl border border-orange-500/20 p-6">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold text-white">Eligibility Quiz</h2>
+              <Link
+                href="/admin/eligibility"
+                className="px-3 py-2 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-orange-500/50 transition-all duration-300 text-sm"
+              >
+                Edit
+              </Link>
+            </div>
+            <p className="text-gray-400 text-xs">
+              Manage eligibility quiz questions
+            </p>
+          </div>
+        </div>
+
         {/* Chapters List */}
         <div className="bg-[#1a1f3a]/90 backdrop-blur-lg rounded-2xl shadow-2xl border border-cyan-500/20 p-6">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-white">Chapters</h2>
+            <div>
+              <h2 className="text-2xl font-bold text-white">Chapters & Content</h2>
+              <p className="text-gray-400 text-sm mt-1">
+                All chapters starting from Chapter 1 (Introduction is managed separately above)
+              </p>
+            </div>
             <Link
               href="/admin/chapters/new"
               className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-cyan-500/50 transition-all duration-300"
@@ -200,26 +240,77 @@ export default function AdminPage() {
               </div>
             ) : (
               chapters.map((chapter) => (
-                <Link
+                <div
                   key={chapter.id}
-                  href={`/admin/chapters/${chapter.id}`}
-                  className="block p-4 bg-[#0a0e27]/50 border border-cyan-500/20 rounded-lg hover:border-cyan-500/50 hover:bg-[#0a0e27]/70 transition-all"
+                  className="p-4 bg-[#0a0e27]/50 border border-cyan-500/20 rounded-lg hover:border-cyan-500/50 hover:bg-[#0a0e27]/70 transition-all"
                 >
                   <div className="flex justify-between items-center">
-                    <div>
+                    <div className="flex-1">
                       <h3 className="text-xl font-semibold text-white mb-1">
-                        Chapter {chapter.number}: {chapter.title}
+                        Chapter {chapter.number}: {chapter.title || "Untitled Chapter"}
                       </h3>
-                      {chapter.description && (
-                        <p className="text-gray-400 text-sm">{chapter.description}</p>
+                      {chapter.description ? (
+                        <p className="text-gray-400 text-sm mb-2">{chapter.description}</p>
+                      ) : (
+                        <p className="text-gray-500 text-sm mb-2 italic">No description set</p>
                       )}
-                      <p className="text-cyan-400 text-sm mt-2">
-                        {chapter._count.sections} section{chapter._count.sections !== 1 ? "s" : ""}
-                      </p>
+                      <div className="flex gap-4 text-cyan-400 text-sm">
+                        <span>{chapter._count.sections} section{chapter._count.sections !== 1 ? "s" : ""}</span>
+                        <Link
+                          href={`/chapter-${chapter.number}`}
+                          target="_blank"
+                          className="text-blue-400 hover:text-blue-300 underline"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          View Page
+                        </Link>
+                      </div>
                     </div>
-                    <div className="text-cyan-400">→</div>
+                    <div className="flex gap-2 ml-4">
+                      <Link
+                        href={`/admin/chapters/${chapter.id}`}
+                        className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-semibold rounded-lg transition-all text-sm"
+                      >
+                        Edit All Content
+                      </Link>
+                      <button
+                        onClick={async (e) => {
+                          e.stopPropagation();
+                          if (confirm(`Are you sure you want to delete Chapter ${chapter.number}: ${chapter.title}? This will also delete all sections, objectives, key terms, and quiz questions.`)) {
+                            try {
+                              const token = document.cookie
+                                .split("; ")
+                                .find((row) => row.startsWith("auth-token="))
+                                ?.split("=")[1];
+                              
+                              const response = await fetch(`/api/admin/chapters/${chapter.id}`, {
+                                method: "DELETE",
+                                headers: {
+                                  Authorization: `Bearer ${token}`,
+                                },
+                                credentials: 'include',
+                              });
+                              
+                              if (response.ok) {
+                                await fetchChapters();
+                                alert("Chapter deleted successfully!");
+                              } else {
+                                const error = await response.json();
+                                alert(`Error: ${error.error || "Failed to delete chapter"}`);
+                              }
+                            } catch (err) {
+                              console.error("Error deleting chapter:", err);
+                              alert("Failed to delete chapter");
+                            }
+                          }
+                        }}
+                        className="px-4 py-2 bg-red-500/20 border border-red-500/30 rounded-lg text-red-400 hover:bg-red-500/30 transition-all text-sm"
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </div>
-                </Link>
+                </div>
               ))
             )}
           </div>

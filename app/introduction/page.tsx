@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import MrListings from "@/components/MrListings";
 import AudioPlayer from "@/components/AudioPlayer";
@@ -12,8 +12,32 @@ import AuthGuard from "@/components/AuthGuard";
 export default function IntroductionPage() {
   const router = useRouter();
   const [isAnimating, setIsAnimating] = useState(false);
+  const [introText, setIntroText] = useState("Hello, future real estate professional. My name is Mr Listings. Welcome to my 63 hour pre-license education course for sales associates, approved by Florida Real Estate Commission.");
+  const [audioUrl, setAudioUrl] = useState("/audio/intro.mp3");
+  const [timestampsUrl, setTimestampsUrl] = useState("/timestamps/intro.timestamps.json");
+  const [loading, setLoading] = useState(true);
 
-  const introText = "Hello, future real estate professional. My name is Mr Listings. Welcome to my 63 hour pre-license education course for sales associates, approved by Florida Real Estate Commission.";
+  useEffect(() => {
+    fetchIntroduction();
+  }, []);
+
+  const fetchIntroduction = async () => {
+    try {
+      const response = await fetch("/api/admin/introduction");
+      if (response.ok) {
+        const data = await response.json();
+        if (data.introduction) {
+          setIntroText(data.introduction.text || introText);
+          setAudioUrl(data.introduction.audioUrl || "/audio/intro.mp3");
+          setTimestampsUrl(data.introduction.timestampsUrl || "/timestamps/intro.timestamps.json");
+        }
+      }
+    } catch (err) {
+      console.error("Error fetching introduction:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleContinue = () => {
     // Navigate immediately without delay for better performance
@@ -52,15 +76,17 @@ export default function IntroductionPage() {
           <div className="relative">
             <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-blue-400 rotate-45" />
             <div className="bg-[#1e3a5f] border border-blue-500/30 rounded-2xl p-6 md:p-8 shadow-2xl">
-              <AudioPlayer
-                text={introText}
-                audioUrl="/audio/intro.mp3"
-                timestampsUrl="/timestamps/intro.timestamps.json"
-                autoPlay={true}
-                onComplete={() => {
-                  // Audio completed, don't replay
-                }}
-              />
+              {!loading && (
+                <AudioPlayer
+                  text={introText}
+                  audioUrl={audioUrl}
+                  timestampsUrl={timestampsUrl}
+                  autoPlay={true}
+                  onComplete={() => {
+                    // Audio completed, don't replay
+                  }}
+                />
+              )}
             </div>
           </div>
         </div>

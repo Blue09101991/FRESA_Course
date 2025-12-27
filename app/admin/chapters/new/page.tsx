@@ -91,6 +91,9 @@ export default function NewChapterPage() {
                 min="1"
                 className="w-full px-4 py-2 bg-[#0a0e27]/50 border border-cyan-500/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/50"
               />
+              <p className="text-gray-400 text-xs mt-1">
+                Note: Chapter numbers start from 1. Introduction is managed separately (not a chapter).
+              </p>
             </div>
 
             <div>

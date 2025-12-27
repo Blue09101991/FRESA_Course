@@ -29,6 +29,7 @@ model Chapter {
   keyTerms           KeyTerm[]
   learningObjectives LearningObjective[]
   sections           Section[]
+  quizQuestions      QuizQuestion[]
 }
 
 model Section {
@@ -71,6 +72,23 @@ model KeyTerm {
   chapter   Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
 
   @@index([chapterId])
+}
+
+model QuizQuestion {
+  id          String   @id @default(cuid())
+  chapterId   String?
+  question    String
+  options     String[] // Array of answer options
+  correctAnswer Int    // Index of correct answer (0-based)
+  explanation Json     // { correct: string, incorrect: string[] }
+  order       Int      @default(0)
+  quizType    String   @default("chapter") // "chapter", "eligibility", etc.
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  chapter     Chapter? @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+
+  @@index([chapterId])
+  @@index([quizType])
 }
 
 enum UserRole {

@@ -18,7 +18,7 @@ interface TimestampsData {
 
 interface AudioPlayerProps {
   text: string;
-  audioUrl: string;
+  audioUrl?: string;
   timestampsUrl?: string;
   autoPlay?: boolean;
   onComplete?: () => void;

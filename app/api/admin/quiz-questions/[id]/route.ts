@@ -20,31 +20,28 @@ export async function GET(
     }
 
     const { id } = await params
-    const chapter = await prisma.chapter.findUnique({
+    const question = await prisma.quizQuestion.findUnique({
       where: { id },
       include: {
-        sections: {
-          // Get ALL sections, don't filter any out
-          orderBy: { order: 'asc' },
-        },
-        learningObjectives: {
-          orderBy: { order: 'asc' },
-        },
-        keyTerms: {
-          orderBy: { order: 'asc' },
+        chapter: {
+          select: {
+            id: true,
+            number: true,
+            title: true,
+          },
         },
       },
     })
 
-    if (!chapter) {
-      return NextResponse.json({ error: 'Chapter not found' }, { status: 404 })
+    if (!question) {
+      return NextResponse.json({ error: 'Question not found' }, { status: 404 })
     }
 
-    return NextResponse.json({ chapter })
+    return NextResponse.json({ question })
   } catch (error) {
-    console.error('Error fetching chapter:', error)
+    console.error('Error fetching quiz question:', error)
     return NextResponse.json(
-      { error: 'Failed to fetch chapter' },
+      { error: 'Failed to fetch quiz question' },
       { status: 500 }
     )
   }
@@ -68,22 +65,36 @@ export async function PUT(
     }
 
     const { id } = await params
-    const { number, title, description } = await request.json()
+    const body = await request.json()
+    const { question, options, correctAnswer, explanation, chapterId, quizType, order } = body
 
-    const chapter = await prisma.chapter.update({
+    const updatedQuestion = await prisma.quizQuestion.update({
       where: { id },
       data: {
-        number,
-        title,
-        description: description || null,
+        question,
+        options,
+        correctAnswer: correctAnswer !== undefined ? parseInt(correctAnswer) : undefined,
+        explanation,
+        chapterId: chapterId || null,
+        quizType,
+        order,
+      },
+      include: {
+        chapter: {
+          select: {
+            id: true,
+            number: true,
+            title: true,
+          },
+        },
       },
     })
 
-    return NextResponse.json({ chapter })
+    return NextResponse.json({ question: updatedQuestion })
   } catch (error) {
-    console.error('Error updating chapter:', error)
+    console.error('Error updating quiz question:', error)
     return NextResponse.json(
-      { error: 'Failed to update chapter' },
+      { error: 'Failed to update quiz question' },
       { status: 500 }
     )
   }
@@ -107,15 +118,15 @@ export async function DELETE(
     }
 
     const { id } = await params
-    await prisma.chapter.delete({
+    await prisma.quizQuestion.delete({
       where: { id },
     })
 
     return NextResponse.json({ success: true })
   } catch (error) {
-    console.error('Error deleting chapter:', error)
+    console.error('Error deleting quiz question:', error)
     return NextResponse.json(
-      { error: 'Failed to delete chapter' },
+      { error: 'Failed to delete quiz question' },
       { status: 500 }
     )
   }
