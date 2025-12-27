@@ -118,6 +118,18 @@ npm start
 - Progress is saved to localStorage (consider adding backend for production)
 - The app is designed as a PWA but manifest.json needs to be added for full PWA support
 
+## Documentation
+
+All project documentation is organized in the [`doc/`](./doc/) folder. See the [Documentation Index](./doc/README.md) for a complete list and navigation.
+
+**Quick Links:**
+- 📖 [Documentation Index](./doc/README.md) - Start here for all documentation
+- 🗄️ [Database Setup](./doc/DATABASE_SETUP.md) - PostgreSQL configuration
+- 🔄 [Migration Guide](./doc/MIGRATION_GUIDE.md) - Database migrations
+- 👤 [Create Admin User](./doc/CREATE_ADMIN_USER.md) - Admin account setup
+- ⚡ [Quick Fix](./doc/QUICK_FIX.md) - Common troubleshooting
+- 🔧 [Build Fix](./doc/BUILD_FIX.md) - Build error solutions
+
 ## License
 
 ISC
