@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { verifyToken, canEdit } from '@/lib/auth'
+import { existsSync } from 'fs'
+import { join } from 'path'
 
 // Introduction is stored as a special section with chapterId = null or a special flag
 // For simplicity, we'll use a special chapter number 0 or create a dedicated table
@@ -19,13 +21,24 @@ export async function GET(request: NextRequest) {
       },
     })
 
+    // Helper function to validate file exists
+    const validateFileUrl = (url: string | null): string | null => {
+      if (!url) return null
+      const filePath = url.startsWith('/') ? url.slice(1) : url
+      const fullPath = join(process.cwd(), 'public', filePath)
+      return existsSync(fullPath) ? url : null
+    }
+
     if (introduction) {
+      const validatedAudioUrl = validateFileUrl(introduction.audioUrl) || '/audio/intro.mp3'
+      const validatedTimestampsUrl = validateFileUrl(introduction.timestampsUrl) || '/timestamps/intro.timestamps.json'
+      
       return NextResponse.json({
         introduction: {
           id: introduction.id,
           text: introduction.text,
-          audioUrl: introduction.audioUrl || '/audio/intro.mp3',
-          timestampsUrl: introduction.timestampsUrl || '/timestamps/intro.timestamps.json',
+          audioUrl: validatedAudioUrl,
+          timestampsUrl: validatedTimestampsUrl,
         },
       })
     }
@@ -64,6 +77,32 @@ export async function PUT(request: NextRequest) {
     const body = await request.json()
     const { text, audioUrl, timestampsUrl } = body
 
+    // Validate that audio and timestamps files exist if URLs are provided
+    let validatedAudioUrl = audioUrl || null
+    let validatedTimestampsUrl = timestampsUrl || null
+
+    if (validatedAudioUrl) {
+      // Remove leading slash and check if file exists in public/audio
+      const audioPath = validatedAudioUrl.startsWith('/') ? validatedAudioUrl.slice(1) : validatedAudioUrl
+      const fullAudioPath = join(process.cwd(), 'public', audioPath)
+      
+      if (!existsSync(fullAudioPath)) {
+        console.warn(`⚠️ Audio file not found: ${fullAudioPath}. Setting audioUrl to null.`)
+        validatedAudioUrl = null
+      }
+    }
+
+    if (validatedTimestampsUrl) {
+      // Remove leading slash and check if file exists in public/timestamps
+      const timestampsPath = validatedTimestampsUrl.startsWith('/') ? validatedTimestampsUrl.slice(1) : validatedTimestampsUrl
+      const fullTimestampsPath = join(process.cwd(), 'public', timestampsPath)
+      
+      if (!existsSync(fullTimestampsPath)) {
+        console.warn(`⚠️ Timestamps file not found: ${fullTimestampsPath}. Setting timestampsUrl to null.`)
+        validatedTimestampsUrl = null
+      }
+    }
+
     // Find or create introduction section
     let introduction = await prisma.section.findFirst({
       where: {
@@ -77,8 +116,8 @@ export async function PUT(request: NextRequest) {
         where: { id: introduction.id },
         data: {
           text,
-          audioUrl: audioUrl || null,
-          timestampsUrl: timestampsUrl || null,
+          audioUrl: validatedAudioUrl,
+          timestampsUrl: validatedTimestampsUrl,
         },
       })
     } else {
@@ -105,8 +144,8 @@ export async function PUT(request: NextRequest) {
           title: 'Introduction',
           text,
           type: 'introduction',
-          audioUrl: audioUrl || null,
-          timestampsUrl: timestampsUrl || null,
+          audioUrl: validatedAudioUrl,
+          timestampsUrl: validatedTimestampsUrl,
           order: 0,
         },
       })

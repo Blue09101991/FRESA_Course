@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { verifyToken, canEdit, canDelete } from '@/lib/auth'
+import { existsSync } from 'fs'
+import { join } from 'path'
 
 export async function GET(
   request: NextRequest,
@@ -61,6 +63,32 @@ export async function PUT(
     const { id } = await params
     const { sectionNumber, title, text, type, audioUrl, timestampsUrl, order } = await request.json()
 
+    // Validate that audio and timestamps files exist if URLs are provided
+    let validatedAudioUrl = audioUrl || null
+    let validatedTimestampsUrl = timestampsUrl || null
+
+    if (validatedAudioUrl) {
+      // Remove leading slash and check if file exists in public/audio
+      const audioPath = validatedAudioUrl.startsWith('/') ? validatedAudioUrl.slice(1) : validatedAudioUrl
+      const fullAudioPath = join(process.cwd(), 'public', audioPath)
+      
+      if (!existsSync(fullAudioPath)) {
+        console.warn(`⚠️ Audio file not found: ${fullAudioPath}. Setting audioUrl to null.`)
+        validatedAudioUrl = null
+      }
+    }
+
+    if (validatedTimestampsUrl) {
+      // Remove leading slash and check if file exists in public/timestamps
+      const timestampsPath = validatedTimestampsUrl.startsWith('/') ? validatedTimestampsUrl.slice(1) : validatedTimestampsUrl
+      const fullTimestampsPath = join(process.cwd(), 'public', timestampsPath)
+      
+      if (!existsSync(fullTimestampsPath)) {
+        console.warn(`⚠️ Timestamps file not found: ${fullTimestampsPath}. Setting timestampsUrl to null.`)
+        validatedTimestampsUrl = null
+      }
+    }
+
     const section = await prisma.section.update({
       where: { id },
       data: {
@@ -68,8 +96,8 @@ export async function PUT(
         title,
         text,
         type,
-        audioUrl: audioUrl || null,
-        timestampsUrl: timestampsUrl || null,
+        audioUrl: validatedAudioUrl,
+        timestampsUrl: validatedTimestampsUrl,
         order: order || 0,
       },
     })

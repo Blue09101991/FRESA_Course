@@ -14,6 +14,7 @@
     "db:seed": "tsx scripts/seed.ts",
     "db:studio": "prisma studio",
     "db:create-admin": "tsx scripts/create-admin.ts",
+    "db:fix-audio": "tsx scripts/fix-audio-urls.ts",
     "test:elevenlabs": "node scripts/test-elevenlabs.js"
   },
   "keywords": [],

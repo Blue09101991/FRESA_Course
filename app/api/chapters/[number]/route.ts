@@ -1,5 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { existsSync } from 'fs'
+import { join } from 'path'
+
+// Helper function to validate file exists
+function validateFileUrl(url: string | null): string | null {
+  if (!url) return null
+  
+  // Remove leading slash and check if file exists
+  const filePath = url.startsWith('/') ? url.slice(1) : url
+  const fullPath = join(process.cwd(), 'public', filePath)
+  
+  if (!existsSync(fullPath)) {
+    console.warn(`⚠️ File not found: ${fullPath}. Returning null for URL.`)
+    return null
+  }
+  
+  return url
+}
 
 // Public API to fetch chapter content for frontend pages
 // This route is public and doesn't require authentication
@@ -41,7 +59,17 @@ export async function GET(
       return NextResponse.json({ error: 'Chapter not found' }, { status: 404 })
     }
 
-    return NextResponse.json({ chapter })
+    // Validate that audio and timestamps files exist for all sections
+    const validatedChapter = {
+      ...chapter,
+      sections: chapter.sections.map(section => ({
+        ...section,
+        audioUrl: validateFileUrl(section.audioUrl),
+        timestampsUrl: validateFileUrl(section.timestampsUrl),
+      })),
+    }
+
+    return NextResponse.json({ chapter: validatedChapter })
   } catch (error) {
     console.error('Error fetching chapter:', error)
     return NextResponse.json(

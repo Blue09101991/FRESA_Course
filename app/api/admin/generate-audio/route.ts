@@ -152,7 +152,17 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Double-check file exists and is readable
+    if (!existsSync(audioFilePath)) {
+      return NextResponse.json(
+        { error: 'Audio file was not created successfully' },
+        { status: 500 }
+      )
+    }
+
     console.log(`✅ Audio file saved: ${audioFileName} (${stats.size} bytes)`)
+    console.log(`✅ File path verified: ${audioFilePath}`)
+    console.log(`✅ File URL will be: /audio/${audioFileName}`)
 
     // In Next.js, files in public/ are served from root, so remove 'public/' from URL
     const audioUrl = `/audio/${audioFileName}`
