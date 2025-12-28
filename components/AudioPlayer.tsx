@@ -341,7 +341,7 @@ export default function AudioPlayer({
 
   // Throttle updates to prevent excessive re-renders
   const lastUpdateTime = useRef<number>(0);
-  const updateInterval = 20; // Update every 20ms for very smooth and responsive highlighting
+  const updateInterval = 15; // Update every 15ms for very smooth and responsive highlighting
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -369,62 +369,43 @@ export default function AudioPlayer({
       let highlightedIndex = -1;
       if (currentWordTimestamps.length > 0 && currentWordMap.size > 0) {
         // Professional word highlighting algorithm
-        // Strategy: Highlight word slightly BEFORE it starts (0.05s early) to show anticipation
-        // This makes highlighting feel more responsive and ahead of speech
-        
-        const highlightOffset = 0.35; // Highlight 350ms before word starts for much better anticipation
-        const adjustedTime = current + highlightOffset;
+        // Strategy: Follow EXACT timestamps from JSON file - no offsets, no early endings
+        // Highlight word when its start time is reached, move to next when end time is reached
         
         let activeWordIndex = -1;
         let nextWordIndex = -1;
         let nextWordStart = Infinity;
-        let closestWordIndex = -1;
-        let closestDistance = Infinity;
         
-        // First pass: Find word that should be highlighted
-        // Check if we're within any word's time range (with offset)
+        // First pass: Find word that should be highlighted based on EXACT timestamps
         for (let i = 0; i < currentWords.length; i++) {
           const timestampIndex = currentWordMap.get(i);
           if (timestampIndex !== undefined && timestampIndex < currentWordTimestamps.length) {
             const wordTimestamp = currentWordTimestamps[timestampIndex];
             
-            // Highlight if we're at or past the word's start (with offset) and before its end
-            // This makes highlighting appear significantly before speech
-            if (adjustedTime >= wordTimestamp.start && current <= wordTimestamp.end) {
+            // Use EXACT start and end times from timestamps JSON file
+            // Highlight if current time is >= word start AND < word end
+            if (current >= wordTimestamp.start && current < wordTimestamp.end) {
               activeWordIndex = i;
-              break; // Found active word
+              break; // Found active word - use exact timestamps
             }
             
-            // Track the next word that's about to start (for smooth transitions)
+            // Track the next word that's about to start (for smooth anticipation)
             if (wordTimestamp.start > current && wordTimestamp.start < nextWordStart) {
               nextWordStart = wordTimestamp.start;
               nextWordIndex = i;
             }
-            
-            // Also track the closest upcoming word for better anticipation
-            if (wordTimestamp.start > current) {
-              const distanceToStart = wordTimestamp.start - current;
-              if (distanceToStart < closestDistance && distanceToStart < 0.4) {
-                closestDistance = distanceToStart;
-                closestWordIndex = i;
-              }
-            }
           }
         }
         
-        // If we found an active word, use it
+        // If we found an active word, use it (following exact timestamps)
         if (activeWordIndex >= 0) {
           highlightedIndex = activeWordIndex;
         } 
-        // If we're very close to the next word (within 0.4s), highlight it early for anticipation
-        else if (nextWordIndex >= 0 && (nextWordStart - current) < 0.4) {
+        // If we're very close to the next word (within 0.2s), highlight it slightly early for smooth transition
+        else if (nextWordIndex >= 0 && (nextWordStart - current) < 0.2) {
           highlightedIndex = nextWordIndex;
         }
-        // Use closest word if very close (within 0.4s)
-        else if (closestWordIndex >= 0 && closestDistance < 0.4) {
-          highlightedIndex = closestWordIndex;
-        }
-        // Fallback: Find the word we're closest to
+        // Fallback: Find the word we're closest to based on exact timestamps
         else {
           let closestIndex = -1;
           let minDistance = Infinity;
@@ -434,33 +415,22 @@ export default function AudioPlayer({
             if (timestampIndex !== undefined && timestampIndex < currentWordTimestamps.length) {
               const wordTimestamp = currentWordTimestamps[timestampIndex];
               
-              // Calculate distance to word's start (prefer words that are about to start)
-              const distanceToStart = Math.abs(current - wordTimestamp.start);
-              const distanceToEnd = Math.abs(current - wordTimestamp.end);
-              const minDist = Math.min(distanceToStart, distanceToEnd);
-              
-              // Prefer words that haven't started yet (future words) if close - for anticipation
-              if (current < wordTimestamp.start && distanceToStart < 0.35) {
-                if (distanceToStart < minDistance) {
-                  minDistance = distanceToStart;
-                  closestIndex = i;
-                }
-              }
-              // Or words we're currently in
-              else if (current >= wordTimestamp.start && current <= wordTimestamp.end) {
+              // Use EXACT timestamps - check if we're within the word's time range
+              if (current >= wordTimestamp.start && current < wordTimestamp.end) {
                 highlightedIndex = i;
-                break;
+                break; // Found word using exact timestamps
               }
-              // Or words we just passed (within 0.1s) - keep highlighting briefly
-              else if (current > wordTimestamp.end && (current - wordTimestamp.end) < 0.1) {
-                if ((current - wordTimestamp.end) < minDistance) {
-                  minDistance = current - wordTimestamp.end;
-                  closestIndex = i;
-                }
+              
+              // Calculate distance to word's start time (for fallback)
+              const distanceToStart = Math.abs(current - wordTimestamp.start);
+              if (distanceToStart < minDistance) {
+                minDistance = distanceToStart;
+                closestIndex = i;
               }
             }
           }
           
+          // Use closest word as fallback
           if (highlightedIndex === -1 && closestIndex >= 0) {
             highlightedIndex = closestIndex;
           }
@@ -571,7 +541,8 @@ export default function AudioPlayer({
         const timestampIndex = wordMap.get(i);
         if (timestampIndex !== undefined && timestampIndex < wordTimestamps.length) {
           const wordTimestamp = wordTimestamps[timestampIndex];
-          if (newTime >= wordTimestamp.start && newTime <= wordTimestamp.end) {
+          // Use EXACT timestamps from JSON file
+          if (newTime >= wordTimestamp.start && newTime < wordTimestamp.end) {
             highlightedWordIndex = i;
             break;
           }
@@ -587,9 +558,70 @@ export default function AudioPlayer({
     return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   };
 
+  // Handle audio loading errors
+  useEffect(() => {
+    if (!audioRef.current || !audioUrl) return
+
+    const audio = audioRef.current
+
+    const handleError = (e: Event) => {
+      console.error('Audio loading error:', {
+        error: audio.error,
+        code: audio.error?.code,
+        message: audio.error?.message,
+        src: audioUrl,
+        networkState: audio.networkState,
+        readyState: audio.readyState,
+      })
+      
+      if (audio.error) {
+        switch (audio.error.code) {
+          case audio.error.MEDIA_ERR_ABORTED:
+            console.error('Audio loading aborted')
+            break
+          case audio.error.MEDIA_ERR_NETWORK:
+            console.error('Network error while loading audio')
+            break
+          case audio.error.MEDIA_ERR_DECODE:
+            console.error('Audio decoding error - file may be corrupted')
+            break
+          case audio.error.MEDIA_ERR_SRC_NOT_SUPPORTED:
+            console.error('Audio format not supported or file not found')
+            break
+        }
+      }
+    }
+
+    const handleCanPlay = () => {
+      console.log('✅ Audio loaded successfully:', audioUrl)
+    }
+
+    audio.addEventListener('error', handleError)
+    audio.addEventListener('canplay', handleCanPlay)
+
+    return () => {
+      audio.removeEventListener('error', handleError)
+      audio.removeEventListener('canplay', handleCanPlay)
+    }
+  }, [audioUrl])
+
   return (
     <div className="w-full">
-      <audio ref={audioRef} src={audioUrl} preload="metadata" loop={false} />
+      {audioUrl ? (
+        <audio 
+          ref={audioRef} 
+          src={audioUrl} 
+          preload="metadata" 
+          loop={false}
+          onError={(e) => {
+            console.error('Audio element error:', e)
+          }}
+        />
+      ) : (
+        <div className="text-yellow-400 text-sm mb-2">
+          ⚠️ No audio URL provided
+        </div>
+      )}
       
       {/* Text with highlighting - structured display with numbered items on separate lines */}
       <div className="text-white text-base md:text-lg leading-relaxed mb-4 min-h-[120px]">

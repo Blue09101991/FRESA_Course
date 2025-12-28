@@ -61,8 +61,10 @@ export async function POST(request: NextRequest) {
     const buffer = Buffer.from(bytes)
     await writeFile(filePath, buffer)
 
-    // Return the public URL path
-    const publicUrl = `/${uploadDir}/${uniqueFileName}`
+    // Return the public URL path (remove 'public/' prefix as Next.js serves from root)
+    const publicUrl = type === 'audio' 
+      ? `/audio/${uniqueFileName}`
+      : `/timestamps/${uniqueFileName}`
 
     return NextResponse.json({ 
       success: true, 

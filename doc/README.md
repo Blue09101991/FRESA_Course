@@ -9,6 +9,7 @@ Welcome to the project documentation. This folder contains all guides, setup ins
 - **[Database Setup](./DATABASE_SETUP.md)** - Complete guide for setting up PostgreSQL database and Prisma
 - **[Migration Guide](./MIGRATION_GUIDE.md)** - How to run and manage database migrations
 - **[Create Admin User](./CREATE_ADMIN_USER.md)** - Multiple methods to create admin accounts
+- **[ElevenLabs Setup](./ELEVENLABS_SETUP.md)** - Guide for setting up ElevenLabs API for audio generation
 
 ### Troubleshooting
 
@@ -48,6 +49,7 @@ doc/
 ├── DATABASE_SETUP.md
 ├── MIGRATION_GUIDE.md
 ├── CREATE_ADMIN_USER.md
+├── ELEVENLABS_SETUP.md
 ├── QUICK_FIX.md
 ├── BUILD_FIX.md
 ├── TURBOPACK_FIX.md

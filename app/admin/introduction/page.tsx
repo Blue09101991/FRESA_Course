@@ -18,6 +18,7 @@ export default function IntroductionEditPage() {
   const [saving, setSaving] = useState(false);
   const [uploadingAudio, setUploadingAudio] = useState(false);
   const [uploadingTimestamps, setUploadingTimestamps] = useState(false);
+  const [generatingAudio, setGeneratingAudio] = useState(false);
   const [introData, setIntroData] = useState<IntroductionData>({
     text: "Hello, future real estate professional. My name is Mr Listings. Welcome to my 63 hour pre-license education course for sales associates, approved by Florida Real Estate Commission.",
     audioUrl: "/audio/intro.mp3",
@@ -57,6 +58,69 @@ export default function IntroductionEditPage() {
       console.error("Error fetching introduction:", err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGenerateAudio = async (text: string) => {
+    if (!text || text.trim().length === 0) {
+      alert("Please enter text content first");
+      return;
+    }
+
+    try {
+      setGeneratingAudio(true);
+      const token = getToken();
+      
+      const response = await fetch('/api/admin/generate-audio', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ text, type: 'both' }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const updatedData = {
+          ...introData,
+          audioUrl: data.audioUrl,
+          timestampsUrl: data.timestampsUrl,
+        };
+        setIntroData(updatedData);
+        
+        // Automatically save the introduction with generated URLs
+        try {
+          const token = getToken();
+          const saveResponse = await fetch("/api/admin/introduction", {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            credentials: 'include',
+            body: JSON.stringify(updatedData),
+          });
+
+          if (saveResponse.ok) {
+            alert(`✅ Audio and timestamps generated and saved successfully!\n\nAudio: ${data.audioUrl}\nTimestamps: ${data.timestampsUrl}\n\nThe introduction page has been updated with these files.`);
+          } else {
+            const saveError = await saveResponse.json();
+            alert(`⚠️ Audio and timestamps generated, but failed to save:\n${saveError.error || 'Unknown error'}\n\nYou can manually save by clicking "Save Introduction".`);
+          }
+        } catch (saveErr) {
+          console.error('Error auto-saving:', saveErr);
+          alert(`⚠️ Audio and timestamps generated, but failed to save automatically.\n\nYou can manually save by clicking "Save Introduction".`);
+        }
+      } else {
+        const error = await response.json();
+        alert(`❌ Generation failed: ${error.error || 'Unknown error'}`);
+      }
+    } catch (err) {
+      console.error('Error generating audio:', err);
+      alert('Failed to generate audio');
+    } finally {
+      setGeneratingAudio(false);
     }
   };
 
@@ -161,9 +225,19 @@ export default function IntroductionEditPage() {
         <div className="bg-[#1a1f3a]/90 backdrop-blur-lg rounded-2xl shadow-2xl border border-purple-500/20 p-6">
           <div className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Introduction Text
-              </label>
+              <div className="flex justify-between items-center mb-2">
+                <label className="block text-sm font-medium text-gray-300">
+                  Introduction Text
+                </label>
+                <button
+                  type="button"
+                  onClick={() => handleGenerateAudio(introData.text)}
+                  disabled={generatingAudio || !introData.text || introData.text.trim().length === 0}
+                  className="px-3 py-1 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white text-sm font-semibold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {generatingAudio ? "🔄 Generating..." : "🎙️ Generate Audio & Timestamps"}
+                </button>
+              </div>
               <textarea
                 value={introData.text}
                 onChange={(e) =>
@@ -173,6 +247,9 @@ export default function IntroductionEditPage() {
                 className="w-full px-4 py-2 bg-[#0a0e27]/50 border border-purple-500/30 rounded-lg text-white"
                 placeholder="Enter introduction text..."
               />
+              <p className="text-xs text-gray-400 mt-1">
+                Enter your text and click "Generate Audio & Timestamps" to automatically create audio and timestamp files using ElevenLabs AI
+              </p>
             </div>
 
             <div>

@@ -87,6 +87,7 @@ export default function ChapterEditPage() {
   });
   const [uploadingAudio, setUploadingAudio] = useState(false);
   const [uploadingTimestamps, setUploadingTimestamps] = useState(false);
+  const [generatingAudio, setGeneratingAudio] = useState(false);
 
   const handleFileUpload = async (file: File, type: 'audio' | 'timestamps') => {
     try {
@@ -250,6 +251,77 @@ export default function ChapterEditPage() {
     setEditingSection(section.id);
     setSectionForm(section);
     setShowSectionForm(true);
+  };
+
+  const handleGenerateAudio = async (text: string) => {
+    if (!text || text.trim().length === 0) {
+      alert("Please enter text content first");
+      return;
+    }
+
+    try {
+      setGeneratingAudio(true);
+      const token = getToken();
+      
+      const response = await fetch('/api/admin/generate-audio', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ text, type: 'both' }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const updatedForm = {
+          ...sectionForm,
+          audioUrl: data.audioUrl,
+          timestampsUrl: data.timestampsUrl,
+        };
+        setSectionForm(updatedForm);
+        
+        // Automatically save the section with generated URLs if we're editing an existing section
+        if (editingSection) {
+          try {
+            const token = getToken();
+            const saveResponse = await fetch(`/api/admin/sections/${editingSection}`, {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                ...updatedForm,
+                chapterId: chapterId === "new" ? null : chapterId,
+              }),
+            });
+
+            if (saveResponse.ok) {
+              await fetchChapter();
+              alert(`✅ Audio and timestamps generated and saved successfully!\n\nAudio: ${data.audioUrl}\nTimestamps: ${data.timestampsUrl}\n\nThe section has been updated with these files.`);
+            } else {
+              const saveError = await saveResponse.json();
+              alert(`⚠️ Audio and timestamps generated, but failed to save:\n${saveError.error || 'Unknown error'}\n\nYou can manually save by clicking "Save Section".`);
+            }
+          } catch (saveErr) {
+            console.error('Error auto-saving:', saveErr);
+            alert(`⚠️ Audio and timestamps generated, but failed to save automatically.\n\nYou can manually save by clicking "Save Section".`);
+          }
+        } else {
+          // New section - just show success message
+          alert(`✅ Audio and timestamps generated successfully!\n\nAudio: ${data.audioUrl}\nTimestamps: ${data.timestampsUrl}\n\nClick "Save Section" to save the section with these files.`);
+        }
+      } else {
+        const error = await response.json();
+        alert(`❌ Generation failed: ${error.error || 'Unknown error'}`);
+      }
+    } catch (err) {
+      console.error('Error generating audio:', err);
+      alert('Failed to generate audio');
+    } finally {
+      setGeneratingAudio(false);
+    }
   };
 
   const [questionForm, setQuestionForm] = useState<Partial<QuizQuestion>>({
@@ -903,9 +975,19 @@ export default function ChapterEditPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Text Content
-                  </label>
+                  <div className="flex justify-between items-center mb-2">
+                    <label className="block text-sm font-medium text-gray-300">
+                      Text Content
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => handleGenerateAudio(sectionForm.text || "")}
+                      disabled={generatingAudio || !sectionForm.text || sectionForm.text.trim().length === 0}
+                      className="px-3 py-1 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white text-sm font-semibold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {generatingAudio ? "🔄 Generating..." : "🎙️ Generate Audio & Timestamps"}
+                    </button>
+                  </div>
                   <textarea
                     value={sectionForm.text || ""}
                     onChange={(e) =>
@@ -913,7 +995,11 @@ export default function ChapterEditPage() {
                     }
                     rows={8}
                     className="w-full px-4 py-2 bg-[#0a0e27]/50 border border-cyan-500/30 rounded-lg text-white"
+                    placeholder="Enter section text content..."
                   />
+                  <p className="text-xs text-gray-400 mt-1">
+                    Enter your text and click "Generate Audio & Timestamps" to automatically create audio and timestamp files using ElevenLabs AI
+                  </p>
                 </div>
 
                 <div>
