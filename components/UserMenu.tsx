@@ -96,12 +96,39 @@ export default function UserMenu() {
 
   const isAdmin = ["Admin", "Developer", "Editor"].includes(user.role);
 
+  const getRoleColor = (role: string) => {
+    switch (role) {
+      case "Admin":
+        return "from-red-500 to-pink-500";
+      case "Developer":
+        return "from-purple-500 to-indigo-500";
+      case "Editor":
+        return "from-blue-500 to-cyan-500";
+      case "Student":
+        return "from-green-500 to-emerald-500";
+      default:
+        return "from-gray-500 to-gray-600";
+    }
+  };
+
+  const getInitials = (name: string) => {
+    const parts = name.trim().split(" ");
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
+  };
+
   return (
     <div className="relative">
       <button
         onClick={() => setShowMenu(!showMenu)}
         className="flex items-center gap-2 px-3 py-1.5 bg-[#1a1f3a]/60 border border-cyan-500/30 rounded-lg hover:bg-cyan-500/10 transition-all"
       >
+        {/* Avatar */}
+        <div className={`w-8 h-8 rounded-full bg-gradient-to-r ${getRoleColor(user.role)} flex items-center justify-center text-white text-sm font-bold flex-shrink-0`}>
+          {getInitials(user.name)}
+        </div>
         <div className="text-left hidden sm:block">
           <div className="text-white text-xs font-medium leading-tight">{user.name}</div>
           <div className="text-cyan-400 text-[10px] leading-tight">{user.role}</div>
@@ -134,9 +161,16 @@ export default function UserMenu() {
           />
           <div className="absolute right-0 mt-2 w-56 bg-[#1a1f3a] border border-cyan-500/30 rounded-lg shadow-xl z-50 overflow-hidden">
             <div className="p-4 border-b border-cyan-500/20">
-              <div className="text-white font-medium">{user.name}</div>
-              <div className="text-gray-400 text-sm">{user.email}</div>
-              <div className="text-cyan-400 text-xs mt-1">{user.role}</div>
+              <div className="flex items-center gap-3">
+                <div className={`w-10 h-10 rounded-full bg-gradient-to-r ${getRoleColor(user.role)} flex items-center justify-center text-white text-sm font-bold flex-shrink-0`}>
+                  {getInitials(user.name)}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-white font-medium truncate">{user.name}</div>
+                  <div className="text-gray-400 text-sm truncate">{user.email}</div>
+                  <div className="text-cyan-400 text-xs mt-1">{user.role}</div>
+                </div>
+              </div>
             </div>
 
             <div className="py-2">

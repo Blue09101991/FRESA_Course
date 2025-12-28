@@ -254,7 +254,7 @@ export default function ChapterEditPage() {
 
   const [questionForm, setQuestionForm] = useState<Partial<QuizQuestion>>({
     question: "",
-    options: ["", "", "", ""],
+    options: ["", ""], // Start with minimum 2 options
     correctAnswer: 0,
     explanation: { correct: "", incorrect: [] },
     quizType: "chapter",
@@ -285,14 +285,14 @@ export default function ChapterEditPage() {
         await fetchChapter();
         setShowQuestionForm(false);
         setEditingQuestion(null);
-        setQuestionForm({
-          question: "",
-          options: ["", "", "", ""],
-          correctAnswer: 0,
-          explanation: { correct: "", incorrect: [] },
-          quizType: "chapter",
-          order: 0,
-        });
+                setQuestionForm({
+                  question: "",
+                  options: ["", ""], // Start with minimum 2 options
+                  correctAnswer: 0,
+                  explanation: { correct: "", incorrect: [] },
+                  quizType: "chapter",
+                  order: 0,
+                });
       }
     } catch (err) {
       console.error("Error saving question:", err);
@@ -775,7 +775,7 @@ export default function ChapterEditPage() {
                 setEditingQuestion(null);
                 setQuestionForm({
                   question: "",
-                  options: ["", "", "", ""],
+                  options: ["", ""], // Start with minimum 2 options
                   correctAnswer: 0,
                   explanation: { correct: "", incorrect: [] },
                   quizType: "chapter",
@@ -1049,9 +1049,21 @@ export default function ChapterEditPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Answer Options (select correct answer with radio button)
-                  </label>
+                  <div className="flex justify-between items-center mb-2">
+                    <label className="block text-sm font-medium text-gray-300">
+                      Answer Options (select correct answer with radio button)
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const newOptions = [...(questionForm.options || []), ""];
+                        setQuestionForm({ ...questionForm, options: newOptions });
+                      }}
+                      className="px-3 py-1 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white text-sm font-semibold rounded-lg transition-all"
+                    >
+                      + Add Option
+                    </button>
+                  </div>
                   {(questionForm.options || []).map((option, idx) => (
                     <div key={idx} className="mb-2 flex items-center gap-2">
                       <input
@@ -1074,8 +1086,40 @@ export default function ChapterEditPage() {
                         className="flex-1 px-4 py-2 bg-[#0a0e27]/50 border border-purple-500/30 rounded-lg text-white"
                         placeholder={`Option ${idx + 1}`}
                       />
+                      {(questionForm.options || []).length > 2 && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const newOptions = [...(questionForm.options || [])];
+                            newOptions.splice(idx, 1);
+                            // Adjust correctAnswer if needed
+                            let newCorrectAnswer = questionForm.correctAnswer || 0;
+                            if (newCorrectAnswer === idx) {
+                              // If removing the correct answer, set to first option
+                              newCorrectAnswer = 0;
+                            } else if (newCorrectAnswer > idx) {
+                              // If correct answer is after removed option, decrement
+                              newCorrectAnswer = newCorrectAnswer - 1;
+                            }
+                            setQuestionForm({ 
+                              ...questionForm, 
+                              options: newOptions,
+                              correctAnswer: newCorrectAnswer
+                            });
+                          }}
+                          className="px-3 py-2 bg-red-500/20 border border-red-500/30 rounded-lg text-red-400 hover:bg-red-500/30 transition-all text-sm"
+                          title="Remove this option"
+                        >
+                          ✕
+                        </button>
+                      )}
                     </div>
                   ))}
+                  {(questionForm.options || []).length < 2 && (
+                    <p className="text-xs text-yellow-400 mt-1">
+                      ⚠️ At least 2 options are required
+                    </p>
+                  )}
                 </div>
 
                 <div>

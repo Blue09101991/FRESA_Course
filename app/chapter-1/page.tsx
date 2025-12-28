@@ -146,10 +146,10 @@ export default function Chapter1Page() {
     }
   };
 
-  const menuItems = [
+  const menuItems = useMemo(() => [
     { id: "intro", title: "Introduction", path: "/introduction" },
-    { id: "chapter1", title: "Chapter 1. The Real Estate Business", path: "/chapter-1" },
-  ];
+    { id: "chapter1", title: chapterData ? `Chapter ${chapterData.number}. ${chapterData.title}` : "Chapter 1. The Real Estate Business", path: "/chapter-1" },
+  ], [chapterData]);
 
   const handleNext = () => {
     const currentIndex = sections.findIndex(s => s.id === currentSection);
@@ -192,7 +192,7 @@ export default function Chapter1Page() {
           <TableOfContents items={menuItems} currentPath="/chapter-1" />
           <div className="relative z-10 min-h-screen flex flex-col items-center justify-center pt-20 pb-8 px-4 md:px-8 md:ml-64 md:pt-24">
           <h1 className="text-3xl md:text-4xl font-bold text-center mb-8 text-white">
-            Chapter 1 Quiz
+            {chapterData ? `Chapter ${chapterData.number} Quiz` : "Chapter 1 Quiz"}
           </h1>
           {quizQuestions.length > 0 ? (
             <Quiz questions={quizQuestions} onComplete={handleQuizComplete} />
@@ -223,8 +223,13 @@ export default function Chapter1Page() {
               FLORIDA REAL ESTATE SALES ASSOCIATE COURSE
             </h1>
             <p className="text-blue-300 text-lg md:text-xl">
-              Chapter 1 of 19: COURSE OVERVIEW AND THE REAL ESTATE BUSINESS
+              {chapterData ? `Chapter ${chapterData.number}: ${chapterData.title}` : "Chapter 1: The Real Estate Business"}
             </p>
+            {chapterData?.description && (
+              <p className="text-gray-300 text-base md:text-lg mt-2 max-w-3xl mx-auto">
+                {chapterData.description}
+              </p>
+            )}
             <div className="mt-4 text-sm text-gray-400">
               Section {currentIndex + 1} of {sections.length}
             </div>
