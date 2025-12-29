@@ -38,6 +38,27 @@ export default function Chapter1Page() {
 
   useEffect(() => {
     fetchChapterData();
+    
+    // Listen for section navigation events from TableOfContents
+    const handleNavigateToSection = (event: CustomEvent) => {
+      const sectionId = event.detail?.sectionId;
+      if (sectionId) {
+        setCurrentSection(sectionId);
+      }
+    };
+    
+    // Check sessionStorage for target section
+    const targetSection = sessionStorage.getItem('targetSection');
+    if (targetSection) {
+      sessionStorage.removeItem('targetSection');
+      setCurrentSection(targetSection);
+    }
+    
+    window.addEventListener('navigateToSection', handleNavigateToSection as EventListener);
+    
+    return () => {
+      window.removeEventListener('navigateToSection', handleNavigateToSection as EventListener);
+    };
   }, []);
 
   const fetchChapterData = async () => {
@@ -146,10 +167,47 @@ export default function Chapter1Page() {
     }
   };
 
-  const menuItems = useMemo(() => [
-    { id: "intro", title: "Introduction", path: "/introduction" },
-    { id: "chapter1", title: chapterData ? `Chapter ${chapterData.number}. ${chapterData.title}` : "Chapter 1. The Real Estate Business", path: "/chapter-1" },
-  ], [chapterData]);
+  const menuItems = useMemo(() => {
+    const items: Array<{ 
+      id: string; 
+      title: string; 
+      path: string; 
+      sectionId?: string;
+      isChapter?: boolean;
+      children?: Array<{ id: string; title: string; path: string; sectionId?: string }>;
+    }> = [
+      { id: "intro", title: "Introduction", path: "/introduction" },
+    ];
+    
+    // Add chapter with sections as children
+    if (chapterData) {
+      const chapterSections = sections.map((section, index) => ({
+        id: `section-${section.id}`,
+        title: `${index + 1}. ${section.title}`,
+        path: "/chapter-1",
+        sectionId: section.id,
+      }));
+      
+      items.push({
+        id: "chapter1",
+        title: `Chapter ${chapterData.number}. ${chapterData.title}`,
+        path: "/chapter-1",
+        isChapter: true,
+        children: chapterSections,
+      });
+    } else {
+      // Fallback if chapter data not loaded yet
+      items.push({
+        id: "chapter1",
+        title: "Chapter 1. The Real Estate Business",
+        path: "/chapter-1",
+        isChapter: true,
+        children: [],
+      });
+    }
+    
+    return items;
+  }, [chapterData, sections]);
 
   const handleNext = () => {
     const currentIndex = sections.findIndex(s => s.id === currentSection);

@@ -23,6 +23,7 @@ const config: Config = {
         "slide-up": "slideUp 0.5s ease-out",
         "scale-in": "scaleIn 0.3s ease-out",
         "bounce-gentle": "bounceGentle 0.6s ease-in-out",
+        "slide-in-left": "slideInLeft 0.3s ease-out forwards",
       },
       keyframes: {
         fadeIn: {
@@ -40,6 +41,10 @@ const config: Config = {
         bounceGentle: {
           "0%, 100%": { transform: "translateY(0)" },
           "50%": { transform: "translateY(-10px)" },
+        },
+        slideInLeft: {
+          "0%": { opacity: "0", transform: "translateX(-10px)" },
+          "100%": { opacity: "1", transform: "translateX(0)" },
         },
       },
     },

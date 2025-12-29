@@ -7,7 +7,10 @@ interface MenuItem {
   id: string;
   title: string;
   path: string;
+  sectionId?: string;
   subsections?: string[];
+  isChapter?: boolean;
+  children?: MenuItem[];
 }
 
 interface TableOfContentsProps {
@@ -17,12 +20,44 @@ interface TableOfContentsProps {
 
 export default function TableOfContents({ items, currentPath }: TableOfContentsProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [expandedChapters, setExpandedChapters] = useState<Set<string>>(new Set());
   const router = useRouter();
   const pathname = usePathname();
 
-  const handleNavigation = (path: string) => {
-    router.push(path);
-    setIsOpen(false);
+  const toggleChapter = (chapterId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setExpandedChapters(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(chapterId)) {
+        newSet.delete(chapterId);
+      } else {
+        newSet.add(chapterId);
+      }
+      return newSet;
+    });
+  };
+
+  const handleNavigation = (item: MenuItem, e?: React.MouseEvent) => {
+    if (item.sectionId) {
+      // If it's a section, navigate to chapter and set the section
+      e?.stopPropagation();
+      router.push(item.path);
+      // Store section ID in sessionStorage to be picked up by the chapter page
+      sessionStorage.setItem('targetSection', item.sectionId);
+      setIsOpen(false);
+      // Small delay to ensure navigation happens, then scroll/update section
+      setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('navigateToSection', { detail: { sectionId: item.sectionId } }));
+      }, 100);
+    } else if (item.isChapter) {
+      // If it's a chapter, toggle expansion instead of navigating
+      e?.stopPropagation();
+      toggleChapter(item.id, e || {} as React.MouseEvent);
+    } else {
+      // Regular navigation item
+      router.push(item.path);
+      setIsOpen(false);
+    }
   };
 
   return (
@@ -47,22 +82,74 @@ export default function TableOfContents({ items, currentPath }: TableOfContentsP
         <div className="p-4">
           <h2 className="text-lg font-bold text-white mb-4 px-2">Course Navigation</h2>
           <nav className="space-y-1">
-            {items.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => handleNavigation(item.path)}
-                className={`w-full text-left px-3 py-2.5 rounded-lg transition-all duration-200 ${
-                  pathname === item.path || currentPath === item.path
-                    ? "bg-gradient-to-r from-blue-500/40 to-cyan-500/30 text-blue-100 font-semibold border-l-4 border-cyan-400 shadow-md"
-                    : "text-gray-300 hover:bg-blue-500/15 hover:text-white hover:translate-x-1"
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  <span className="text-sm leading-relaxed">{item.title}</span>
+            {items.map((item) => {
+              const isExpanded = item.isChapter && expandedChapters.has(item.id);
+              const hasChildren = item.children && item.children.length > 0;
+              
+              return (
+                <div key={item.id} className="space-y-0.5">
+                  <button
+                    onClick={(e) => handleNavigation(item, e)}
+                    className={`w-full text-left px-3 py-2.5 rounded-lg transition-all duration-200 ${
+                      pathname === item.path || currentPath === item.path
+                        ? "bg-gradient-to-r from-blue-500/40 to-cyan-500/30 text-blue-100 font-semibold border-l-4 border-cyan-400 shadow-md"
+                        : item.isChapter
+                        ? "text-gray-200 hover:bg-blue-500/20 hover:text-white font-medium"
+                        : "text-gray-300 hover:bg-blue-500/15 hover:text-white hover:translate-x-1"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      {item.isChapter && hasChildren && (
+                        <svg
+                          className={`w-4 h-4 transition-transform duration-300 ${isExpanded ? 'rotate-90' : ''}`}
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      )}
+                      {!item.isChapter && hasChildren && <span className="w-4" />}
+                      <span className={`${item.isChapter ? 'text-sm font-semibold' : 'text-xs'} leading-relaxed`}>
+                        {item.title}
+                      </span>
+                    </div>
+                  </button>
+                  
+                  {/* Animated section children */}
+                  {item.isChapter && hasChildren && (
+                    <div
+                      className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                        isExpanded ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'
+                      }`}
+                    >
+                      <div className="pl-4 space-y-0.5">
+                        {item.children?.map((child, index) => (
+                          <button
+                            key={child.id}
+                            onClick={(e) => handleNavigation(child, e)}
+                            className={`w-full text-left px-3 py-1.5 rounded-md transition-all duration-200 transform ${
+                              pathname === child.path || currentPath === child.path
+                                ? "bg-blue-500/30 text-blue-200 font-medium border-l-2 border-blue-400"
+                                : "text-gray-400 hover:bg-blue-500/10 hover:text-gray-200 hover:translate-x-1"
+                            } ${isExpanded ? 'animate-slide-in-left' : ''}`}
+                            style={{
+                              animationDelay: isExpanded ? `${index * 30}ms` : '0ms',
+                            }}
+                          >
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs leading-relaxed">{child.title}</span>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
-              </button>
-            ))}
+              );
+            })}
           </nav>
+          
         </div>
       </aside>
 
@@ -87,22 +174,74 @@ export default function TableOfContents({ items, currentPath }: TableOfContentsP
                 </button>
               </div>
               <nav className="space-y-2">
-                {items.map((item) => (
-                  <button
-                    key={item.id}
-                    onClick={() => handleNavigation(item.path)}
-                    className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 ${
-                      pathname === item.path || currentPath === item.path
-                        ? "bg-blue-500/30 text-blue-300 font-semibold border-l-4 border-blue-500"
-                        : "text-gray-300 hover:bg-blue-500/10 hover:text-white"
-                    }`}
-                  >
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm">{item.title}</span>
+                {items.map((item) => {
+                  const isExpanded = item.isChapter && expandedChapters.has(item.id);
+                  const hasChildren = item.children && item.children.length > 0;
+                  
+                  return (
+                    <div key={item.id} className="space-y-1">
+                      <button
+                        onClick={(e) => handleNavigation(item, e)}
+                        className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 ${
+                          pathname === item.path || currentPath === item.path
+                            ? "bg-blue-500/30 text-blue-300 font-semibold border-l-4 border-blue-500"
+                            : item.isChapter
+                            ? "text-gray-200 hover:bg-blue-500/20 hover:text-white font-medium"
+                            : "text-gray-300 hover:bg-blue-500/10 hover:text-white"
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          {item.isChapter && hasChildren && (
+                            <svg
+                              className={`w-4 h-4 transition-transform duration-300 ${isExpanded ? 'rotate-90' : ''}`}
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                            </svg>
+                          )}
+                          {!item.isChapter && hasChildren && <span className="w-4" />}
+                          <span className={item.isChapter ? 'text-sm font-semibold' : 'text-sm'}>
+                            {item.title}
+                          </span>
+                        </div>
+                      </button>
+                      
+                      {/* Animated section children */}
+                      {item.isChapter && hasChildren && (
+                        <div
+                          className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                            isExpanded ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'
+                          }`}
+                        >
+                          <div className="pl-6 space-y-1">
+                            {item.children?.map((child, index) => (
+                              <button
+                                key={child.id}
+                                onClick={(e) => handleNavigation(child, e)}
+                                className={`w-full text-left px-4 py-2 rounded-md transition-all duration-200 transform ${
+                                  pathname === child.path || currentPath === child.path
+                                    ? "bg-blue-500/30 text-blue-200 font-medium border-l-2 border-blue-400"
+                                    : "text-gray-400 hover:bg-blue-500/10 hover:text-gray-200 hover:translate-x-1"
+                                } ${isExpanded ? 'animate-slide-in-left' : ''}`}
+                                style={{
+                                  animationDelay: isExpanded ? `${index * 30}ms` : '0ms',
+                                }}
+                              >
+                                <div className="flex items-center gap-2">
+                                  <span className="text-xs">{child.title}</span>
+                                </div>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
-                  </button>
-                ))}
+                  );
+                })}
               </nav>
+              
             </div>
           </aside>
         </>
