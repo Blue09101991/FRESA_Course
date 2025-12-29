@@ -465,8 +465,11 @@ export default function AudioPlayer({
 
     const handleLoadedMetadata = () => {
       setDuration(audio.duration);
-      // Set playback rate when metadata is loaded
-      audio.playbackRate = playbackRate;
+      // Set initial playback rate when metadata is loaded
+      // The playbackRate will be kept in sync by the separate useEffect
+      if (audio.readyState >= 2) {
+        audio.playbackRate = playbackRate;
+      }
     };
 
     const handleEnded = () => {
@@ -548,13 +551,22 @@ export default function AudioPlayer({
       audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
       audio.removeEventListener("ended", handleEnded);
     };
-  }, [audioUrl, autoPlay, hasPlayed, onTimeUpdate, onComplete, playbackRate]); // Minimal dependencies
+  }, [audioUrl, autoPlay, hasPlayed, onTimeUpdate, onComplete]); // Removed playbackRate - handled separately
 
-  // Update playback rate when it changes
+  // Update playback rate when it changes - this should NOT restart the audio
   useEffect(() => {
     const audio = audioRef.current;
-    if (audio) {
+    if (audio && audio.readyState >= 2) { // Only update if audio is loaded
+      // Store current playing state and time
+      const wasPlaying = !audio.paused;
+      const currentTime = audio.currentTime;
+      
+      // Update playback rate
       audio.playbackRate = playbackRate;
+      
+      // If audio was playing, ensure it continues playing (don't restart)
+      // The playbackRate change should not affect the playing state
+      // We don't need to do anything else - the audio should continue playing
     }
   }, [playbackRate]);
 
