@@ -277,7 +277,7 @@ export default function ChapterEditPage() {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ text, type: 'both' }),
+        body: JSON.stringify({ text, type: 'both', context: 'section' }), // Use man's voice for sections
       });
 
       if (response.ok) {
@@ -376,7 +376,7 @@ export default function ChapterEditPage() {
         body: JSON.stringify({ 
           text: fullText, 
           type: 'both',
-          voiceId: 'GP1bgf0sjoFuuHkyrg8E' // Woman's voice for quiz
+          context: 'quiz' // Use woman's voice for quiz
         }),
       });
 
@@ -422,7 +422,7 @@ export default function ChapterEditPage() {
         body: JSON.stringify({ 
           text: explanationText, 
           type: 'both',
-          voiceId: 'GP1bgf0sjoFuuHkyrg8E' // Woman's voice for quiz
+          context: 'quiz' // Use woman's voice for quiz
         }),
       });
 
@@ -468,7 +468,7 @@ export default function ChapterEditPage() {
         body: JSON.stringify({ 
           text: explanationText, 
           type: 'both',
-          voiceId: 'GP1bgf0sjoFuuHkyrg8E' // Woman's voice for quiz
+          context: 'quiz' // Use woman's voice for quiz
         }),
       });
 
@@ -546,7 +546,7 @@ export default function ChapterEditPage() {
           body: JSON.stringify({ 
             text: fullQuestionText, 
             type: 'both',
-            voiceId: 'GP1bgf0sjoFuuHkyrg8E'
+            context: 'quiz' // Use woman's voice for quiz
           }),
         });
 
@@ -578,7 +578,7 @@ export default function ChapterEditPage() {
           body: JSON.stringify({ 
             text: correctText, 
             type: 'both',
-            voiceId: 'GP1bgf0sjoFuuHkyrg8E'
+            context: 'quiz' // Use woman's voice for quiz
           }),
         });
 
@@ -621,7 +621,7 @@ export default function ChapterEditPage() {
             body: JSON.stringify({ 
               text: incorrectText, 
               type: 'both',
-              voiceId: 'GP1bgf0sjoFuuHkyrg8E'
+              context: 'quiz' // Use woman's voice for quiz
             }),
           });
 

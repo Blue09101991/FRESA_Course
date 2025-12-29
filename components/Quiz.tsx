@@ -60,6 +60,23 @@ export default function Quiz({ questions, onComplete, showCharacter = true }: Qu
     if (currentQuestion?.audioUrl) {
       const audio = new Audio(currentQuestion.audioUrl);
       
+      // Handle audio loading errors
+      const handleError = () => {
+        if (audio.error) {
+          console.error('Quiz audio loading error:', {
+            code: audio.error.code,
+            message: audio.error.message,
+            src: currentQuestion.audioUrl,
+          });
+          if (audio.error.code === audio.error.MEDIA_ERR_SRC_NOT_SUPPORTED || 
+              audio.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) {
+            console.warn('⚠️ Quiz audio file not found (404). On deployed servers, files may not persist. Consider using cloud storage.');
+          }
+        }
+      };
+      
+      audio.addEventListener('error', handleError);
+      
       // Wait for audio to be ready before playing
       const playAudio = () => {
         audio.play().catch(err => {
@@ -151,6 +168,24 @@ export default function Quiz({ questions, onComplete, showCharacter = true }: Qu
 
     if (audioUrlToPlay) {
       const audio = new Audio(audioUrlToPlay);
+      explanationAudioRef.current = audio;
+      
+      // Handle audio loading errors
+      const handleError = () => {
+        if (audio.error) {
+          console.error('Explanation audio loading error:', {
+            code: audio.error.code,
+            message: audio.error.message,
+            src: audioUrlToPlay,
+          });
+          if (audio.error.code === audio.error.MEDIA_ERR_SRC_NOT_SUPPORTED || 
+              audio.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) {
+            console.warn('⚠️ Explanation audio file not found (404). On deployed servers, files may not persist. Consider using cloud storage.');
+          }
+        }
+      };
+      
+      audio.addEventListener('error', handleError);
       
       // Wait for audio to be ready before playing
       const playAudio = () => {
@@ -172,8 +207,6 @@ export default function Quiz({ questions, onComplete, showCharacter = true }: Qu
         audio.addEventListener('loadeddata', playAudio, { once: true });
         audio.load();
       }
-
-      explanationAudioRef.current = audio;
     }
   };
 

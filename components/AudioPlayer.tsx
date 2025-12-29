@@ -633,14 +633,16 @@ export default function AudioPlayer({
     const audio = audioRef.current
 
     const handleError = (e: Event) => {
-      console.error('Audio loading error:', {
+      const errorDetails = {
         error: audio.error,
         code: audio.error?.code,
         message: audio.error?.message,
         src: audioUrl,
         networkState: audio.networkState,
         readyState: audio.readyState,
-      })
+      }
+      
+      console.error('Audio loading error:', errorDetails)
       
       if (audio.error) {
         switch (audio.error.code) {
@@ -648,13 +650,18 @@ export default function AudioPlayer({
             console.error('Audio loading aborted')
             break
           case audio.error.MEDIA_ERR_NETWORK:
-            console.error('Network error while loading audio')
+            console.error('Network error while loading audio. File may not exist on server.')
+            // Check if it's a 404
+            if (audio.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) {
+              console.warn('⚠️ Audio file not found (404). This may happen on deployed servers if files are not persisted. Consider using cloud storage.')
+            }
             break
           case audio.error.MEDIA_ERR_DECODE:
             console.error('Audio decoding error - file may be corrupted')
             break
           case audio.error.MEDIA_ERR_SRC_NOT_SUPPORTED:
-            console.error('Audio format not supported or file not found')
+            console.error('Audio format not supported or file not found (404)')
+            console.warn('⚠️ Audio file not found. On deployed servers, files in public/ may not persist. Consider using cloud storage (S3, Cloudinary, etc.)')
             break
         }
       }

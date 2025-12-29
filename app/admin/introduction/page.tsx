@@ -77,7 +77,7 @@ export default function IntroductionEditPage() {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ text, type: 'both' }),
+        body: JSON.stringify({ text, type: 'both', context: 'introduction' }), // Use man's voice for introduction
       });
 
       if (response.ok) {

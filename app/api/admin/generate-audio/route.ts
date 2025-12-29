@@ -5,8 +5,9 @@ import { join } from 'path'
 import { existsSync } from 'fs'
 
 const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY
-const ELEVENLABS_VOICE_ID = process.env.ELEVENLABS_VOICE_ID || 'nPczCjzI2devNBz1zQrb' // Voice ID for introduction and chapter sections (default fallback)
-const ELEVENLABS_QUIZ_VOICE_ID = 'GP1bgf0sjoFuuHkyrg8E' // Woman's voice ID for quiz questions
+// Voice IDs from environment variables with fallback to defaults
+const ELEVENLABS_MAN_VOICE_ID = process.env.ELEVENLABS_MAN_VOICE_ID || 'nPczCjzI2devNBz1zQrb' // Man's voice ID for introduction and chapter sections
+const ELEVENLABS_WOMAN_VOICE_ID = process.env.ELEVENLABS_WOMAN_VOICE_ID || 'GP1bgf0sjoFuuHkyrg8E' // Woman's voice ID for quiz questions
 
 export async function POST(request: NextRequest) {
   try {
@@ -29,21 +30,33 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    if (!ELEVENLABS_VOICE_ID) {
+    // Validate voice IDs are set (should have defaults, but check anyway)
+    if (!ELEVENLABS_MAN_VOICE_ID || !ELEVENLABS_WOMAN_VOICE_ID) {
       return NextResponse.json(
-        { error: 'ElevenLabs Voice ID is not configured. Please set ELEVENLABS_VOICE_ID in your .env file and restart the server.' },
+        { error: 'ElevenLabs Voice IDs are not configured. Please set ELEVENLABS_MAN_VOICE_ID and ELEVENLABS_WOMAN_VOICE_ID in your .env file and restart the server.' },
         { status: 500 }
       )
     }
 
-    const { text, type, voiceId } = await request.json() // type: 'audio' or 'timestamps' or 'both', voiceId: optional voice ID override
+    const { text, type, voiceId, context } = await request.json() // type: 'audio' or 'timestamps' or 'both', voiceId: optional voice ID override, context: 'quiz' or 'section' or 'introduction'
 
     if (!text || text.trim().length === 0) {
       return NextResponse.json({ error: 'Text is required' }, { status: 400 })
     }
 
-    // Use provided voiceId, or default to quiz voice if not specified, or fallback to default voice
-    const selectedVoiceId = voiceId || ELEVENLABS_QUIZ_VOICE_ID || ELEVENLABS_VOICE_ID
+    // Determine voice ID:
+    // 1. If voiceId is explicitly provided, use it
+    // 2. If context is 'quiz', use woman's voice
+    // 3. Otherwise (sections, introduction), use man's voice (default)
+    let selectedVoiceId: string
+    if (voiceId) {
+      selectedVoiceId = voiceId
+    } else if (context === 'quiz') {
+      selectedVoiceId = ELEVENLABS_WOMAN_VOICE_ID
+    } else {
+      // Default to man's voice for introduction and sections
+      selectedVoiceId = ELEVENLABS_MAN_VOICE_ID
+    }
 
     // Generate audio using ElevenLabs TTS API
     const audioResponse = await fetch(
@@ -170,6 +183,10 @@ export async function POST(request: NextRequest) {
 
     // In Next.js, files in public/ are served from root, so remove 'public/' from URL
     const audioUrl = `/audio/${audioFileName}`
+    
+    // IMPORTANT: On deployed servers (especially serverless), files in public/ may not persist
+    // Consider using a cloud storage service (S3, Cloudinary, etc.) for production
+    // For now, return the URL but note that it may not be accessible on deployed servers
 
     // Generate timestamps
     // Estimate duration: MP3 files at 128kbps are approximately 1MB per minute
