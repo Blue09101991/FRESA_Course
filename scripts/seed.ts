@@ -39,6 +39,62 @@ async function main() {
 
   console.log('✅ Created admin user:', admin.email)
 
+  // Create Introduction (Chapter 0)
+  const introChapter = await prisma.chapter.upsert({
+    where: { number: 0 },
+    update: {},
+    create: {
+      number: 0,
+      title: 'Introduction',
+      description: 'Course Introduction Page',
+    },
+  })
+
+  console.log('✅ Created Introduction Chapter (Chapter 0)')
+
+  // Create or update Introduction Section
+  const introText = "Hello, future real estate professional. My name is Mr Listings. Welcome to my 63 hour pre-license education course for sales associates, approved by Florida Real Estate Commission."
+  
+  let introSection = await prisma.section.findFirst({
+    where: {
+      chapterId: introChapter.id,
+      type: 'introduction',
+    },
+  })
+
+  if (!introSection) {
+    introSection = await prisma.section.create({
+      data: {
+        chapterId: introChapter.id,
+        sectionNumber: 0,
+        title: 'Introduction',
+        text: introText,
+        type: 'introduction',
+        audioUrl: '/audio/intro.mp3',
+        timestampsUrl: '/timestamps/intro.timestamps.json',
+        order: 0,
+      },
+    })
+    console.log('✅ Created Introduction section')
+  } else {
+    // Update if exists but missing text/audio/timestamps (initialize with defaults)
+    const needsUpdate = !introSection.text || !introSection.text.trim() || 
+                        !introSection.audioUrl || !introSection.timestampsUrl
+    if (needsUpdate) {
+      await prisma.section.update({
+        where: { id: introSection.id },
+        data: {
+          text: introSection.text && introSection.text.trim() ? introSection.text : introText,
+          audioUrl: introSection.audioUrl || '/audio/intro.mp3',
+          timestampsUrl: introSection.timestampsUrl || '/timestamps/intro.timestamps.json',
+        },
+      })
+      console.log('✅ Updated Introduction section with original data')
+    } else {
+      console.log('✅ Introduction section already exists with data')
+    }
+  }
+
   // Create Chapter 1
   const chapter1 = await prisma.chapter.upsert({
     where: { number: 1 },
@@ -63,22 +119,33 @@ async function main() {
     'Distinguish among the three categories of residential construction',
   ]
 
-  // Delete existing objectives for this chapter
-  await prisma.learningObjective.deleteMany({
-    where: { chapterId: chapter1.id },
-  })
-
+  // Upsert learning objectives (don't delete, just update or create)
   for (let i = 0; i < objectives.length; i++) {
-    await prisma.learningObjective.create({
-      data: {
+    // Check if objective already exists
+    const existing = await prisma.learningObjective.findFirst({
+      where: {
         chapterId: chapter1.id,
-        text: objectives[i],
         order: i,
       },
     })
+
+    if (existing) {
+      await prisma.learningObjective.update({
+        where: { id: existing.id },
+        data: { text: objectives[i] },
+      })
+    } else {
+      await prisma.learningObjective.create({
+        data: {
+          chapterId: chapter1.id,
+          text: objectives[i],
+          order: i,
+        },
+      })
+    }
   }
 
-  console.log('✅ Created learning objectives')
+  console.log('✅ Created/Updated learning objectives')
 
   // Create Key Terms
   const keyTerms = [
@@ -94,22 +161,33 @@ async function main() {
     'farm area (target market)',
   ]
 
-  // Delete existing key terms for this chapter
-  await prisma.keyTerm.deleteMany({
-    where: { chapterId: chapter1.id },
-  })
-
+  // Upsert key terms (don't delete, just update or create)
   for (let i = 0; i < keyTerms.length; i++) {
-    await prisma.keyTerm.create({
-      data: {
+    // Check if key term already exists
+    const existing = await prisma.keyTerm.findFirst({
+      where: {
         chapterId: chapter1.id,
-        term: keyTerms[i],
         order: i,
       },
     })
+
+    if (existing) {
+      await prisma.keyTerm.update({
+        where: { id: existing.id },
+        data: { term: keyTerms[i] },
+      })
+    } else {
+      await prisma.keyTerm.create({
+        data: {
+          chapterId: chapter1.id,
+          term: keyTerms[i],
+          order: i,
+        },
+      })
+    }
   }
 
-  console.log('✅ Created key terms')
+  console.log('✅ Created/Updated key terms')
 
   // Create Sections - ALL 11 original sections
   const sections = [
@@ -214,21 +292,42 @@ async function main() {
     },
   ]
 
-  // Delete existing sections for this chapter
-  await prisma.section.deleteMany({
-    where: { chapterId: chapter1.id },
-  })
-
+  // Upsert sections (update if exists, create if not)
   for (const section of sections) {
-    await prisma.section.create({
-      data: {
+    const existing = await prisma.section.findFirst({
+      where: {
         chapterId: chapter1.id,
-        ...section,
+        sectionNumber: section.sectionNumber,
       },
     })
+
+    if (existing) {
+      // Update existing section, but preserve admin modifications if text exists
+      await prisma.section.update({
+        where: { id: existing.id },
+        data: {
+          title: section.title,
+          // Only update text if it's empty or matches default (preserve admin edits)
+          text: existing.text && existing.text.trim().length > 0 ? existing.text : section.text,
+          type: section.type,
+          // Only update audio/timestamps if they're not set
+          audioUrl: existing.audioUrl || section.audioUrl,
+          timestampsUrl: existing.timestampsUrl || section.timestampsUrl,
+          order: section.order,
+        },
+      })
+    } else {
+      // Create new section
+      await prisma.section.create({
+        data: {
+          chapterId: chapter1.id,
+          ...section,
+        },
+      })
+    }
   }
 
-  console.log('✅ Created all 11 sections')
+  console.log('✅ Created/Updated all 11 sections')
 
   // Create Quiz Questions - ALL 6 original questions
   const quizQuestions = [
@@ -360,21 +459,49 @@ async function main() {
     },
   ]
 
-  // Delete existing quiz questions for this chapter
-  await prisma.quizQuestion.deleteMany({
-    where: { chapterId: chapter1.id },
-  })
-
-  for (const question of quizQuestions) {
-    await prisma.quizQuestion.create({
-      data: {
+  // Upsert quiz questions (update if exists, create if not)
+  for (let i = 0; i < quizQuestions.length; i++) {
+    const question = quizQuestions[i]
+    const existing = await prisma.quizQuestion.findFirst({
+      where: {
         chapterId: chapter1.id,
-        ...question,
+        order: i,
+        quizType: 'chapter',
       },
     })
+
+    if (existing) {
+      // Update existing question, but preserve admin modifications
+      await prisma.quizQuestion.update({
+        where: { id: existing.id },
+        data: {
+          question: existing.question && existing.question.trim().length > 0 ? existing.question : question.question,
+          options: existing.options && existing.options.length > 0 ? existing.options : question.options,
+          correctAnswer: question.correctAnswer,
+          explanation: existing.explanation && typeof existing.explanation === 'object' ? existing.explanation : question.explanation,
+          // Preserve audio URLs if they exist
+          audioUrl: existing.audioUrl || undefined,
+          timestampsUrl: existing.timestampsUrl || undefined,
+          correctExplanationAudioUrl: existing.correctExplanationAudioUrl || undefined,
+          correctExplanationTimestampsUrl: existing.correctExplanationTimestampsUrl || undefined,
+          incorrectExplanationAudioUrls: existing.incorrectExplanationAudioUrls ? existing.incorrectExplanationAudioUrls as any : undefined,
+          incorrectExplanationTimestampsUrls: existing.incorrectExplanationTimestampsUrls ? existing.incorrectExplanationTimestampsUrls as any : undefined,
+          order: i,
+        },
+      })
+    } else {
+      // Create new question
+      await prisma.quizQuestion.create({
+        data: {
+          chapterId: chapter1.id,
+          ...question,
+          order: i,
+        },
+      })
+    }
   }
 
-  console.log('✅ Created all 6 quiz questions')
+  console.log('✅ Created/Updated all 6 quiz questions')
 
   console.log('🎉 Database seed completed!')
   console.log('\n📝 Default Admin Credentials:')

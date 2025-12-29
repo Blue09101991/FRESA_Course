@@ -12,6 +12,7 @@
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:seed": "tsx scripts/seed.ts",
+    "db:init": "tsx scripts/seed.ts",
     "db:studio": "prisma studio",
     "db:create-admin": "tsx scripts/create-admin.ts",
     "create-super-admin": "tsx scripts/create-admin.ts",
