@@ -91,13 +91,13 @@ export default function Home() {
           <MrListings size="large" />
         </div>
 
-        {/* Get Started Button */}
+        {/* WELCOME Button */}
         <div className={`transition-all duration-500 ${showButton ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
           <button
             onClick={handleGetStarted}
             className="bg-gradient-to-r from-[#3b82f6] to-[#2563eb] hover:from-[#2563eb] hover:to-[#1d4ed8] text-white font-bold py-5 px-16 rounded-2xl text-xl md:text-2xl transition-all duration-300 transform hover:scale-110 active:scale-95 shadow-2xl hover:shadow-blue-500/50 animate-pulse-glow"
           >
-            Get Started
+            WELCOME
           </button>
         </div>
       </div>

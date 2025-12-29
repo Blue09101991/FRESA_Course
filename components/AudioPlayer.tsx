@@ -40,9 +40,12 @@ export default function AudioPlayer({
   const [wordTimestamps, setWordTimestamps] = useState<WordTimestamp[]>([]);
   const [wordMap, setWordMap] = useState<Map<number, number>>(new Map());
   const [hasPlayed, setHasPlayed] = useState(false);
+  const [playbackRate, setPlaybackRate] = useState(1);
+  const [showSpeedMenu, setShowSpeedMenu] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
   const wordsRef = useRef<HTMLSpanElement[]>([]);
   const lastHighlightedIndexRef = useRef<number>(-1);
+  const speedMenuRef = useRef<HTMLDivElement>(null);
 
   // Split text into words for highlighting - memoize to prevent recalculation
   // Split by spaces to get actual words only (no spaces)
@@ -116,6 +119,16 @@ export default function AudioPlayer({
     }
     return indices;
   }, [wordsWithSpaces]);
+
+  // Reset hasPlayed when audioUrl changes (new section loaded)
+  useEffect(() => {
+    if (audioUrl) {
+      setHasPlayed(false);
+      setIsPlaying(false);
+      setCurrentTime(0);
+      setHighlightedIndex(-1);
+    }
+  }, [audioUrl]);
 
   // Load timestamps JSON - only once, use ref to prevent multiple loads
   const timestampsLoadedRef = useRef<string | null>(null);
@@ -450,6 +463,8 @@ export default function AudioPlayer({
 
     const handleLoadedMetadata = () => {
       setDuration(audio.duration);
+      // Set playback rate when metadata is loaded
+      audio.playbackRate = playbackRate;
     };
 
     const handleEnded = () => {
@@ -468,41 +483,60 @@ export default function AudioPlayer({
     audio.addEventListener("loadedmetadata", handleLoadedMetadata);
     audio.addEventListener("ended", handleEnded);
 
-    // Only auto-play once when component mounts
+    // Auto-play when audioUrl changes or component mounts (for each new section)
     // Note: Browser autoplay policy may block this - user interaction required
-    if (autoPlay && !hasPlayed) {
+    if (autoPlay && audioUrl) {
       const playAudio = () => {
-        if (!hasPlayed && audio.readyState >= 2) {
-          const playPromise = audio.play();
-          if (playPromise !== undefined) {
-            playPromise
-              .then(() => {
-                setIsPlaying(true);
-                setHasPlayed(true);
-              })
-              .catch((error) => {
-                // Autoplay was prevented - this is normal browser behavior
-                // User will need to click play button - don't show error
-                if (error.name !== 'NotAllowedError') {
-                  console.error("Error playing audio:", error);
-                }
-                setIsPlaying(false);
-                setHasPlayed(false); // Allow manual play
-              });
-          }
+        // Reset current time to start
+        audio.currentTime = 0;
+        
+        const playPromise = audio.play();
+        if (playPromise !== undefined) {
+          playPromise
+            .then(() => {
+              setIsPlaying(true);
+              setHasPlayed(true);
+              console.log('✅ Audio started automatically');
+            })
+            .catch((error) => {
+              // Autoplay was prevented - this is normal browser behavior
+              // User will need to click play button - don't show error
+              if (error.name !== 'NotAllowedError') {
+                console.error("Error playing audio:", error);
+              } else {
+                console.log('ℹ️ Autoplay blocked by browser - user interaction required');
+              }
+              setIsPlaying(false);
+              setHasPlayed(false); // Allow manual play
+            });
         }
       };
 
+      // Try to play immediately if audio is ready
       if (audio.readyState >= 2) {
-        playAudio();
+        // Small delay to ensure audio is fully ready
+        const timeoutId = setTimeout(() => {
+          playAudio();
+        }, 100);
+        
+        return () => {
+          clearTimeout(timeoutId);
+        };
       } else {
+        // Wait for audio to be ready
         const canPlayHandler = () => {
           playAudio();
         };
+        const loadedDataHandler = () => {
+          playAudio();
+        };
+        
         audio.addEventListener("canplay", canPlayHandler, { once: true });
+        audio.addEventListener("loadeddata", loadedDataHandler, { once: true });
         
         return () => {
           audio.removeEventListener("canplay", canPlayHandler);
+          audio.removeEventListener("loadeddata", loadedDataHandler);
         };
       }
     }
@@ -512,7 +546,39 @@ export default function AudioPlayer({
       audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
       audio.removeEventListener("ended", handleEnded);
     };
-  }, [audioUrl, autoPlay, hasPlayed, onTimeUpdate, onComplete]); // Minimal dependencies
+  }, [audioUrl, autoPlay, hasPlayed, onTimeUpdate, onComplete, playbackRate]); // Minimal dependencies
+
+  // Update playback rate when it changes
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (audio) {
+      audio.playbackRate = playbackRate;
+    }
+  }, [playbackRate]);
+
+  // Close speed menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (speedMenuRef.current && !speedMenuRef.current.contains(event.target as Node)) {
+        setShowSpeedMenu(false);
+      }
+    };
+
+    if (showSpeedMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showSpeedMenu]);
+
+  const speedOptions = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
+
+  const handleSpeedChange = (speed: number) => {
+    setPlaybackRate(speed);
+    setShowSpeedMenu(false);
+  };
 
   const togglePlay = () => {
     const audio = audioRef.current;
@@ -663,27 +729,35 @@ export default function AudioPlayer({
                       }
                     }}
                     className={isSpace ? "inline" : "inline-block"}
-                    style={isHighlighted ? {
-                      background: "linear-gradient(120deg, rgba(59, 130, 246, 0.35) 0%, rgba(59, 130, 246, 0.55) 100%)",
-                      backgroundSize: "100% 85%",
-                      backgroundPosition: "center",
-                      backgroundRepeat: "no-repeat",
-                      color: "#fef08a",
-                      fontWeight: "600",
-                      borderRadius: "3px",
-                      textShadow: "0 0 10px rgba(251, 191, 36, 0.7), 0 0 15px rgba(59, 130, 246, 0.5)",
-                      transition: "all 0.15s cubic-bezier(0.4, 0, 0.2, 1)",
-                      display: "inline-block",
-                      padding: "0",
-                      margin: "0",
-                      boxShadow: "0 2px 8px rgba(59, 130, 246, 0.3)",
-                    } : {
+                    style={{
+                      // CRITICAL: All words must have identical base styles to prevent layout shifts
                       padding: "0",
                       margin: "0",
                       display: isSpace ? "inline" : "inline-block",
-                      transition: "all 0.15s cubic-bezier(0.4, 0, 0.2, 1)",
-                      color: isNumberedItem ? "#93c5fd" : "inherit", // Light blue for numbered items
-                      fontWeight: isNumberedItem ? "600" : "inherit", // Bold for numbered items
+                      minWidth: "0",
+                      width: "auto",
+                      verticalAlign: "baseline",
+                      lineHeight: "inherit",
+                      fontSize: "inherit",
+                      fontFamily: "inherit",
+                      // IMPORTANT: Use consistent font-weight (600) for ALL words to prevent width changes
+                      // This ensures highlighted and non-highlighted words have the same width
+                      fontWeight: "600", // Always 600 for all words to prevent width changes
+                      // Apply highlight styles without affecting layout
+                      ...(isHighlighted ? {
+                        background: "linear-gradient(120deg, rgba(59, 130, 246, 0.35) 0%, rgba(59, 130, 246, 0.55) 100%)",
+                        backgroundSize: "100% 85%",
+                        backgroundPosition: "center",
+                        backgroundRepeat: "no-repeat",
+                        color: "#fef08a",
+                        borderRadius: "3px",
+                        textShadow: "0 0 10px rgba(251, 191, 36, 0.7), 0 0 15px rgba(59, 130, 246, 0.5)",
+                      } : {
+                        color: isNumberedItem ? "#93c5fd" : "inherit",
+                        background: "transparent",
+                      }),
+                      // Smooth transition for color/background only (not size-affecting properties)
+                      transition: "background 0.15s ease, color 0.15s ease, text-shadow 0.15s ease",
                     }}
                   >
                     {segment}
@@ -726,6 +800,35 @@ export default function AudioPlayer({
 
         <div className="text-sm text-gray-300 min-w-[80px] text-right">
           {formatTime(currentTime)} / {formatTime(duration)}
+        </div>
+
+        {/* Speed Control */}
+        <div className="relative" ref={speedMenuRef}>
+          <button
+            onClick={() => setShowSpeedMenu(!showSpeedMenu)}
+            className="px-3 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white text-sm font-medium transition-all duration-200 hover:scale-105 min-w-[60px]"
+            aria-label="Playback speed"
+          >
+            {playbackRate}x
+          </button>
+          
+          {showSpeedMenu && (
+            <div className="absolute bottom-full right-0 mb-2 bg-[#1e3a5f] border border-blue-500/30 rounded-lg shadow-2xl overflow-hidden z-50 min-w-[100px]">
+              {speedOptions.map((speed) => (
+                <button
+                  key={speed}
+                  onClick={() => handleSpeedChange(speed)}
+                  className={`w-full px-4 py-2 text-left text-sm transition-colors duration-150 ${
+                    playbackRate === speed
+                      ? 'bg-blue-600 text-white font-semibold'
+                      : 'text-gray-300 hover:bg-blue-500/30 hover:text-white'
+                  }`}
+                >
+                  {speed}x {speed === 1 && '(Normal)'}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

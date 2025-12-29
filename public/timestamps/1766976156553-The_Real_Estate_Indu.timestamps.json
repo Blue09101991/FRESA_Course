@@ -1,0 +1,243 @@
+{
+  "text": "The Real Estate Industry plays a key role in the nation's economy by driving construction, creating jobs, enabling homeownership and investment, generating tax revenue, and supporting related industries like banking, insurance, and retail, which together stimulate overall economic growth.",
+  "segments": [
+    {
+      "words": [
+        {
+          "text": "The",
+          "start": 0,
+          "end": 0.415,
+          "confidence": 1
+        },
+        {
+          "text": "Real",
+          "start": 0.415,
+          "end": 0.83,
+          "confidence": 1
+        },
+        {
+          "text": "Estate",
+          "start": 0.83,
+          "end": 1.246,
+          "confidence": 1
+        },
+        {
+          "text": "Industry",
+          "start": 1.246,
+          "end": 1.661,
+          "confidence": 1
+        },
+        {
+          "text": "plays",
+          "start": 1.661,
+          "end": 2.076,
+          "confidence": 1
+        },
+        {
+          "text": "a",
+          "start": 2.076,
+          "end": 2.491,
+          "confidence": 1
+        },
+        {
+          "text": "key",
+          "start": 2.491,
+          "end": 2.907,
+          "confidence": 1
+        },
+        {
+          "text": "role",
+          "start": 2.907,
+          "end": 3.322,
+          "confidence": 1
+        },
+        {
+          "text": "in",
+          "start": 3.322,
+          "end": 3.737,
+          "confidence": 1
+        },
+        {
+          "text": "the",
+          "start": 3.737,
+          "end": 4.152,
+          "confidence": 1
+        },
+        {
+          "text": "nation's",
+          "start": 4.152,
+          "end": 4.567,
+          "confidence": 1
+        },
+        {
+          "text": "economy",
+          "start": 4.567,
+          "end": 4.983,
+          "confidence": 1
+        },
+        {
+          "text": "by",
+          "start": 4.983,
+          "end": 5.398,
+          "confidence": 1
+        },
+        {
+          "text": "driving",
+          "start": 5.398,
+          "end": 5.813,
+          "confidence": 1
+        },
+        {
+          "text": "construction,",
+          "start": 5.813,
+          "end": 6.228,
+          "confidence": 1
+        },
+        {
+          "text": "creating",
+          "start": 6.228,
+          "end": 6.644,
+          "confidence": 1
+        },
+        {
+          "text": "jobs,",
+          "start": 6.644,
+          "end": 7.059,
+          "confidence": 1
+        },
+        {
+          "text": "enabling",
+          "start": 7.059,
+          "end": 7.474,
+          "confidence": 1
+        },
+        {
+          "text": "homeownership",
+          "start": 7.474,
+          "end": 7.889,
+          "confidence": 1
+        },
+        {
+          "text": "and",
+          "start": 7.889,
+          "end": 8.304,
+          "confidence": 1
+        },
+        {
+          "text": "investment,",
+          "start": 8.304,
+          "end": 8.72,
+          "confidence": 1
+        },
+        {
+          "text": "generating",
+          "start": 8.72,
+          "end": 9.135,
+          "confidence": 1
+        },
+        {
+          "text": "tax",
+          "start": 9.135,
+          "end": 9.55,
+          "confidence": 1
+        },
+        {
+          "text": "revenue,",
+          "start": 9.55,
+          "end": 9.965,
+          "confidence": 1
+        },
+        {
+          "text": "and",
+          "start": 9.965,
+          "end": 10.38,
+          "confidence": 1
+        },
+        {
+          "text": "supporting",
+          "start": 10.38,
+          "end": 10.796,
+          "confidence": 1
+        },
+        {
+          "text": "related",
+          "start": 10.796,
+          "end": 11.211,
+          "confidence": 1
+        },
+        {
+          "text": "industries",
+          "start": 11.211,
+          "end": 11.626,
+          "confidence": 1
+        },
+        {
+          "text": "like",
+          "start": 11.626,
+          "end": 12.041,
+          "confidence": 1
+        },
+        {
+          "text": "banking,",
+          "start": 12.041,
+          "end": 12.457,
+          "confidence": 1
+        },
+        {
+          "text": "insurance,",
+          "start": 12.457,
+          "end": 12.872,
+          "confidence": 1
+        },
+        {
+          "text": "and",
+          "start": 12.872,
+          "end": 13.287,
+          "confidence": 1
+        },
+        {
+          "text": "retail,",
+          "start": 13.287,
+          "end": 13.702,
+          "confidence": 1
+        },
+        {
+          "text": "which",
+          "start": 13.702,
+          "end": 14.117,
+          "confidence": 1
+        },
+        {
+          "text": "together",
+          "start": 14.117,
+          "end": 14.533,
+          "confidence": 1
+        },
+        {
+          "text": "stimulate",
+          "start": 14.533,
+          "end": 14.948,
+          "confidence": 1
+        },
+        {
+          "text": "overall",
+          "start": 14.948,
+          "end": 15.363,
+          "confidence": 1
+        },
+        {
+          "text": "economic",
+          "start": 15.363,
+          "end": 15.778,
+          "confidence": 1
+        },
+        {
+          "text": "growth.",
+          "start": 15.778,
+          "end": 16.194,
+          "confidence": 1
+        }
+      ]
+    }
+  ]
+}

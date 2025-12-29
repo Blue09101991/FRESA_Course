@@ -287,7 +287,7 @@ export default function Chapter1Page() {
                       text={currentSectionData.text}
                       audioUrl={currentSectionData.audioUrl || undefined}
                       timestampsUrl={currentSectionData.timestampsUrl || undefined}
-                      autoPlay={false}
+                      autoPlay={true}
                       onComplete={() => {}}
                     />
                   )}
