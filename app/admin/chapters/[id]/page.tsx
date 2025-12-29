@@ -407,6 +407,10 @@ export default function ChapterEditPage() {
     order: 0,
   });
 
+  // Bulk input states
+  const [bulkObjectivesText, setBulkObjectivesText] = useState("");
+  const [bulkKeyTermsText, setBulkKeyTermsText] = useState("");
+
   const handleSaveObjective = async (objectiveId?: string) => {
     try {
       const token = getToken();
@@ -466,6 +470,96 @@ export default function ChapterEditPage() {
       }
     } catch (err) {
       console.error("Error saving key term:", err);
+    }
+  };
+
+  // Bulk add learning objectives
+  const handleBulkAddObjectives = async () => {
+    if (!bulkObjectivesText.trim()) {
+      alert("Please enter at least one learning objective");
+      return;
+    }
+
+    try {
+      const token = getToken();
+      const lines = bulkObjectivesText
+        .split("\n")
+        .map((line) => line.trim())
+        .filter((line) => line.length > 0);
+
+      if (lines.length === 0) {
+        alert("No valid objectives found. Please enter objectives separated by new lines.");
+        return;
+      }
+
+      // Create all objectives
+      const promises = lines.map((text, index) => {
+        return fetch("/api/admin/objectives", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            text,
+            order: learningObjectives.length + index,
+            chapterId: chapterId === "new" ? null : chapterId,
+          }),
+        });
+      });
+
+      await Promise.all(promises);
+      await fetchChapter();
+      setBulkObjectivesText("");
+      alert(`Successfully added ${lines.length} learning objective(s)!`);
+    } catch (err) {
+      console.error("Error bulk adding objectives:", err);
+      alert("Failed to add objectives. Please try again.");
+    }
+  };
+
+  // Bulk add key terms
+  const handleBulkAddKeyTerms = async () => {
+    if (!bulkKeyTermsText.trim()) {
+      alert("Please enter at least one key term");
+      return;
+    }
+
+    try {
+      const token = getToken();
+      const lines = bulkKeyTermsText
+        .split("\n")
+        .map((line) => line.trim())
+        .filter((line) => line.length > 0);
+
+      if (lines.length === 0) {
+        alert("No valid key terms found. Please enter key terms separated by new lines.");
+        return;
+      }
+
+      // Create all key terms
+      const promises = lines.map((term, index) => {
+        return fetch("/api/admin/key-terms", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            term,
+            order: keyTerms.length + index,
+            chapterId: chapterId === "new" ? null : chapterId,
+          }),
+        });
+      });
+
+      await Promise.all(promises);
+      await fetchChapter();
+      setBulkKeyTermsText("");
+      alert(`Successfully added ${lines.length} key term(s)!`);
+    } catch (err) {
+      console.error("Error bulk adding key terms:", err);
+      alert("Failed to add key terms. Please try again.");
     }
   };
 
@@ -739,50 +833,71 @@ export default function ChapterEditPage() {
         <div className="bg-[#1a1f3a]/90 backdrop-blur-lg rounded-2xl shadow-2xl border border-green-500/20 p-6 mb-6">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-white">Learning Objectives</h2>
-            <button
-              onClick={() => {
-                setShowObjectiveForm(true);
-                setEditingObjective(null);
-                setObjectiveForm({ text: "", order: learningObjectives.length });
-              }}
-              className="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-green-500/50 transition-all duration-300"
-            >
-              + New Objective
-            </button>
           </div>
+          
+          {/* Bulk Input Area */}
+          <div className="mb-6 p-4 bg-[#0a0e27]/50 border border-green-500/30 rounded-lg">
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Add Multiple Learning Objectives (one per line)
+            </label>
+            <textarea
+              value={bulkObjectivesText}
+              onChange={(e) => setBulkObjectivesText(e.target.value)}
+              rows={6}
+              className="w-full px-4 py-2 bg-[#0a0e27]/70 border border-green-500/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-green-500/50 focus:ring-2 focus:ring-green-500/20"
+              placeholder="Enter learning objectives, one per line:&#10;Objective 1&#10;Objective 2&#10;Objective 3"
+            />
+            <div className="flex justify-end mt-3">
+              <button
+                onClick={handleBulkAddObjectives}
+                disabled={!bulkObjectivesText.trim()}
+                className="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 disabled:from-gray-500 disabled:to-gray-600 disabled:cursor-not-allowed text-white font-semibold rounded-lg shadow-lg hover:shadow-green-500/50 transition-all duration-300"
+              >
+                Add All Objectives
+              </button>
+            </div>
+          </div>
+
+          {/* Existing Objectives List */}
           <div className="space-y-2">
-            {learningObjectives.map((obj) => (
-              <div key={obj.id} className="p-3 bg-[#0a0e27]/50 border border-green-500/20 rounded-lg flex justify-between items-center">
-                <span className="text-white">{obj.text}</span>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => {
-                      setEditingObjective(obj.id);
-                      setObjectiveForm(obj);
-                      setShowObjectiveForm(true);
-                    }}
-                    className="px-2 py-1 bg-green-500/20 border border-green-500/30 rounded text-green-400 hover:bg-green-500/30 text-sm"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={async () => {
-                      if (confirm("Delete this objective?")) {
-                        const token = getToken();
-                        await fetch(`/api/admin/objectives/${obj.id}`, {
-                          method: "DELETE",
-                          headers: { Authorization: `Bearer ${token}` },
-                        });
-                        await fetchChapter();
-                      }
-                    }}
-                    className="px-2 py-1 bg-red-500/20 border border-red-500/30 rounded text-red-400 hover:bg-red-500/30 text-sm"
-                  >
-                    Delete
-                  </button>
-                </div>
+            {learningObjectives.length === 0 ? (
+              <div className="text-center py-4 text-gray-400 text-sm">
+                No learning objectives yet. Add them using the textarea above.
               </div>
-            ))}
+            ) : (
+              learningObjectives.map((obj) => (
+                <div key={obj.id} className="p-3 bg-[#0a0e27]/50 border border-green-500/20 rounded-lg flex justify-between items-center">
+                  <span className="text-white">{obj.text}</span>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => {
+                        setEditingObjective(obj.id);
+                        setObjectiveForm(obj);
+                        setShowObjectiveForm(true);
+                      }}
+                      className="px-2 py-1 bg-green-500/20 border border-green-500/30 rounded text-green-400 hover:bg-green-500/30 text-sm"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={async () => {
+                        if (confirm("Delete this objective?")) {
+                          const token = getToken();
+                          await fetch(`/api/admin/objectives/${obj.id}`, {
+                            method: "DELETE",
+                            headers: { Authorization: `Bearer ${token}` },
+                          });
+                          await fetchChapter();
+                        }
+                      }}
+                      className="px-2 py-1 bg-red-500/20 border border-red-500/30 rounded text-red-400 hover:bg-red-500/30 text-sm"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
 
@@ -790,50 +905,71 @@ export default function ChapterEditPage() {
         <div className="bg-[#1a1f3a]/90 backdrop-blur-lg rounded-2xl shadow-2xl border border-yellow-500/20 p-6 mb-6">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-white">Key Terms</h2>
-            <button
-              onClick={() => {
-                setShowKeyTermForm(true);
-                setEditingKeyTerm(null);
-                setKeyTermForm({ term: "", order: keyTerms.length });
-              }}
-              className="px-4 py-2 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-yellow-500/50 transition-all duration-300"
-            >
-              + New Key Term
-            </button>
           </div>
+          
+          {/* Bulk Input Area */}
+          <div className="mb-6 p-4 bg-[#0a0e27]/50 border border-yellow-500/30 rounded-lg">
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Add Multiple Key Terms (one per line)
+            </label>
+            <textarea
+              value={bulkKeyTermsText}
+              onChange={(e) => setBulkKeyTermsText(e.target.value)}
+              rows={6}
+              className="w-full px-4 py-2 bg-[#0a0e27]/70 border border-yellow-500/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-yellow-500/50 focus:ring-2 focus:ring-yellow-500/20"
+              placeholder="Enter key terms, one per line:&#10;Term 1&#10;Term 2&#10;Term 3"
+            />
+            <div className="flex justify-end mt-3">
+              <button
+                onClick={handleBulkAddKeyTerms}
+                disabled={!bulkKeyTermsText.trim()}
+                className="px-4 py-2 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 disabled:from-gray-500 disabled:to-gray-600 disabled:cursor-not-allowed text-white font-semibold rounded-lg shadow-lg hover:shadow-yellow-500/50 transition-all duration-300"
+              >
+                Add All Key Terms
+              </button>
+            </div>
+          </div>
+
+          {/* Existing Key Terms List */}
           <div className="space-y-2">
-            {keyTerms.map((term) => (
-              <div key={term.id} className="p-3 bg-[#0a0e27]/50 border border-yellow-500/20 rounded-lg flex justify-between items-center">
-                <span className="text-white">{term.term}</span>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => {
-                      setEditingKeyTerm(term.id);
-                      setKeyTermForm(term);
-                      setShowKeyTermForm(true);
-                    }}
-                    className="px-2 py-1 bg-yellow-500/20 border border-yellow-500/30 rounded text-yellow-400 hover:bg-yellow-500/30 text-sm"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={async () => {
-                      if (confirm("Delete this key term?")) {
-                        const token = getToken();
-                        await fetch(`/api/admin/key-terms/${term.id}`, {
-                          method: "DELETE",
-                          headers: { Authorization: `Bearer ${token}` },
-                        });
-                        await fetchChapter();
-                      }
-                    }}
-                    className="px-2 py-1 bg-red-500/20 border border-red-500/30 rounded text-red-400 hover:bg-red-500/30 text-sm"
-                  >
-                    Delete
-                  </button>
-                </div>
+            {keyTerms.length === 0 ? (
+              <div className="text-center py-4 text-gray-400 text-sm">
+                No key terms yet. Add them using the textarea above.
               </div>
-            ))}
+            ) : (
+              keyTerms.map((term) => (
+                <div key={term.id} className="p-3 bg-[#0a0e27]/50 border border-yellow-500/20 rounded-lg flex justify-between items-center">
+                  <span className="text-white">{term.term}</span>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => {
+                        setEditingKeyTerm(term.id);
+                        setKeyTermForm(term);
+                        setShowKeyTermForm(true);
+                      }}
+                      className="px-2 py-1 bg-yellow-500/20 border border-yellow-500/30 rounded text-yellow-400 hover:bg-yellow-500/30 text-sm"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={async () => {
+                        if (confirm("Delete this key term?")) {
+                          const token = getToken();
+                          await fetch(`/api/admin/key-terms/${term.id}`, {
+                            method: "DELETE",
+                            headers: { Authorization: `Bearer ${token}` },
+                          });
+                          await fetchChapter();
+                        }
+                      }}
+                      className="px-2 py-1 bg-red-500/20 border border-red-500/30 rounded text-red-400 hover:bg-red-500/30 text-sm"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
 
