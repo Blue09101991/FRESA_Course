@@ -1,0 +1,633 @@
+{
+  "text": "There are 5 Major Sales Specialties: 1. Residential properties - Housing with 4 units or fewer, or vacant land zoned for 4 units or less. This includes Single Family homes, townhouses, condos, or multifamily units with 4 units or fewer. 2. Commercial Properties are Income-producing properties, for example offices, retail centers, etc. 3. Industrial Properties are buildings where Manufacturing of products takes place, warehouses for storing products, and distribution facilities. 4. Agricultural Properties are Farms and land of more than 10 acres. 5. Businesses: The sale of business opportunities. This often includes the sale of stock or assets (personal property) rather than just land.",
+  "segments": [
+    {
+      "words": [
+        {
+          "text": "There",
+          "start": 0,
+          "end": 0.407,
+          "confidence": 1
+        },
+        {
+          "text": "are",
+          "start": 0.407,
+          "end": 0.814,
+          "confidence": 1
+        },
+        {
+          "text": "5",
+          "start": 0.814,
+          "end": 1.221,
+          "confidence": 1
+        },
+        {
+          "text": "Major",
+          "start": 1.221,
+          "end": 1.628,
+          "confidence": 1
+        },
+        {
+          "text": "Sales",
+          "start": 1.628,
+          "end": 2.035,
+          "confidence": 1
+        },
+        {
+          "text": "Specialties:",
+          "start": 2.035,
+          "end": 2.442,
+          "confidence": 1
+        },
+        {
+          "text": "1.",
+          "start": 2.442,
+          "end": 2.849,
+          "confidence": 1
+        },
+        {
+          "text": "Residential",
+          "start": 2.849,
+          "end": 3.256,
+          "confidence": 1
+        },
+        {
+          "text": "properties",
+          "start": 3.256,
+          "end": 3.663,
+          "confidence": 1
+        },
+        {
+          "text": "-",
+          "start": 3.663,
+          "end": 4.071,
+          "confidence": 1
+        },
+        {
+          "text": "Housing",
+          "start": 4.071,
+          "end": 4.478,
+          "confidence": 1
+        },
+        {
+          "text": "with",
+          "start": 4.478,
+          "end": 4.885,
+          "confidence": 1
+        },
+        {
+          "text": "4",
+          "start": 4.885,
+          "end": 5.292,
+          "confidence": 1
+        },
+        {
+          "text": "units",
+          "start": 5.292,
+          "end": 5.699,
+          "confidence": 1
+        },
+        {
+          "text": "or",
+          "start": 5.699,
+          "end": 6.106,
+          "confidence": 1
+        },
+        {
+          "text": "fewer,",
+          "start": 6.106,
+          "end": 6.513,
+          "confidence": 1
+        },
+        {
+          "text": "or",
+          "start": 6.513,
+          "end": 6.92,
+          "confidence": 1
+        },
+        {
+          "text": "vacant",
+          "start": 6.92,
+          "end": 7.327,
+          "confidence": 1
+        },
+        {
+          "text": "land",
+          "start": 7.327,
+          "end": 7.734,
+          "confidence": 1
+        },
+        {
+          "text": "zoned",
+          "start": 7.734,
+          "end": 8.141,
+          "confidence": 1
+        },
+        {
+          "text": "for",
+          "start": 8.141,
+          "end": 8.548,
+          "confidence": 1
+        },
+        {
+          "text": "4",
+          "start": 8.548,
+          "end": 8.955,
+          "confidence": 1
+        },
+        {
+          "text": "units",
+          "start": 8.955,
+          "end": 9.362,
+          "confidence": 1
+        },
+        {
+          "text": "or",
+          "start": 9.362,
+          "end": 9.769,
+          "confidence": 1
+        },
+        {
+          "text": "less.",
+          "start": 9.769,
+          "end": 10.176,
+          "confidence": 1
+        },
+        {
+          "text": "This",
+          "start": 10.176,
+          "end": 10.583,
+          "confidence": 1
+        },
+        {
+          "text": "includes",
+          "start": 10.583,
+          "end": 10.99,
+          "confidence": 1
+        },
+        {
+          "text": "Single",
+          "start": 10.99,
+          "end": 11.397,
+          "confidence": 1
+        },
+        {
+          "text": "Family",
+          "start": 11.397,
+          "end": 11.805,
+          "confidence": 1
+        },
+        {
+          "text": "homes,",
+          "start": 11.805,
+          "end": 12.212,
+          "confidence": 1
+        },
+        {
+          "text": "townhouses,",
+          "start": 12.212,
+          "end": 12.619,
+          "confidence": 1
+        },
+        {
+          "text": "condos,",
+          "start": 12.619,
+          "end": 13.026,
+          "confidence": 1
+        },
+        {
+          "text": "or",
+          "start": 13.026,
+          "end": 13.433,
+          "confidence": 1
+        },
+        {
+          "text": "multifamily",
+          "start": 13.433,
+          "end": 13.84,
+          "confidence": 1
+        },
+        {
+          "text": "units",
+          "start": 13.84,
+          "end": 14.247,
+          "confidence": 1
+        },
+        {
+          "text": "with",
+          "start": 14.247,
+          "end": 14.654,
+          "confidence": 1
+        },
+        {
+          "text": "4",
+          "start": 14.654,
+          "end": 15.061,
+          "confidence": 1
+        },
+        {
+          "text": "units",
+          "start": 15.061,
+          "end": 15.468,
+          "confidence": 1
+        },
+        {
+          "text": "or",
+          "start": 15.468,
+          "end": 15.875,
+          "confidence": 1
+        },
+        {
+          "text": "fewer.",
+          "start": 15.875,
+          "end": 16.282,
+          "confidence": 1
+        },
+        {
+          "text": "2.",
+          "start": 16.282,
+          "end": 16.689,
+          "confidence": 1
+        },
+        {
+          "text": "Commercial",
+          "start": 16.689,
+          "end": 17.096,
+          "confidence": 1
+        },
+        {
+          "text": "Properties",
+          "start": 17.096,
+          "end": 17.503,
+          "confidence": 1
+        },
+        {
+          "text": "are",
+          "start": 17.503,
+          "end": 17.91,
+          "confidence": 1
+        },
+        {
+          "text": "Income-producing",
+          "start": 17.91,
+          "end": 18.317,
+          "confidence": 1
+        },
+        {
+          "text": "properties,",
+          "start": 18.317,
+          "end": 18.724,
+          "confidence": 1
+        },
+        {
+          "text": "for",
+          "start": 18.724,
+          "end": 19.131,
+          "confidence": 1
+        },
+        {
+          "text": "example",
+          "start": 19.131,
+          "end": 19.539,
+          "confidence": 1
+        },
+        {
+          "text": "offices,",
+          "start": 19.539,
+          "end": 19.946,
+          "confidence": 1
+        },
+        {
+          "text": "retail",
+          "start": 19.946,
+          "end": 20.353,
+          "confidence": 1
+        },
+        {
+          "text": "centers,",
+          "start": 20.353,
+          "end": 20.76,
+          "confidence": 1
+        },
+        {
+          "text": "etc.",
+          "start": 20.76,
+          "end": 21.167,
+          "confidence": 1
+        },
+        {
+          "text": "3.",
+          "start": 21.167,
+          "end": 21.574,
+          "confidence": 1
+        },
+        {
+          "text": "Industrial",
+          "start": 21.574,
+          "end": 21.981,
+          "confidence": 1
+        },
+        {
+          "text": "Properties",
+          "start": 21.981,
+          "end": 22.388,
+          "confidence": 1
+        },
+        {
+          "text": "are",
+          "start": 22.388,
+          "end": 22.795,
+          "confidence": 1
+        },
+        {
+          "text": "buildings",
+          "start": 22.795,
+          "end": 23.202,
+          "confidence": 1
+        },
+        {
+          "text": "where",
+          "start": 23.202,
+          "end": 23.609,
+          "confidence": 1
+        },
+        {
+          "text": "Manufacturing",
+          "start": 23.609,
+          "end": 24.016,
+          "confidence": 1
+        },
+        {
+          "text": "of",
+          "start": 24.016,
+          "end": 24.423,
+          "confidence": 1
+        },
+        {
+          "text": "products",
+          "start": 24.423,
+          "end": 24.83,
+          "confidence": 1
+        },
+        {
+          "text": "takes",
+          "start": 24.83,
+          "end": 25.237,
+          "confidence": 1
+        },
+        {
+          "text": "place,",
+          "start": 25.237,
+          "end": 25.644,
+          "confidence": 1
+        },
+        {
+          "text": "warehouses",
+          "start": 25.644,
+          "end": 26.051,
+          "confidence": 1
+        },
+        {
+          "text": "for",
+          "start": 26.051,
+          "end": 26.458,
+          "confidence": 1
+        },
+        {
+          "text": "storing",
+          "start": 26.458,
+          "end": 26.866,
+          "confidence": 1
+        },
+        {
+          "text": "products,",
+          "start": 26.866,
+          "end": 27.273,
+          "confidence": 1
+        },
+        {
+          "text": "and",
+          "start": 27.273,
+          "end": 27.68,
+          "confidence": 1
+        },
+        {
+          "text": "distribution",
+          "start": 27.68,
+          "end": 28.087,
+          "confidence": 1
+        },
+        {
+          "text": "facilities.",
+          "start": 28.087,
+          "end": 28.494,
+          "confidence": 1
+        },
+        {
+          "text": "4.",
+          "start": 28.494,
+          "end": 28.901,
+          "confidence": 1
+        },
+        {
+          "text": "Agricultural",
+          "start": 28.901,
+          "end": 29.308,
+          "confidence": 1
+        },
+        {
+          "text": "Properties",
+          "start": 29.308,
+          "end": 29.715,
+          "confidence": 1
+        },
+        {
+          "text": "are",
+          "start": 29.715,
+          "end": 30.122,
+          "confidence": 1
+        },
+        {
+          "text": "Farms",
+          "start": 30.122,
+          "end": 30.529,
+          "confidence": 1
+        },
+        {
+          "text": "and",
+          "start": 30.529,
+          "end": 30.936,
+          "confidence": 1
+        },
+        {
+          "text": "land",
+          "start": 30.936,
+          "end": 31.343,
+          "confidence": 1
+        },
+        {
+          "text": "of",
+          "start": 31.343,
+          "end": 31.75,
+          "confidence": 1
+        },
+        {
+          "text": "more",
+          "start": 31.75,
+          "end": 32.157,
+          "confidence": 1
+        },
+        {
+          "text": "than",
+          "start": 32.157,
+          "end": 32.564,
+          "confidence": 1
+        },
+        {
+          "text": "10",
+          "start": 32.564,
+          "end": 32.971,
+          "confidence": 1
+        },
+        {
+          "text": "acres.",
+          "start": 32.971,
+          "end": 33.378,
+          "confidence": 1
+        },
+        {
+          "text": "5.",
+          "start": 33.378,
+          "end": 33.785,
+          "confidence": 1
+        },
+        {
+          "text": "Businesses:",
+          "start": 33.785,
+          "end": 34.192,
+          "confidence": 1
+        },
+        {
+          "text": "The",
+          "start": 34.192,
+          "end": 34.6,
+          "confidence": 1
+        },
+        {
+          "text": "sale",
+          "start": 34.6,
+          "end": 35.007,
+          "confidence": 1
+        },
+        {
+          "text": "of",
+          "start": 35.007,
+          "end": 35.414,
+          "confidence": 1
+        },
+        {
+          "text": "business",
+          "start": 35.414,
+          "end": 35.821,
+          "confidence": 1
+        },
+        {
+          "text": "opportunities.",
+          "start": 35.821,
+          "end": 36.228,
+          "confidence": 1
+        },
+        {
+          "text": "This",
+          "start": 36.228,
+          "end": 36.635,
+          "confidence": 1
+        },
+        {
+          "text": "often",
+          "start": 36.635,
+          "end": 37.042,
+          "confidence": 1
+        },
+        {
+          "text": "includes",
+          "start": 37.042,
+          "end": 37.449,
+          "confidence": 1
+        },
+        {
+          "text": "the",
+          "start": 37.449,
+          "end": 37.856,
+          "confidence": 1
+        },
+        {
+          "text": "sale",
+          "start": 37.856,
+          "end": 38.263,
+          "confidence": 1
+        },
+        {
+          "text": "of",
+          "start": 38.263,
+          "end": 38.67,
+          "confidence": 1
+        },
+        {
+          "text": "stock",
+          "start": 38.67,
+          "end": 39.077,
+          "confidence": 1
+        },
+        {
+          "text": "or",
+          "start": 39.077,
+          "end": 39.484,
+          "confidence": 1
+        },
+        {
+          "text": "assets",
+          "start": 39.484,
+          "end": 39.891,
+          "confidence": 1
+        },
+        {
+          "text": "(personal",
+          "start": 39.891,
+          "end": 40.298,
+          "confidence": 1
+        },
+        {
+          "text": "property)",
+          "start": 40.298,
+          "end": 40.705,
+          "confidence": 1
+        },
+        {
+          "text": "rather",
+          "start": 40.705,
+          "end": 41.112,
+          "confidence": 1
+        },
+        {
+          "text": "than",
+          "start": 41.112,
+          "end": 41.519,
+          "confidence": 1
+        },
+        {
+          "text": "just",
+          "start": 41.519,
+          "end": 41.926,
+          "confidence": 1
+        },
+        {
+          "text": "land.",
+          "start": 41.926,
+          "end": 42.334,
+          "confidence": 1
+        }
+      ]
+    }
+  ]
+}

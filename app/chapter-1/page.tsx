@@ -409,7 +409,7 @@ export default function Chapter1Page() {
                 onClick={handleNext}
                 className="flex-1 bg-[#3b82f6] hover:bg-[#2563eb] text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 active:scale-95"
               >
-                {currentIndex < sections.length - 1 ? "Next Section" : "Start Quiz"}
+                {currentIndex < sections.length - 1 ? "Next" : "Start Quiz"}
               </button>
             </div>
           </div>
