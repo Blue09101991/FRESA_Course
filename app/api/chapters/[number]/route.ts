@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { existsSync } from 'fs'
 import { join } from 'path'
+import { getDefaultChapterData, mergeWithDefaults } from '@/lib/defaultChapterData'
 
 // Helper function to validate file exists
 function validateFileUrl(url: string | null): string | null {
@@ -33,7 +34,11 @@ export async function GET(
       return NextResponse.json({ error: 'Invalid chapter number' }, { status: 400 })
     }
 
-    const chapter = await prisma.chapter.findUnique({
+    // Get default chapter data
+    const defaultData = getDefaultChapterData(chapterNumber)
+    
+    // Try to fetch from database
+    let chapter = await prisma.chapter.findUnique({
       where: { number: chapterNumber },
       include: {
         sections: {
@@ -55,17 +60,40 @@ export async function GET(
       },
     })
 
+    // If chapter doesn't exist in DB, create it with default data
+    if (!chapter && defaultData) {
+      chapter = await prisma.chapter.create({
+        data: {
+          number: defaultData.number,
+          title: defaultData.title,
+          description: defaultData.description,
+        },
+        include: {
+          sections: true,
+          learningObjectives: true,
+          keyTerms: true,
+          quizQuestions: true,
+        },
+      })
+    }
+
     if (!chapter) {
       return NextResponse.json({ error: 'Chapter not found' }, { status: 404 })
     }
 
+    // Merge database data with defaults
+    let finalChapter = chapter
+    if (defaultData) {
+      finalChapter = mergeWithDefaults(chapter, defaultData)
+    }
+
     // Validate that audio and timestamps files exist for all sections
     const validatedChapter = {
-      ...chapter,
-      sections: chapter.sections.map(section => ({
+      ...finalChapter,
+      sections: finalChapter.sections.map((section: any) => ({
         ...section,
-        audioUrl: validateFileUrl(section.audioUrl),
-        timestampsUrl: validateFileUrl(section.timestampsUrl),
+        audioUrl: validateFileUrl(section.audioUrl) || section.audioUrl, // Keep original URL if file doesn't exist (might be generated)
+        timestampsUrl: validateFileUrl(section.timestampsUrl) || section.timestampsUrl,
       })),
     }
 
