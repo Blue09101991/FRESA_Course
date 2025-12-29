@@ -124,24 +124,27 @@ export default function TableOfContents({ items, currentPath }: TableOfContentsP
                       }`}
                     >
                       <div className="pl-4 space-y-0.5">
-                        {item.children?.map((child, index) => (
-                          <button
-                            key={child.id}
-                            onClick={(e) => handleNavigation(child, e)}
-                            className={`w-full text-left px-3 py-1.5 rounded-md transition-all duration-200 transform ${
-                              pathname === child.path || currentPath === child.path
-                                ? "bg-blue-500/30 text-blue-200 font-medium border-l-2 border-blue-400"
-                                : "text-gray-400 hover:bg-blue-500/10 hover:text-gray-200 hover:translate-x-1"
-                            } ${isExpanded ? 'animate-slide-in-left' : ''}`}
-                            style={{
-                              animationDelay: isExpanded ? `${index * 30}ms` : '0ms',
-                            }}
-                          >
-                            <div className="flex items-center gap-2">
-                              <span className="text-xs leading-relaxed">{child.title}</span>
-                            </div>
-                          </button>
-                        ))}
+                        {item.children?.map((child, index) => {
+                          const isActive = pathname === child.path || currentPath === child.path;
+                          return (
+                            <button
+                              key={child.id}
+                              onClick={(e) => handleNavigation(child, e)}
+                              className={`w-full text-left px-3 py-1.5 rounded-md transition-all duration-300 ease-in-out ${
+                                isActive
+                                  ? "bg-blue-500/30 text-blue-200 font-medium border-l-2 border-blue-400 shadow-md"
+                                  : "text-gray-400 hover:bg-blue-500/30 hover:text-white hover:translate-x-2 hover:shadow-lg hover:border-l-2 hover:border-blue-400/60"
+                              } ${isExpanded ? 'animate-slide-in-left' : ''}`}
+                              style={{
+                                animationDelay: isExpanded ? `${index * 30}ms` : '0ms',
+                              }}
+                            >
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs leading-relaxed">{child.title}</span>
+                              </div>
+                            </button>
+                          );
+                        })}
                       </div>
                     </div>
                   )}
@@ -216,24 +219,27 @@ export default function TableOfContents({ items, currentPath }: TableOfContentsP
                           }`}
                         >
                           <div className="pl-6 space-y-1">
-                            {item.children?.map((child, index) => (
-                              <button
-                                key={child.id}
-                                onClick={(e) => handleNavigation(child, e)}
-                                className={`w-full text-left px-4 py-2 rounded-md transition-all duration-200 transform ${
-                                  pathname === child.path || currentPath === child.path
-                                    ? "bg-blue-500/30 text-blue-200 font-medium border-l-2 border-blue-400"
-                                    : "text-gray-400 hover:bg-blue-500/10 hover:text-gray-200 hover:translate-x-1"
-                                } ${isExpanded ? 'animate-slide-in-left' : ''}`}
-                                style={{
-                                  animationDelay: isExpanded ? `${index * 30}ms` : '0ms',
-                                }}
-                              >
-                                <div className="flex items-center gap-2">
-                                  <span className="text-xs">{child.title}</span>
-                                </div>
-                              </button>
-                            ))}
+                            {item.children?.map((child, index) => {
+                              const isActive = pathname === child.path || currentPath === child.path;
+                              return (
+                                <button
+                                  key={child.id}
+                                  onClick={(e) => handleNavigation(child, e)}
+                                  className={`w-full text-left px-4 py-2 rounded-md transition-all duration-300 ease-in-out ${
+                                    isActive
+                                      ? "bg-blue-500/30 text-blue-200 font-medium border-l-2 border-blue-400 shadow-md"
+                                      : "text-gray-400 hover:bg-blue-500/30 hover:text-white hover:translate-x-2 hover:shadow-lg hover:border-l-2 hover:border-blue-400/60"
+                                  } ${isExpanded ? 'animate-slide-in-left' : ''}`}
+                                  style={{
+                                    animationDelay: isExpanded ? `${index * 30}ms` : '0ms',
+                                  }}
+                                >
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-xs">{child.title}</span>
+                                  </div>
+                                </button>
+                              );
+                            })}
                           </div>
                         </div>
                       )}

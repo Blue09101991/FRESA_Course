@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Section button hover animations */
+.section-button:not(.bg-blue-500\/30):hover {
+  transform: translateX(8px) !important;
+  background-color: rgba(59, 130, 246, 0.3) !important;
+  color: white !important;
+  border-left: 2px solid rgba(59, 130, 246, 0.6) !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+}
+
 @keyframes fade-in {
   from {
     opacity: 0;
@@ -179,6 +188,26 @@ html {
   50% {
     text-shadow: 0 0 12px rgba(251, 191, 36, 0.8),
                  0 0 18px rgba(59, 130, 246, 0.6);
+  }
+}
+
+@keyframes slideInScale {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes fadeInOverlay {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
   }
 }
 

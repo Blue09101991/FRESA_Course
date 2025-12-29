@@ -9,6 +9,7 @@ import StarsBackground from "@/components/StarsBackground";
 import TableOfContents from "@/components/TableOfContents";
 import Header from "@/components/Header";
 import AuthGuard from "@/components/AuthGuard";
+import { highlightText, highlightTextArray } from "@/lib/highlightText";
 
 // Lazy load AudioPlayer to improve initial page load
 const AudioPlayer = dynamic(() => import("@/components/AudioPlayer"), {
@@ -35,6 +36,7 @@ export default function Chapter1Page() {
   const [keyTerms, setKeyTerms] = useState<string[]>([]);
   const [sections, setSections] = useState<Section[]>([]);
   const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>([]);
+  const [searchHighlight, setSearchHighlight] = useState<string>("");
 
   useEffect(() => {
     fetchChapterData();
@@ -43,16 +45,38 @@ export default function Chapter1Page() {
     const handleNavigateToSection = (event: CustomEvent) => {
       const sectionId = event.detail?.sectionId;
       if (sectionId) {
-        setCurrentSection(sectionId);
+        if (sectionId === 'quiz') {
+          // Show quiz if target is quiz
+          setShowQuiz(true);
+        } else {
+          setCurrentSection(sectionId);
+        }
       }
     };
     
-    // Check sessionStorage for target section
-    const targetSection = sessionStorage.getItem('targetSection');
-    if (targetSection) {
-      sessionStorage.removeItem('targetSection');
-      setCurrentSection(targetSection);
-    }
+    // Check sessionStorage for target section (from search results)
+    const checkTargetSection = () => {
+      const targetSection = sessionStorage.getItem('targetSection');
+      if (targetSection) {
+        // Don't remove immediately - wait until we've successfully navigated
+        if (targetSection === 'quiz') {
+          // Show quiz if target is quiz
+          setShowQuiz(true);
+          sessionStorage.removeItem('targetSection');
+        } else if (targetSection === 'objectives' || targetSection === 'key-terms') {
+          // These are special sections that should always exist
+          setCurrentSection(targetSection);
+          sessionStorage.removeItem('targetSection');
+        } else {
+          // For regular sections, wait for sections to be loaded
+          // This will be handled in fetchChapterData
+          // Keep the targetSection in sessionStorage for now
+        }
+      }
+    };
+    
+    // Check immediately
+    checkTargetSection();
     
     window.addEventListener('navigateToSection', handleNavigateToSection as EventListener);
     
@@ -118,6 +142,20 @@ export default function Chapter1Page() {
         }
         
         setSections(dbSections);
+        
+        // After sections are loaded, check if we need to navigate to a specific section
+        const targetSection = sessionStorage.getItem('targetSection');
+        if (targetSection && targetSection !== 'quiz' && targetSection !== 'objectives' && targetSection !== 'key-terms') {
+          // Check if the target section exists in the loaded sections
+          const sectionExists = dbSections.some(s => s.id === targetSection);
+          if (sectionExists) {
+            setCurrentSection(targetSection);
+            sessionStorage.removeItem('targetSection');
+          } else {
+            // Section not found, clear the target
+            sessionStorage.removeItem('targetSection');
+          }
+        }
         
         // Set quiz questions
         if (data.chapter.quizQuestions) {
@@ -313,7 +351,9 @@ export default function Chapter1Page() {
                         <div className="flex-shrink-0 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
                           {index + 1}
                         </div>
-                        <p className="text-white text-base md:text-lg flex-1">{objective}</p>
+                        <p className="text-white text-base md:text-lg flex-1">
+                          {searchHighlight ? highlightText(objective, searchHighlight) : objective}
+                        </p>
                       </div>
                     ))}
                   </div>
@@ -330,7 +370,9 @@ export default function Chapter1Page() {
                         className="p-4 bg-[#0a1a2e] rounded-lg border border-blue-500/20 hover:border-blue-500/40 transition-all duration-200 animate-scale-in"
                         style={{ animationDelay: `${index * 0.05}s` }}
                       >
-                        <p className="text-blue-300 font-semibold text-base md:text-lg">{term}</p>
+                        <p className="text-blue-300 font-semibold text-base md:text-lg">
+                          {searchHighlight ? highlightText(term, searchHighlight) : term}
+                        </p>
                       </div>
                     ))}
                   </div>
@@ -347,6 +389,7 @@ export default function Chapter1Page() {
                       timestampsUrl={currentSectionData.timestampsUrl || undefined}
                       autoPlay={true}
                       onComplete={() => {}}
+                      highlightQuery={searchHighlight}
                     />
                   )}
                 </>

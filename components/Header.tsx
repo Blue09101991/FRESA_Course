@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import UserMenu from "./UserMenu";
+import SearchBar from "./SearchBar";
 
 export default function Header() {
   return (
@@ -13,7 +14,10 @@ export default function Header() {
         >
           Florida Real Estate Course
         </Link>
-        <UserMenu />
+        <div className="flex items-center gap-3">
+          <SearchBar />
+          <UserMenu />
+        </div>
       </div>
     </header>
   );

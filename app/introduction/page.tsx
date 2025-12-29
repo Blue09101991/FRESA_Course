@@ -8,6 +8,7 @@ import StarsBackground from "@/components/StarsBackground";
 import TableOfContents from "@/components/TableOfContents";
 import Header from "@/components/Header";
 import AuthGuard from "@/components/AuthGuard";
+import { highlightText } from "@/lib/highlightText";
 
 export default function IntroductionPage() {
   const router = useRouter();
@@ -16,9 +17,20 @@ export default function IntroductionPage() {
   const [audioUrl, setAudioUrl] = useState("/audio/intro.mp3");
   const [timestampsUrl, setTimestampsUrl] = useState("/timestamps/intro.timestamps.json");
   const [loading, setLoading] = useState(true);
+  const [searchHighlight, setSearchHighlight] = useState<string>("");
 
   useEffect(() => {
     fetchIntroduction();
+    
+    // Check for search highlight query
+    const searchQuery = sessionStorage.getItem('searchHighlight');
+    if (searchQuery) {
+      setSearchHighlight(searchQuery);
+      // Clear after a delay to allow highlighting to be applied
+      setTimeout(() => {
+        sessionStorage.removeItem('searchHighlight');
+      }, 5000); // Clear after 5 seconds
+    }
   }, []);
 
   const fetchIntroduction = async () => {
@@ -85,6 +97,7 @@ export default function IntroductionPage() {
                   onComplete={() => {
                     // Audio completed, don't replay
                   }}
+                  highlightQuery={searchHighlight}
                 />
               )}
             </div>

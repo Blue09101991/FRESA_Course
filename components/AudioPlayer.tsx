@@ -23,6 +23,7 @@ interface AudioPlayerProps {
   autoPlay?: boolean;
   onComplete?: () => void;
   onTimeUpdate?: (currentTime: number, duration: number) => void;
+  highlightQuery?: string;
 }
 
 export default function AudioPlayer({
@@ -32,6 +33,7 @@ export default function AudioPlayer({
   autoPlay = false,
   onComplete,
   onTimeUpdate,
+  highlightQuery,
 }: AudioPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -752,6 +754,12 @@ export default function AudioPlayer({
                         color: "#fef08a",
                         borderRadius: "3px",
                         textShadow: "0 0 10px rgba(251, 191, 36, 0.7), 0 0 15px rgba(59, 130, 246, 0.5)",
+                      } : highlightQuery && segment.toLowerCase().includes(highlightQuery.toLowerCase()) ? {
+                        // Search highlight (yellow background)
+                        backgroundColor: "rgba(250, 204, 21, 0.4)",
+                        color: "#fef08a",
+                        borderRadius: "3px",
+                        fontWeight: "600",
                       } : {
                         color: isNumberedItem ? "#93c5fd" : "inherit",
                         background: "transparent",
