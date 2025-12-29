@@ -6,6 +6,7 @@ import { existsSync } from 'fs'
 
 const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY
 const ELEVENLABS_VOICE_ID = process.env.ELEVENLABS_VOICE_ID || 'nPczCjzI2devNBz1zQrb' // Voice ID for introduction and chapter sections (default fallback)
+const ELEVENLABS_QUIZ_VOICE_ID = 'GP1bgf0sjoFuuHkyrg8E' // Woman's voice ID for quiz questions
 
 export async function POST(request: NextRequest) {
   try {
@@ -35,15 +36,18 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const { text, type } = await request.json() // type: 'audio' or 'timestamps' or 'both'
+    const { text, type, voiceId } = await request.json() // type: 'audio' or 'timestamps' or 'both', voiceId: optional voice ID override
 
     if (!text || text.trim().length === 0) {
       return NextResponse.json({ error: 'Text is required' }, { status: 400 })
     }
 
+    // Use provided voiceId, or default to quiz voice if not specified, or fallback to default voice
+    const selectedVoiceId = voiceId || ELEVENLABS_QUIZ_VOICE_ID || ELEVENLABS_VOICE_ID
+
     // Generate audio using ElevenLabs TTS API
     const audioResponse = await fetch(
-      `https://api.elevenlabs.io/v1/text-to-speech/${ELEVENLABS_VOICE_ID}`,
+      `https://api.elevenlabs.io/v1/text-to-speech/${selectedVoiceId}`,
       {
         method: 'POST',
         headers: {

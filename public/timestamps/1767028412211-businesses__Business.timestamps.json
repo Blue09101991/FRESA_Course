@@ -1,0 +1,123 @@
+{
+  "text": "businesses. Business brokerage (selling business opportunities, often including assets and goodwill) is one of the five recognized sales specialties.",
+  "segments": [
+    {
+      "words": [
+        {
+          "text": "businesses.",
+          "start": 0,
+          "end": 0.463,
+          "confidence": 1
+        },
+        {
+          "text": "Business",
+          "start": 0.463,
+          "end": 0.927,
+          "confidence": 1
+        },
+        {
+          "text": "brokerage",
+          "start": 0.927,
+          "end": 1.39,
+          "confidence": 1
+        },
+        {
+          "text": "(selling",
+          "start": 1.39,
+          "end": 1.853,
+          "confidence": 1
+        },
+        {
+          "text": "business",
+          "start": 1.853,
+          "end": 2.317,
+          "confidence": 1
+        },
+        {
+          "text": "opportunities,",
+          "start": 2.317,
+          "end": 2.78,
+          "confidence": 1
+        },
+        {
+          "text": "often",
+          "start": 2.78,
+          "end": 3.243,
+          "confidence": 1
+        },
+        {
+          "text": "including",
+          "start": 3.243,
+          "end": 3.707,
+          "confidence": 1
+        },
+        {
+          "text": "assets",
+          "start": 3.707,
+          "end": 4.17,
+          "confidence": 1
+        },
+        {
+          "text": "and",
+          "start": 4.17,
+          "end": 4.633,
+          "confidence": 1
+        },
+        {
+          "text": "goodwill)",
+          "start": 4.633,
+          "end": 5.097,
+          "confidence": 1
+        },
+        {
+          "text": "is",
+          "start": 5.097,
+          "end": 5.56,
+          "confidence": 1
+        },
+        {
+          "text": "one",
+          "start": 5.56,
+          "end": 6.024,
+          "confidence": 1
+        },
+        {
+          "text": "of",
+          "start": 6.024,
+          "end": 6.487,
+          "confidence": 1
+        },
+        {
+          "text": "the",
+          "start": 6.487,
+          "end": 6.95,
+          "confidence": 1
+        },
+        {
+          "text": "five",
+          "start": 6.95,
+          "end": 7.414,
+          "confidence": 1
+        },
+        {
+          "text": "recognized",
+          "start": 7.414,
+          "end": 7.877,
+          "confidence": 1
+        },
+        {
+          "text": "sales",
+          "start": 7.877,
+          "end": 8.34,
+          "confidence": 1
+        },
+        {
+          "text": "specialties.",
+          "start": 8.34,
+          "end": 8.804,
+          "confidence": 1
+        }
+      ]
+    }
+  ]
+}

@@ -165,6 +165,14 @@ export default function Chapter1Page() {
             options: q.options,
             correctAnswer: q.correctAnswer,
             explanation: q.explanation,
+            audioUrl: q.audioUrl,
+            timestampsUrl: q.timestampsUrl,
+            explanationAudioUrl: q.explanationAudioUrl,
+            explanationTimestampsUrl: q.explanationTimestampsUrl,
+            correctExplanationAudioUrl: q.correctExplanationAudioUrl,
+            correctExplanationTimestampsUrl: q.correctExplanationTimestampsUrl,
+            incorrectExplanationAudioUrls: q.incorrectExplanationAudioUrls,
+            incorrectExplanationTimestampsUrls: q.incorrectExplanationTimestampsUrls,
           })));
         }
       } else {

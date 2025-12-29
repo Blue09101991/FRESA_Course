@@ -1,0 +1,315 @@
+{
+  "text": "Special use. The five major sales specialties defined in the real estate industry and Florida course curriculum are Residential, Commercial, Industrial, Agricultural, and Businesses. 'Special use' is typically a category used in appraisal or zoning (referring to properties like schools, churches, or cemeteries) rather than a primary sales specialty for licensees.",
+  "segments": [
+    {
+      "words": [
+        {
+          "text": "Special",
+          "start": 0,
+          "end": 0.463,
+          "confidence": 1
+        },
+        {
+          "text": "use.",
+          "start": 0.463,
+          "end": 0.927,
+          "confidence": 1
+        },
+        {
+          "text": "The",
+          "start": 0.927,
+          "end": 1.39,
+          "confidence": 1
+        },
+        {
+          "text": "five",
+          "start": 1.39,
+          "end": 1.853,
+          "confidence": 1
+        },
+        {
+          "text": "major",
+          "start": 1.853,
+          "end": 2.317,
+          "confidence": 1
+        },
+        {
+          "text": "sales",
+          "start": 2.317,
+          "end": 2.78,
+          "confidence": 1
+        },
+        {
+          "text": "specialties",
+          "start": 2.78,
+          "end": 3.244,
+          "confidence": 1
+        },
+        {
+          "text": "defined",
+          "start": 3.244,
+          "end": 3.707,
+          "confidence": 1
+        },
+        {
+          "text": "in",
+          "start": 3.707,
+          "end": 4.17,
+          "confidence": 1
+        },
+        {
+          "text": "the",
+          "start": 4.17,
+          "end": 4.634,
+          "confidence": 1
+        },
+        {
+          "text": "real",
+          "start": 4.634,
+          "end": 5.097,
+          "confidence": 1
+        },
+        {
+          "text": "estate",
+          "start": 5.097,
+          "end": 5.56,
+          "confidence": 1
+        },
+        {
+          "text": "industry",
+          "start": 5.56,
+          "end": 6.024,
+          "confidence": 1
+        },
+        {
+          "text": "and",
+          "start": 6.024,
+          "end": 6.487,
+          "confidence": 1
+        },
+        {
+          "text": "Florida",
+          "start": 6.487,
+          "end": 6.95,
+          "confidence": 1
+        },
+        {
+          "text": "course",
+          "start": 6.95,
+          "end": 7.414,
+          "confidence": 1
+        },
+        {
+          "text": "curriculum",
+          "start": 7.414,
+          "end": 7.877,
+          "confidence": 1
+        },
+        {
+          "text": "are",
+          "start": 7.877,
+          "end": 8.34,
+          "confidence": 1
+        },
+        {
+          "text": "Residential,",
+          "start": 8.34,
+          "end": 8.804,
+          "confidence": 1
+        },
+        {
+          "text": "Commercial,",
+          "start": 8.804,
+          "end": 9.267,
+          "confidence": 1
+        },
+        {
+          "text": "Industrial,",
+          "start": 9.267,
+          "end": 9.731,
+          "confidence": 1
+        },
+        {
+          "text": "Agricultural,",
+          "start": 9.731,
+          "end": 10.194,
+          "confidence": 1
+        },
+        {
+          "text": "and",
+          "start": 10.194,
+          "end": 10.657,
+          "confidence": 1
+        },
+        {
+          "text": "Businesses.",
+          "start": 10.657,
+          "end": 11.121,
+          "confidence": 1
+        },
+        {
+          "text": "'Special",
+          "start": 11.121,
+          "end": 11.584,
+          "confidence": 1
+        },
+        {
+          "text": "use'",
+          "start": 11.584,
+          "end": 12.047,
+          "confidence": 1
+        },
+        {
+          "text": "is",
+          "start": 12.047,
+          "end": 12.511,
+          "confidence": 1
+        },
+        {
+          "text": "typically",
+          "start": 12.511,
+          "end": 12.974,
+          "confidence": 1
+        },
+        {
+          "text": "a",
+          "start": 12.974,
+          "end": 13.437,
+          "confidence": 1
+        },
+        {
+          "text": "category",
+          "start": 13.437,
+          "end": 13.901,
+          "confidence": 1
+        },
+        {
+          "text": "used",
+          "start": 13.901,
+          "end": 14.364,
+          "confidence": 1
+        },
+        {
+          "text": "in",
+          "start": 14.364,
+          "end": 14.828,
+          "confidence": 1
+        },
+        {
+          "text": "appraisal",
+          "start": 14.828,
+          "end": 15.291,
+          "confidence": 1
+        },
+        {
+          "text": "or",
+          "start": 15.291,
+          "end": 15.754,
+          "confidence": 1
+        },
+        {
+          "text": "zoning",
+          "start": 15.754,
+          "end": 16.218,
+          "confidence": 1
+        },
+        {
+          "text": "(referring",
+          "start": 16.218,
+          "end": 16.681,
+          "confidence": 1
+        },
+        {
+          "text": "to",
+          "start": 16.681,
+          "end": 17.144,
+          "confidence": 1
+        },
+        {
+          "text": "properties",
+          "start": 17.144,
+          "end": 17.608,
+          "confidence": 1
+        },
+        {
+          "text": "like",
+          "start": 17.608,
+          "end": 18.071,
+          "confidence": 1
+        },
+        {
+          "text": "schools,",
+          "start": 18.071,
+          "end": 18.534,
+          "confidence": 1
+        },
+        {
+          "text": "churches,",
+          "start": 18.534,
+          "end": 18.998,
+          "confidence": 1
+        },
+        {
+          "text": "or",
+          "start": 18.998,
+          "end": 19.461,
+          "confidence": 1
+        },
+        {
+          "text": "cemeteries)",
+          "start": 19.461,
+          "end": 19.924,
+          "confidence": 1
+        },
+        {
+          "text": "rather",
+          "start": 19.924,
+          "end": 20.388,
+          "confidence": 1
+        },
+        {
+          "text": "than",
+          "start": 20.388,
+          "end": 20.851,
+          "confidence": 1
+        },
+        {
+          "text": "a",
+          "start": 20.851,
+          "end": 21.315,
+          "confidence": 1
+        },
+        {
+          "text": "primary",
+          "start": 21.315,
+          "end": 21.778,
+          "confidence": 1
+        },
+        {
+          "text": "sales",
+          "start": 21.778,
+          "end": 22.241,
+          "confidence": 1
+        },
+        {
+          "text": "specialty",
+          "start": 22.241,
+          "end": 22.705,
+          "confidence": 1
+        },
+        {
+          "text": "for",
+          "start": 22.705,
+          "end": 23.168,
+          "confidence": 1
+        },
+        {
+          "text": "licensees.",
+          "start": 23.168,
+          "end": 23.631,
+          "confidence": 1
+        }
+      ]
+    }
+  ]
+}

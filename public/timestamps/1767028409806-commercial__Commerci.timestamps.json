@@ -1,0 +1,117 @@
+{
+  "text": "commercial. Commercial property (income-producing property like retail centers and offices) is one of the five recognized sales specialties.",
+  "segments": [
+    {
+      "words": [
+        {
+          "text": "commercial.",
+          "start": 0,
+          "end": 0.435,
+          "confidence": 1
+        },
+        {
+          "text": "Commercial",
+          "start": 0.435,
+          "end": 0.869,
+          "confidence": 1
+        },
+        {
+          "text": "property",
+          "start": 0.869,
+          "end": 1.304,
+          "confidence": 1
+        },
+        {
+          "text": "(income-producing",
+          "start": 1.304,
+          "end": 1.738,
+          "confidence": 1
+        },
+        {
+          "text": "property",
+          "start": 1.738,
+          "end": 2.173,
+          "confidence": 1
+        },
+        {
+          "text": "like",
+          "start": 2.173,
+          "end": 2.608,
+          "confidence": 1
+        },
+        {
+          "text": "retail",
+          "start": 2.608,
+          "end": 3.042,
+          "confidence": 1
+        },
+        {
+          "text": "centers",
+          "start": 3.042,
+          "end": 3.477,
+          "confidence": 1
+        },
+        {
+          "text": "and",
+          "start": 3.477,
+          "end": 3.912,
+          "confidence": 1
+        },
+        {
+          "text": "offices)",
+          "start": 3.912,
+          "end": 4.346,
+          "confidence": 1
+        },
+        {
+          "text": "is",
+          "start": 4.346,
+          "end": 4.781,
+          "confidence": 1
+        },
+        {
+          "text": "one",
+          "start": 4.781,
+          "end": 5.215,
+          "confidence": 1
+        },
+        {
+          "text": "of",
+          "start": 5.215,
+          "end": 5.65,
+          "confidence": 1
+        },
+        {
+          "text": "the",
+          "start": 5.65,
+          "end": 6.085,
+          "confidence": 1
+        },
+        {
+          "text": "five",
+          "start": 6.085,
+          "end": 6.519,
+          "confidence": 1
+        },
+        {
+          "text": "recognized",
+          "start": 6.519,
+          "end": 6.954,
+          "confidence": 1
+        },
+        {
+          "text": "sales",
+          "start": 6.954,
+          "end": 7.388,
+          "confidence": 1
+        },
+        {
+          "text": "specialties.",
+          "start": 7.388,
+          "end": 7.823,
+          "confidence": 1
+        }
+      ]
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import MrListings from "./MrListings";
 
 export interface QuizQuestion {
@@ -12,6 +12,14 @@ export interface QuizQuestion {
     correct: string;
     incorrect: string[];
   };
+  audioUrl?: string | null;
+  timestampsUrl?: string | null;
+  explanationAudioUrl?: string | null;
+  explanationTimestampsUrl?: string | null;
+  correctExplanationAudioUrl?: string | null;
+  correctExplanationTimestampsUrl?: string | null;
+  incorrectExplanationAudioUrls?: string[] | null;
+  incorrectExplanationTimestampsUrls?: string[] | null;
 }
 
 interface QuizProps {
@@ -28,9 +36,66 @@ export default function Quiz({ questions, onComplete, showCharacter = true }: Qu
   const [score, setScore] = useState(0);
   const [currentQuestionScore, setCurrentQuestionScore] = useState(0);
   const [characterAnimation, setCharacterAnimation] = useState<"idle" | "thumbs-up" | "thumbs-down" | "congratulations">("idle");
+  const questionAudioRef = useRef<HTMLAudioElement | null>(null);
+  const explanationAudioRef = useRef<HTMLAudioElement | null>(null);
 
   const currentQuestion = questions[currentQuestionIndex];
   const isLastQuestion = currentQuestionIndex === questions.length - 1;
+
+  // Play question audio when question loads
+  useEffect(() => {
+    // Clean up previous audio
+    if (questionAudioRef.current) {
+      questionAudioRef.current.pause();
+      questionAudioRef.current.currentTime = 0;
+      questionAudioRef.current = null;
+    }
+    if (explanationAudioRef.current) {
+      explanationAudioRef.current.pause();
+      explanationAudioRef.current.currentTime = 0;
+      explanationAudioRef.current = null;
+    }
+
+    // Play question + options audio if available
+    if (currentQuestion?.audioUrl) {
+      const audio = new Audio(currentQuestion.audioUrl);
+      
+      // Wait for audio to be ready before playing
+      const playAudio = () => {
+        audio.play().catch(err => {
+          // Only log if it's not an AbortError (which is expected during cleanup)
+          if (err.name !== 'AbortError') {
+            console.error('Error playing question audio:', err);
+          }
+        });
+      };
+
+      // Try to play when audio is ready
+      if (audio.readyState >= 2) {
+        // Audio is already loaded
+        playAudio();
+      } else {
+        // Wait for audio to load
+        audio.addEventListener('canplay', playAudio, { once: true });
+        audio.addEventListener('loadeddata', playAudio, { once: true });
+        audio.load();
+      }
+
+      questionAudioRef.current = audio;
+
+      return () => {
+        // Cleanup: pause and reset audio
+        if (audio) {
+          audio.pause();
+          audio.currentTime = 0;
+          // Remove event listeners
+          audio.removeEventListener('canplay', playAudio);
+          audio.removeEventListener('loadeddata', playAudio);
+        }
+        questionAudioRef.current = null;
+      };
+    }
+  }, [currentQuestionIndex, currentQuestion?.audioUrl]);
 
   const handleAnswerSelect = (index: number) => {
     if (showExplanation) return; // Prevent changing answer after submission
@@ -51,9 +116,80 @@ export default function Quiz({ questions, onComplete, showCharacter = true }: Qu
     } else {
       setCharacterAnimation("thumbs-down");
     }
+
+    // Stop question audio and play explanation audio
+    if (questionAudioRef.current) {
+      questionAudioRef.current.pause();
+      questionAudioRef.current.currentTime = 0;
+      questionAudioRef.current = null;
+    }
+
+    // Clean up previous explanation audio
+    if (explanationAudioRef.current) {
+      explanationAudioRef.current.pause();
+      explanationAudioRef.current.currentTime = 0;
+      explanationAudioRef.current = null;
+    }
+
+    // Play appropriate explanation audio based on whether answer is correct or incorrect
+    let audioUrlToPlay: string | null | undefined = null;
+    
+    if (correct) {
+      // Play correct explanation audio
+      audioUrlToPlay = currentQuestion?.correctExplanationAudioUrl || currentQuestion?.explanationAudioUrl;
+    } else {
+      // Play incorrect explanation audio for the selected option
+      const incorrectAudioUrls = currentQuestion?.incorrectExplanationAudioUrls;
+      if (incorrectAudioUrls && incorrectAudioUrls.length > selectedAnswer) {
+        audioUrlToPlay = incorrectAudioUrls[selectedAnswer];
+      }
+      // Fallback to old explanationAudioUrl if new format not available
+      if (!audioUrlToPlay) {
+        audioUrlToPlay = currentQuestion?.explanationAudioUrl;
+      }
+    }
+
+    if (audioUrlToPlay) {
+      const audio = new Audio(audioUrlToPlay);
+      
+      // Wait for audio to be ready before playing
+      const playAudio = () => {
+        audio.play().catch(err => {
+          // Only log if it's not an AbortError (which is expected during cleanup)
+          if (err.name !== 'AbortError') {
+            console.error('Error playing explanation audio:', err);
+          }
+        });
+      };
+
+      // Try to play when audio is ready
+      if (audio.readyState >= 2) {
+        // Audio is already loaded
+        playAudio();
+      } else {
+        // Wait for audio to load
+        audio.addEventListener('canplay', playAudio, { once: true });
+        audio.addEventListener('loadeddata', playAudio, { once: true });
+        audio.load();
+      }
+
+      explanationAudioRef.current = audio;
+    }
   };
 
   const handleNext = () => {
+    // Stop any playing audio
+    if (questionAudioRef.current) {
+      questionAudioRef.current.pause();
+      questionAudioRef.current.currentTime = 0;
+      questionAudioRef.current = null;
+    }
+    if (explanationAudioRef.current) {
+      explanationAudioRef.current.pause();
+      explanationAudioRef.current.currentTime = 0;
+      explanationAudioRef.current = null;
+    }
+
     if (isLastQuestion) {
       // Show congratulations
       setCharacterAnimation("congratulations");
