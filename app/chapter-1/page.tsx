@@ -39,6 +39,7 @@ export default function Chapter1Page() {
   const [searchHighlight, setSearchHighlight] = useState<string>("");
   const [showRegistrationPrompt, setShowRegistrationPrompt] = useState(false);
   const [quizScore, setQuizScore] = useState<{ score: number; total: number } | null>(null);
+  const [activePlayingSectionId, setActivePlayingSectionId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchChapterData();
@@ -147,15 +148,25 @@ export default function Chapter1Page() {
         
         // After sections are loaded, check if we need to navigate to a specific section
         const targetSection = sessionStorage.getItem('targetSection');
-        if (targetSection && targetSection !== 'quiz' && targetSection !== 'objectives' && targetSection !== 'key-terms') {
-          // Check if the target section exists in the loaded sections
-          const sectionExists = dbSections.some(s => s.id === targetSection);
-          if (sectionExists) {
-            setCurrentSection(targetSection);
+        if (targetSection) {
+          if (targetSection === 'quiz') {
+            setShowQuiz(true);
             sessionStorage.removeItem('targetSection');
+            setActivePlayingSectionId(null);
           } else {
-            // Section not found, clear the target
-            sessionStorage.removeItem('targetSection');
+            // Check if the target section exists in the loaded sections (including objectives and key-terms)
+            const sectionExists = dbSections.some(s => s.id === targetSection) || 
+                                  targetSection === 'objectives' || 
+                                  targetSection === 'key-terms';
+            if (sectionExists) {
+              setCurrentSection(targetSection);
+              sessionStorage.removeItem('targetSection');
+              // Clear any previous playing section highlight
+              setActivePlayingSectionId(null);
+            } else {
+              // Section not found, clear the target
+              sessionStorage.removeItem('targetSection');
+            }
           }
         }
         
@@ -308,7 +319,7 @@ export default function Chapter1Page() {
       <main className="min-h-screen bg-gradient-to-b from-[#0a1a2e] via-[#1e3a5f] to-[#0a1a2e] relative overflow-hidden">
           <Header />
           <StarsBackground />
-          <TableOfContents items={menuItems} currentPath="/chapter-1" />
+          <TableOfContents items={menuItems} currentPath="/chapter-1" activeSectionId={activePlayingSectionId || undefined} />
           <div className="relative z-10 min-h-screen flex flex-col items-center justify-center pt-20 pb-8 px-4 md:px-8 md:ml-64 md:pt-24">
           <h1 className="text-3xl md:text-4xl font-bold text-center mb-8 text-white">
             {chapterData ? `Chapter ${chapterData.number} Quiz` : "Chapter 1 Quiz"}
@@ -347,7 +358,7 @@ export default function Chapter1Page() {
     <main className="min-h-screen bg-gradient-to-b from-[#0a1a2e] via-[#1e3a5f] to-[#0a1a2e] relative overflow-hidden">
         <Header />
         <StarsBackground />
-        <TableOfContents items={menuItems} currentPath="/chapter-1" />
+        <TableOfContents items={menuItems} currentPath="/chapter-1" activeSectionId={activePlayingSectionId || undefined} />
 
         <div className="relative z-10 min-h-screen flex flex-col pt-20 pb-8 px-4 md:px-8 md:ml-64 md:pt-24">
         {/* Header */}
@@ -429,7 +440,21 @@ export default function Chapter1Page() {
                       audioUrl={currentSectionData.audioUrl || undefined}
                       timestampsUrl={currentSectionData.timestampsUrl || undefined}
                       autoPlay={true}
-                      onComplete={() => {}}
+                      onComplete={() => {
+                        setActivePlayingSectionId(null);
+                      }}
+                      onPlayingChange={(isPlaying) => {
+                        // Track when audio starts/stops playing
+                        if (isPlaying) {
+                          setActivePlayingSectionId(currentSection);
+                        } else {
+                          // Only clear if we're not at the end (onComplete will handle that)
+                          const audio = document.querySelector('audio') as HTMLAudioElement;
+                          if (audio && audio.currentTime >= audio.duration) {
+                            setActivePlayingSectionId(null);
+                          }
+                        }
+                      }}
                       highlightQuery={searchHighlight}
                     />
                   )}

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import MrListings from "./MrListings";
+import AudioPlayer from "./AudioPlayer";
 
 export interface QuizQuestion {
   id: string;
@@ -36,83 +37,114 @@ export default function Quiz({ questions, onComplete, showCharacter = true }: Qu
   const [score, setScore] = useState(0);
   const [currentQuestionScore, setCurrentQuestionScore] = useState(0);
   const [characterAnimation, setCharacterAnimation] = useState<"idle" | "thumbs-up" | "thumbs-down" | "congratulations">("idle");
-  const questionAudioRef = useRef<HTMLAudioElement | null>(null);
-  const explanationAudioRef = useRef<HTMLAudioElement | null>(null);
+  const [highlightedWord, setHighlightedWord] = useState<string | null>(null);
+  const questionRef = useRef<HTMLDivElement>(null);
+  const optionsRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   const currentQuestion = questions[currentQuestionIndex];
   const isLastQuestion = currentQuestionIndex === questions.length - 1;
 
-  // Play question audio when question loads
-  useEffect(() => {
-    // Clean up previous audio
-    if (questionAudioRef.current) {
-      questionAudioRef.current.pause();
-      questionAudioRef.current.currentTime = 0;
-      questionAudioRef.current = null;
-    }
-    if (explanationAudioRef.current) {
-      explanationAudioRef.current.pause();
-      explanationAudioRef.current.currentTime = 0;
-      explanationAudioRef.current = null;
-    }
+  // Build question text with options for AudioPlayer
+  const questionText = currentQuestion 
+    ? `${currentQuestion.question}. ${currentQuestion.options.map((opt, idx) => `Option ${idx + 1}: ${opt}`).join(". ")}`
+    : "";
 
-    // Play question + options audio if available
-    if (currentQuestion?.audioUrl) {
-      const audio = new Audio(currentQuestion.audioUrl);
-      
-      // Handle audio loading errors
-      const handleError = () => {
-        if (audio.error) {
-          console.error('Quiz audio loading error:', {
-            code: audio.error.code,
-            message: audio.error.message,
-            src: currentQuestion.audioUrl,
-          });
-          if (audio.error.code === audio.error.MEDIA_ERR_SRC_NOT_SUPPORTED || 
-              audio.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) {
-            console.warn('⚠️ Quiz audio file not found (404). On deployed servers, files may not persist. Consider using cloud storage.');
-          }
-        }
-      };
-      
-      audio.addEventListener('error', handleError);
-      
-      // Wait for audio to be ready before playing
-      const playAudio = () => {
-        audio.play().catch(err => {
-          // Only log if it's not an AbortError (which is expected during cleanup)
-          if (err.name !== 'AbortError') {
-            console.error('Error playing question audio:', err);
-          }
-        });
-      };
+  // Normalize word for matching (remove punctuation, lowercase)
+  const normalizeWord = (word: string) => {
+    return word.toLowerCase().replace(/[^\w]/g, '');
+  };
 
-      // Try to play when audio is ready
-      if (audio.readyState >= 2) {
-        // Audio is already loaded
-        playAudio();
-      } else {
-        // Wait for audio to load
-        audio.addEventListener('canplay', playAudio, { once: true });
-        audio.addEventListener('loadeddata', playAudio, { once: true });
-        audio.load();
+  // Handle word highlighting from AudioPlayer
+  const handleHighlightedWord = (word: string, wordIndex: number) => {
+    const normalizedWord = normalizeWord(word);
+    setHighlightedWord(normalizedWord);
+    
+    // Highlight words in question and options
+    if (questionRef.current) {
+      highlightWordsInElement(questionRef.current, normalizedWord);
+    }
+    optionsRefs.current.forEach((ref) => {
+      if (ref) {
+        highlightWordsInElement(ref, normalizedWord);
       }
+    });
+  };
 
-      questionAudioRef.current = audio;
+  // Highlight matching words in an element
+  const highlightWordsInElement = (element: HTMLElement, targetWord: string) => {
+    // Remove previous highlights
+    const highlightedSpans = element.querySelectorAll('span[data-audio-highlight]');
+    highlightedSpans.forEach((span) => {
+      const parent = span.parentNode;
+      if (parent) {
+        parent.replaceChild(document.createTextNode(span.textContent || ''), span);
+        parent.normalize();
+      }
+    });
 
-      return () => {
-        // Cleanup: pause and reset audio
-        if (audio) {
-          audio.pause();
-          audio.currentTime = 0;
-          // Remove event listeners
-          audio.removeEventListener('canplay', playAudio);
-          audio.removeEventListener('loadeddata', playAudio);
-        }
-        questionAudioRef.current = null;
-      };
+    // Find and highlight matching words
+    const walker = document.createTreeWalker(
+      element,
+      NodeFilter.SHOW_TEXT,
+      null
+    );
+
+    const textNodes: Text[] = [];
+    let node;
+    while ((node = walker.nextNode())) {
+      if (node.nodeType === Node.TEXT_NODE && node.textContent) {
+        textNodes.push(node as Text);
+      }
     }
-  }, [currentQuestionIndex, currentQuestion?.audioUrl]);
+
+    textNodes.forEach((textNode) => {
+      const text = textNode.textContent || '';
+      const words = text.split(/(\s+)/);
+      
+      let newHTML = '';
+      words.forEach((word) => {
+        if (word.trim() && normalizeWord(word) === targetWord) {
+          newHTML += `<span data-audio-highlight style="background: linear-gradient(120deg, rgba(59, 130, 246, 0.35) 0%, rgba(59, 130, 246, 0.55) 100%); background-size: 100% 85%; background-position: center; background-repeat: no-repeat; color: #fef08a; border-radius: 3px; text-shadow: 0 0 10px rgba(251, 191, 36, 0.7), 0 0 15px rgba(59, 130, 246, 0.5); transition: background 0.15s ease, color 0.15s ease, text-shadow 0.15s ease;">${word}</span>`;
+        } else {
+          newHTML += word;
+        }
+      });
+
+      if (newHTML !== text) {
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = newHTML;
+        const fragment = document.createDocumentFragment();
+        while (tempDiv.firstChild) {
+          fragment.appendChild(tempDiv.firstChild);
+        }
+        textNode.parentNode?.replaceChild(fragment, textNode);
+      }
+    });
+  };
+
+  // Helper to remove all highlights from an element
+  const removeHighlights = (element: HTMLElement | null) => {
+    if (!element) return;
+    const highlighted = element.querySelectorAll('span[data-audio-highlight]');
+    highlighted.forEach((span) => {
+      const parent = span.parentNode;
+      if (parent) {
+        parent.replaceChild(document.createTextNode(span.textContent || ''), span);
+        parent.normalize();
+      }
+    });
+  };
+
+  // Reset highlights and refs when question changes
+  useEffect(() => {
+    setHighlightedWord(null);
+    // Clear options refs array - will be repopulated when options render
+    optionsRefs.current = new Array(currentQuestion?.options.length || 0).fill(null);
+    // Remove highlights from previous question
+    removeHighlights(questionRef.current);
+    const explanationEl = document.querySelector('[data-explanation-text]') as HTMLElement;
+    removeHighlights(explanationEl);
+  }, [currentQuestionIndex, currentQuestion]);
 
   const handleAnswerSelect = (index: number) => {
     if (showExplanation) return; // Prevent changing answer after submission
@@ -133,96 +165,9 @@ export default function Quiz({ questions, onComplete, showCharacter = true }: Qu
     } else {
       setCharacterAnimation("thumbs-down");
     }
-
-    // Stop question audio and play explanation audio
-    if (questionAudioRef.current) {
-      questionAudioRef.current.pause();
-      questionAudioRef.current.currentTime = 0;
-      questionAudioRef.current = null;
-    }
-
-    // Clean up previous explanation audio
-    if (explanationAudioRef.current) {
-      explanationAudioRef.current.pause();
-      explanationAudioRef.current.currentTime = 0;
-      explanationAudioRef.current = null;
-    }
-
-    // Play appropriate explanation audio based on whether answer is correct or incorrect
-    let audioUrlToPlay: string | null | undefined = null;
-    
-    if (correct) {
-      // Play correct explanation audio
-      audioUrlToPlay = currentQuestion?.correctExplanationAudioUrl || currentQuestion?.explanationAudioUrl;
-    } else {
-      // Play incorrect explanation audio for the selected option
-      const incorrectAudioUrls = currentQuestion?.incorrectExplanationAudioUrls;
-      if (incorrectAudioUrls && incorrectAudioUrls.length > selectedAnswer) {
-        audioUrlToPlay = incorrectAudioUrls[selectedAnswer];
-      }
-      // Fallback to old explanationAudioUrl if new format not available
-      if (!audioUrlToPlay) {
-        audioUrlToPlay = currentQuestion?.explanationAudioUrl;
-      }
-    }
-
-    if (audioUrlToPlay) {
-      const audio = new Audio(audioUrlToPlay);
-      explanationAudioRef.current = audio;
-      
-      // Handle audio loading errors
-      const handleError = () => {
-        if (audio.error) {
-          console.error('Explanation audio loading error:', {
-            code: audio.error.code,
-            message: audio.error.message,
-            src: audioUrlToPlay,
-          });
-          if (audio.error.code === audio.error.MEDIA_ERR_SRC_NOT_SUPPORTED || 
-              audio.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) {
-            console.warn('⚠️ Explanation audio file not found (404). On deployed servers, files may not persist. Consider using cloud storage.');
-          }
-        }
-      };
-      
-      audio.addEventListener('error', handleError);
-      
-      // Wait for audio to be ready before playing
-      const playAudio = () => {
-        audio.play().catch(err => {
-          // Only log if it's not an AbortError (which is expected during cleanup)
-          if (err.name !== 'AbortError') {
-            console.error('Error playing explanation audio:', err);
-          }
-        });
-      };
-
-      // Try to play when audio is ready
-      if (audio.readyState >= 2) {
-        // Audio is already loaded
-        playAudio();
-      } else {
-        // Wait for audio to load
-        audio.addEventListener('canplay', playAudio, { once: true });
-        audio.addEventListener('loadeddata', playAudio, { once: true });
-        audio.load();
-      }
-    }
   };
 
   const handleNext = () => {
-    // Stop any playing audio
-    if (questionAudioRef.current) {
-      questionAudioRef.current.pause();
-      questionAudioRef.current.currentTime = 0;
-      questionAudioRef.current = null;
-    }
-    if (explanationAudioRef.current) {
-      explanationAudioRef.current.pause();
-      explanationAudioRef.current.currentTime = 0;
-      explanationAudioRef.current = null;
-    }
-
     if (isLastQuestion) {
       // Show congratulations
       setCharacterAnimation("congratulations");
@@ -238,6 +183,39 @@ export default function Quiz({ questions, onComplete, showCharacter = true }: Qu
       setIsCorrect(false);
       setCurrentQuestionScore(0);
       setCharacterAnimation("idle");
+    }
+  };
+
+  // Get explanation audio URL and text
+  const getExplanationAudioUrl = () => {
+    if (isCorrect) {
+      return currentQuestion?.correctExplanationAudioUrl || currentQuestion?.explanationAudioUrl || null;
+    } else {
+      const incorrectAudioUrls = currentQuestion?.incorrectExplanationAudioUrls;
+      if (incorrectAudioUrls && Array.isArray(incorrectAudioUrls) && incorrectAudioUrls.length > selectedAnswer!) {
+        return incorrectAudioUrls[selectedAnswer!];
+      }
+      return currentQuestion?.explanationAudioUrl || null;
+    }
+  };
+
+  const getExplanationText = () => {
+    if (isCorrect) {
+      return currentQuestion.explanation.correct;
+    } else {
+      return currentQuestion.explanation.incorrect[selectedAnswer!] || currentQuestion.explanation.correct;
+    }
+  };
+
+  const getExplanationTimestampsUrl = () => {
+    if (isCorrect) {
+      return currentQuestion?.correctExplanationTimestampsUrl || currentQuestion?.explanationTimestampsUrl || null;
+    } else {
+      const incorrectTimestampsUrls = currentQuestion?.incorrectExplanationTimestampsUrls;
+      if (incorrectTimestampsUrls && Array.isArray(incorrectTimestampsUrls) && incorrectTimestampsUrls.length > selectedAnswer!) {
+        return incorrectTimestampsUrls[selectedAnswer!];
+      }
+      return currentQuestion?.explanationTimestampsUrl || null;
     }
   };
 
@@ -257,9 +235,12 @@ export default function Quiz({ questions, onComplete, showCharacter = true }: Qu
 
       {/* Question Card */}
       <div className="bg-[#1e3a5f] border border-blue-500/30 rounded-2xl p-6 md:p-8 shadow-2xl mb-6">
-        <h2 className="text-xl md:text-2xl font-semibold mb-6 text-white">
-          {currentQuestion.question}
-        </h2>
+        {/* Question Text - Clear and Prominent */}
+        <div className="mb-6" ref={questionRef}>
+          <h2 className="text-xl md:text-2xl font-semibold text-white leading-relaxed">
+            {currentQuestion.question}
+          </h2>
+        </div>
 
         {/* Options */}
         <div className="space-y-3 mb-6">
@@ -282,7 +263,7 @@ export default function Quiz({ questions, onComplete, showCharacter = true }: Qu
 
             return (
               <button
-                key={index}
+                key={`option-${currentQuestionIndex}-${index}`}
                 onClick={() => handleAnswerSelect(index)}
                 disabled={showExplanation}
                 className={optionClass}
@@ -311,26 +292,85 @@ export default function Quiz({ questions, onComplete, showCharacter = true }: Qu
                       <div className="w-3 h-3 bg-white rounded-full" />
                     )}
                   </div>
-                  <span className="flex-1">{option}</span>
+                  <span 
+                    className="flex-1 text-base" 
+                    ref={(el) => { 
+                      if (el) {
+                        optionsRefs.current[index] = el;
+                      }
+                    }}
+                  >
+                    {option}
+                  </span>
                 </div>
               </button>
             );
           })}
         </div>
 
+        {/* Question Audio Player - Controls Only at Bottom */}
+        {currentQuestion?.audioUrl && !showExplanation && (
+          <div className="mb-6 pt-4 border-t border-blue-500/20">
+            <AudioPlayer
+              key={`question-audio-${currentQuestionIndex}`}
+              text={questionText}
+              audioUrl={currentQuestion.audioUrl}
+              timestampsUrl={currentQuestion.timestampsUrl || undefined}
+              autoPlay={false}
+              hideText={true}
+              onHighlightedWord={handleHighlightedWord}
+            />
+          </div>
+        )}
+
         {/* Explanation */}
         {showExplanation && (
-          <div className={`p-4 rounded-lg mb-4 animate-slide-up ${
-            isCorrect ? "bg-green-500/20 border border-green-500/50" : "bg-red-500/20 border border-red-500/50"
+          <div className={`p-5 rounded-lg mb-6 animate-slide-up ${
+            isCorrect ? "bg-green-500/20 border-2 border-green-500/50" : "bg-red-500/20 border-2 border-red-500/50"
           }`}>
-            <p className={`font-semibold mb-2 ${isCorrect ? "text-green-300" : "text-red-300"}`}>
-              {isCorrect ? "Correct!" : "Incorrect"}
-            </p>
-            <p className="text-white text-sm md:text-base">
-              {isCorrect
-                ? currentQuestion.explanation.correct
-                : currentQuestion.explanation.incorrect[selectedAnswer!] || currentQuestion.explanation.correct}
-            </p>
+            <div className="flex items-center gap-2 mb-4">
+              {isCorrect ? (
+                <svg className="w-6 h-6 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+              ) : (
+                <svg className="w-6 h-6 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                </svg>
+              )}
+              <p className={`font-bold text-lg ${isCorrect ? "text-green-300" : "text-red-300"}`}>
+                {isCorrect ? "Correct Answer!" : "Incorrect Answer"}
+              </p>
+            </div>
+            
+            {/* Explanation Text with Highlighting Support */}
+            <div className="mb-4" data-explanation-text>
+              <p className="text-white text-base md:text-lg leading-relaxed">
+                {getExplanationText()}
+              </p>
+            </div>
+            
+            {/* Explanation Audio Player */}
+            {getExplanationAudioUrl() && (
+              <div className="pt-4 border-t border-white/10">
+                <AudioPlayer
+                  key={`explanation-audio-${currentQuestionIndex}-${isCorrect ? 'correct' : 'incorrect'}-${selectedAnswer}`}
+                  text={getExplanationText()}
+                  audioUrl={getExplanationAudioUrl() || undefined}
+                  timestampsUrl={getExplanationTimestampsUrl() || undefined}
+                  autoPlay={false}
+                  hideText={true}
+                  onHighlightedWord={(word) => {
+                    // Highlight words in explanation text
+                    const explanationElement = document.querySelector('[data-explanation-text]') as HTMLElement;
+                    if (explanationElement) {
+                      const normalizedWord = normalizeWord(word);
+                      highlightWordsInElement(explanationElement, normalizedWord);
+                    }
+                  }}
+                />
+              </div>
+            )}
           </div>
         )}
 

@@ -23,7 +23,10 @@ interface AudioPlayerProps {
   autoPlay?: boolean;
   onComplete?: () => void;
   onTimeUpdate?: (currentTime: number, duration: number) => void;
+  onPlayingChange?: (isPlaying: boolean) => void;
   highlightQuery?: string;
+  hideText?: boolean; // Hide text display, show only controls
+  onHighlightedWord?: (word: string, wordIndex: number) => void; // Callback when word is highlighted
 }
 
 export default function AudioPlayer({
@@ -33,7 +36,10 @@ export default function AudioPlayer({
   autoPlay = false,
   onComplete,
   onTimeUpdate,
+  onPlayingChange,
   highlightQuery,
+  hideText = false,
+  onHighlightedWord,
 }: AudioPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -42,7 +48,14 @@ export default function AudioPlayer({
   const [wordTimestamps, setWordTimestamps] = useState<WordTimestamp[]>([]);
   const [wordMap, setWordMap] = useState<Map<number, number>>(new Map());
   const [hasPlayed, setHasPlayed] = useState(false);
-  const [playbackRate, setPlaybackRate] = useState(1);
+  // Load playbackRate from localStorage on mount, default to 1
+  const [playbackRate, setPlaybackRate] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('audioPlaybackRate');
+      return saved ? parseFloat(saved) : 1;
+    }
+    return 1;
+  });
   const [showSpeedMenu, setShowSpeedMenu] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
   const wordsRef = useRef<HTMLSpanElement[]>([]);
@@ -392,6 +405,11 @@ export default function AudioPlayer({
       if (highlightedIndex !== lastHighlightedIndexRef.current) {
         lastHighlightedIndexRef.current = highlightedIndex;
         setHighlightedIndex(highlightedIndex);
+        
+        // Call onHighlightedWord callback if provided
+        if (onHighlightedWord && highlightedIndex >= 0 && highlightedIndex < words.length) {
+          onHighlightedWord(words[highlightedIndex], highlightedIndex);
+        }
       }
     };
 
@@ -408,6 +426,9 @@ export default function AudioPlayer({
       setIsPlaying(false);
       setCurrentTime(audio.duration); // Keep at end, don't reset
       setHighlightedIndex(wordsRefForHighlight.current.length - 1); // Keep last word highlighted
+      if (onPlayingChange) {
+        onPlayingChange(false);
+      }
       if (onComplete) {
         onComplete();
       }
@@ -433,6 +454,9 @@ export default function AudioPlayer({
             .then(() => {
               setIsPlaying(true);
               setHasPlayed(true);
+              if (onPlayingChange) {
+                onPlayingChange(true);
+              }
               console.log('✅ Audio started automatically');
             })
             .catch((error) => {
@@ -485,14 +509,30 @@ export default function AudioPlayer({
     };
   }, [audioUrl, autoPlay, hasPlayed, onTimeUpdate, onComplete]); // Removed playbackRate - handled separately
 
+  // Set initial playback rate from localStorage when audio loads
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (audio && audioUrl) {
+      // Restore saved playback rate when audio is ready
+      const savedRate = typeof window !== 'undefined' ? localStorage.getItem('audioPlaybackRate') : null;
+      if (savedRate) {
+        const rate = parseFloat(savedRate);
+        if (!isNaN(rate) && rate > 0) {
+          audio.playbackRate = rate;
+          setPlaybackRate(rate); // Sync state with actual audio playbackRate
+        }
+      } else {
+        // If no saved rate, ensure audio starts at 1.0
+        audio.playbackRate = 1;
+        setPlaybackRate(1);
+      }
+    }
+  }, [audioUrl]);
+
   // Update playback rate when it changes - this should NOT restart the audio
   useEffect(() => {
     const audio = audioRef.current;
     if (audio && audio.readyState >= 2) { // Only update if audio is loaded
-      // Store current playing state and time
-      const wasPlaying = !audio.paused;
-      const currentTime = audio.currentTime;
-      
       // Update playback rate
       audio.playbackRate = playbackRate;
       
@@ -523,6 +563,10 @@ export default function AudioPlayer({
 
   const handleSpeedChange = (speed: number) => {
     setPlaybackRate(speed);
+    // Save to localStorage for persistence across sections
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('audioPlaybackRate', speed.toString());
+    }
     setShowSpeedMenu(false);
   };
 
@@ -533,8 +577,16 @@ export default function AudioPlayer({
     if (isPlaying) {
       audio.pause();
       setIsPlaying(false);
+      if (onPlayingChange) {
+        onPlayingChange(false);
+      }
     } else {
-      audio.play().then(() => setIsPlaying(true)).catch(console.error);
+      audio.play().then(() => {
+        setIsPlaying(true);
+        if (onPlayingChange) {
+          onPlayingChange(true);
+        }
+      }).catch(console.error);
     }
   };
 
@@ -643,6 +695,7 @@ export default function AudioPlayer({
       )}
       
       {/* Text with highlighting - structured display with numbered items on separate lines */}
+      {!hideText && (
       <div className="text-white text-base md:text-lg leading-relaxed mb-4 min-h-[120px]">
         {textBlocks.map((block, blockIndex) => {
           // Split this block's text into words with spaces for highlighting
@@ -727,6 +780,7 @@ export default function AudioPlayer({
           );
         })}
       </div>
+      )}
 
       {/* Audio Controls */}
       <div className="flex items-center gap-4 mt-4">

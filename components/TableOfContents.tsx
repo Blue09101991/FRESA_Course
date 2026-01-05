@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 
 interface MenuItem {
@@ -16,13 +16,28 @@ interface MenuItem {
 interface TableOfContentsProps {
   items: MenuItem[];
   currentPath?: string;
+  activeSectionId?: string; // ID of the section currently playing audio
 }
 
-export default function TableOfContents({ items, currentPath }: TableOfContentsProps) {
+export default function TableOfContents({ items, currentPath, activeSectionId }: TableOfContentsProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [expandedChapters, setExpandedChapters] = useState<Set<string>>(new Set());
   const router = useRouter();
   const pathname = usePathname();
+
+  // Auto-expand chapters that contain the active section
+  useEffect(() => {
+    if (activeSectionId) {
+      items.forEach(item => {
+        if (item.isChapter && item.children) {
+          const hasActiveSection = item.children.some(child => child.sectionId === activeSectionId);
+          if (hasActiveSection && !expandedChapters.has(item.id)) {
+            setExpandedChapters(prev => new Set(prev).add(item.id));
+          }
+        }
+      });
+    }
+  }, [activeSectionId, items]);
 
   const toggleChapter = (chapterId: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -41,14 +56,25 @@ export default function TableOfContents({ items, currentPath }: TableOfContentsP
     if (item.sectionId) {
       // If it's a section, navigate to chapter and set the section
       e?.stopPropagation();
-      router.push(item.path);
+      
       // Store section ID in sessionStorage to be picked up by the chapter page
       sessionStorage.setItem('targetSection', item.sectionId);
-      setIsOpen(false);
-      // Small delay to ensure navigation happens, then scroll/update section
-      setTimeout(() => {
+      
+      // If we're already on the chapter page, just dispatch the event
+      // Otherwise, navigate first
+      if (pathname === item.path || currentPath === item.path) {
+        // Already on the page - just trigger section change
         window.dispatchEvent(new CustomEvent('navigateToSection', { detail: { sectionId: item.sectionId } }));
-      }, 100);
+      } else {
+        // Navigate to the chapter page first
+        router.push(item.path);
+        // Small delay to ensure navigation happens, then trigger section change
+        setTimeout(() => {
+          window.dispatchEvent(new CustomEvent('navigateToSection', { detail: { sectionId: item.sectionId } }));
+        }, 100);
+      }
+      
+      setIsOpen(false);
     } else if (item.isChapter) {
       // If it's a chapter, toggle expansion instead of navigating
       e?.stopPropagation();
@@ -83,7 +109,11 @@ export default function TableOfContents({ items, currentPath }: TableOfContentsP
           <h2 className="text-lg font-bold text-white mb-4 px-2">Course Navigation</h2>
           <nav className="space-y-1">
             {items.map((item) => {
-              const isExpanded = item.isChapter && expandedChapters.has(item.id);
+              // Auto-expand chapter if it contains the active section
+              const shouldAutoExpand = item.isChapter && item.children && item.children.some(child => 
+                activeSectionId === child.sectionId
+              );
+              const isExpanded = item.isChapter && (expandedChapters.has(item.id) || shouldAutoExpand);
               const hasChildren = item.children && item.children.length > 0;
               
               return (
@@ -126,12 +156,13 @@ export default function TableOfContents({ items, currentPath }: TableOfContentsP
                       <div className="pl-4 space-y-0.5">
                         {item.children?.map((child, index) => {
                           const isActive = pathname === child.path || currentPath === child.path;
+                          const isPlaying = activeSectionId === child.sectionId;
                           return (
                             <button
                               key={child.id}
                               onClick={(e) => handleNavigation(child, e)}
                               className={`w-full text-left px-3 py-1.5 rounded-md transition-all duration-300 ease-in-out ${
-                                isActive
+                                isActive || isPlaying
                                   ? "bg-blue-500/30 text-blue-200 font-medium border-l-2 border-blue-400 shadow-md"
                                   : "text-gray-400 hover:bg-blue-500/30 hover:text-white hover:translate-x-2 hover:shadow-lg hover:border-l-2 hover:border-blue-400/60"
                               } ${isExpanded ? 'animate-slide-in-left' : ''}`}
@@ -140,6 +171,11 @@ export default function TableOfContents({ items, currentPath }: TableOfContentsP
                               }}
                             >
                               <div className="flex items-center gap-2">
+                                {isPlaying && (
+                                  <svg className="w-3 h-3 text-blue-400 animate-pulse" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
+                                  </svg>
+                                )}
                                 <span className="text-xs leading-relaxed">{child.title}</span>
                               </div>
                             </button>
@@ -221,12 +257,13 @@ export default function TableOfContents({ items, currentPath }: TableOfContentsP
                           <div className="pl-6 space-y-1">
                             {item.children?.map((child, index) => {
                               const isActive = pathname === child.path || currentPath === child.path;
+                              const isPlaying = activeSectionId === child.sectionId;
                               return (
                                 <button
                                   key={child.id}
                                   onClick={(e) => handleNavigation(child, e)}
                                   className={`w-full text-left px-4 py-2 rounded-md transition-all duration-300 ease-in-out ${
-                                    isActive
+                                    isActive || isPlaying
                                       ? "bg-blue-500/30 text-blue-200 font-medium border-l-2 border-blue-400 shadow-md"
                                       : "text-gray-400 hover:bg-blue-500/30 hover:text-white hover:translate-x-2 hover:shadow-lg hover:border-l-2 hover:border-blue-400/60"
                                   } ${isExpanded ? 'animate-slide-in-left' : ''}`}
@@ -235,6 +272,11 @@ export default function TableOfContents({ items, currentPath }: TableOfContentsP
                                   }}
                                 >
                                   <div className="flex items-center gap-2">
+                                    {isPlaying && (
+                                      <svg className="w-3 h-3 text-blue-400 animate-pulse" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
+                                      </svg>
+                                    )}
                                     <span className="text-xs">{child.title}</span>
                                   </div>
                                 </button>
