@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyToken, canEdit } from '@/lib/auth'
-import { writeFile, mkdir } from 'fs/promises'
+import { writeFile, mkdir, readFile } from 'fs/promises'
 import { join } from 'path'
 import { existsSync } from 'fs'
+import { generateTimestampsWithWhisper, convertWhisperToOurFormat, checkWhisperDependencies } from '@/lib/whisper-timestamps'
 
 const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY
 // Voice IDs from environment variables with fallback to defaults
@@ -59,6 +60,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Generate audio using ElevenLabs TTS API
+    // First, generate the audio
     const audioResponse = await fetch(
       `https://api.elevenlabs.io/v1/text-to-speech/${selectedVoiceId}`,
       {
@@ -71,7 +73,7 @@ export async function POST(request: NextRequest) {
         },
         body: JSON.stringify({
           text: text.trim(),
-          model_id: 'eleven_multilingual_v2', // Use multilingual v2 for best quality
+          model_id: 'eleven_multilingual_v2',
           voice_settings: {
             stability: 0.5,
             similarity_boost: 0.75,
@@ -124,7 +126,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Get audio as buffer
+    // Get audio as buffer (regular TTS endpoint returns binary audio)
     const audioBuffer = await audioResponse.arrayBuffer()
     const audioBytes = Buffer.from(audioBuffer)
 
@@ -188,45 +190,90 @@ export async function POST(request: NextRequest) {
     // Consider using a cloud storage service (S3, Cloudinary, etc.) for production
     // For now, return the URL but note that it may not be accessible on deployed servers
 
-    // Generate timestamps
-    // Estimate duration: MP3 files at 128kbps are approximately 1MB per minute
-    // For better accuracy, we estimate based on file size
-    // Note: For production, consider using ElevenLabs Speech to Text API for accurate word-level timestamps
-    const estimatedDurationSeconds = Math.max(1, (audioBytes.length / 1024 / 1024) * 60)
+    // Generate timestamps using Whisper (Python)
+    // This provides the most accurate word-level timestamps
+    let timestampsData: any = null
     
-    // Split text into words (preserve spaces for display)
-    const textWords = text.trim().split(/(\s+)/)
-    const words = textWords.filter((w: string) => w.trim().length > 0)
+    // Check if Whisper is available
+    const whisperCheck = await checkWhisperDependencies()
     
-    // Calculate average speaking rate: ~150 words per minute
-    const wordsPerSecond = 150 / 60
-    const estimatedDurationFromText = words.length / wordsPerSecond
-    
-    // Use the longer of the two estimates (file size or text-based)
-    const finalDuration = Math.max(estimatedDurationSeconds, estimatedDurationFromText)
-    const avgWordDuration = finalDuration / words.length
-
-    const wordTimestamps = words.map((word: string, index: number) => {
-      const start = index * avgWordDuration
-      const end = (index + 1) * avgWordDuration
-      return {
-        text: word.trim(),
-        start: Math.max(0, Math.round(start * 1000) / 1000), // Convert to seconds with 3 decimal places
-        end: Math.round(end * 1000) / 1000,
-        confidence: 1.0,
+    if (whisperCheck.whisperAvailable) {
+      try {
+        console.log('🔄 Generating timestamps using Whisper...')
+        
+        // Prepare paths
+        const timestampsDir = 'public/timestamps'
+        const timestampsPath = join(process.cwd(), timestampsDir)
+        
+        if (!existsSync(timestampsPath)) {
+          await mkdir(timestampsPath, { recursive: true })
+        }
+        
+        const timestampsFileName = `${timestamp}-${sanitizedText}.timestamps.json`
+        const timestampsFilePath = join(timestampsPath, timestampsFileName)
+        
+        // Generate timestamps using Whisper
+        await generateTimestampsWithWhisper(
+          audioFilePath, // Full path to audio file
+          timestampsFilePath, // Full path to output JSON
+          'base', // Model: tiny, base, small, medium, large (base is good balance)
+          'en' // Language
+        )
+        
+        // Read the generated Whisper JSON
+        const whisperData = JSON.parse(await readFile(timestampsFilePath, 'utf-8'))
+        
+        // Convert Whisper format to our format
+        timestampsData = convertWhisperToOurFormat(whisperData, text)
+        
+        console.log('✅ Whisper timestamps generated successfully:', {
+          wordCount: timestampsData.segments[0]?.words?.length || 0,
+        })
+        
+      } catch (whisperError: any) {
+        console.warn('⚠️ Whisper timestamp generation failed:', whisperError.message)
+        console.warn('⚠️ Falling back to estimated timestamps')
       }
-    }).filter((w: { text: string }) => w.text.length > 0) // Filter out empty words
+    } else {
+      console.warn('⚠️ Whisper not available:', whisperCheck.error)
+      console.warn('⚠️ Using estimated timestamps. To enable Whisper:')
+      console.warn('   1. Install Python and ffmpeg')
+      console.warn('   2. Run: pip install -U whisper-timestamped')
+    }
+    
+    // Fallback: Use estimated timestamps if Whisper failed or is unavailable
+    if (!timestampsData) {
+      console.log('📊 Using estimated timestamps (fallback)')
+      
+      const estimatedDurationSeconds = Math.max(1, (audioBytes.length / 1024 / 1024) * 60)
+      const textWords = text.trim().split(/\s+/).filter((w: string) => w.length > 0)
+      const wordsPerSecond = 150 / 60 // Average speaking rate
+      const estimatedDurationFromText = textWords.length / wordsPerSecond
+      const finalDuration = Math.max(estimatedDurationSeconds, estimatedDurationFromText)
+      const avgWordDuration = finalDuration / textWords.length
 
-    const timestampsData = {
-      text: text.trim(),
-      segments: [
-        {
-          words: wordTimestamps,
-        },
-      ],
+      const wordTimestamps = textWords.map((word: string, index: number) => {
+        const start = index * avgWordDuration
+        const end = (index + 1) * avgWordDuration
+        return {
+          text: word.trim(),
+          start: Math.max(0, Math.round(start * 1000) / 1000),
+          end: Math.round(end * 1000) / 1000,
+          confidence: 1.0,
+        }
+      })
+
+      timestampsData = {
+        text: text.trim(),
+        segments: [
+          {
+            words: wordTimestamps,
+          },
+        ],
+      }
     }
 
-    // Save timestamps file
+    // Save timestamps file (if not already saved by Whisper)
     const timestampsDir = 'public/timestamps'
     const timestampsPath = join(process.cwd(), timestampsDir)
 
@@ -236,7 +283,11 @@ export async function POST(request: NextRequest) {
 
     const timestampsFileName = `${timestamp}-${sanitizedText}.timestamps.json`
     const timestampsFilePath = join(timestampsPath, timestampsFileName)
-    await writeFile(timestampsFilePath, JSON.stringify(timestampsData, null, 2))
+    
+    // Only write if file doesn't exist (Whisper already created it)
+    if (!existsSync(timestampsFilePath)) {
+      await writeFile(timestampsFilePath, JSON.stringify(timestampsData, null, 2))
+    }
 
     // In Next.js, files in public/ are served from root, so remove 'public/' from URL
     const timestampsUrl = `/timestamps/${timestampsFileName}`

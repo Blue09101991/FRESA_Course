@@ -147,7 +147,7 @@ export default function AudioPlayer({
         fetch(timestampsUrl, { signal: controller.signal })
         .then((res) => res.json())
         .then((data: TimestampsData) => {
-          // Extract all words from segments
+          // Extract all words from segments - these are the ACTUAL spoken words with timestamps
           const allWords: WordTimestamp[] = [];
           data.segments.forEach((segment) => {
             allWords.push(...segment.words);
@@ -155,168 +155,108 @@ export default function AudioPlayer({
           setWordTimestamps(allWords);
 
           // Create a map from text word index to timestamp word index
-          // This handles slight differences in text (e.g., "Nister" vs "Mr")
+          // Use timestamp words as the source of truth - they represent what was actually spoken
           const map = new Map<number, number>();
-          let timestampIndex = 0;
           
-          // Improved word matching algorithm for better accuracy
-          const normalizeWord = (word: string) => 
-            word.replace(/[.,!?;:'"]/g, '').toLowerCase().trim();
+          // Normalize word for comparison (remove punctuation, lowercase)
+          const normalizeWord = (word: string): string => {
+            return word.replace(/[.,!?;:'"()\[\]{}]/g, '').toLowerCase().trim();
+          };
           
-          // Helper to check if two words match (handles compound words and variations)
+          // More flexible word matching
           const wordsMatch = (textWord: string, timestampWord: string): boolean => {
             const textNorm = normalizeWord(textWord);
             const timestampNorm = normalizeWord(timestampWord);
             
-            // Exact match
+            // Exact match after normalization
             if (textNorm === timestampNorm) return true;
             
-            // Remove all punctuation and compare
+            // Remove all non-alphanumeric characters and compare
             const textClean = textNorm.replace(/[^a-z0-9]/g, '');
             const timestampClean = timestampNorm.replace(/[^a-z0-9]/g, '');
             if (textClean === timestampClean && textClean.length > 0) return true;
             
-            // Handle variations like "pre-license" vs "pre-licensed" (with/without 'd')
-            // Check if one is a prefix of the other (for word variations)
-            if (textClean.length > 3 && timestampClean.length > 3) {
-              const minLen = Math.min(textClean.length, timestampClean.length);
-              const textPrefix = textClean.substring(0, minLen);
-              const timestampPrefix = timestampClean.substring(0, minLen);
-              if (textPrefix === timestampPrefix && Math.abs(textClean.length - timestampClean.length) <= 2) {
-                return true; // Very similar words (like "license" vs "licensed")
-              }
-            }
-            
-            // Handle compound words: "homeownership" matches "home ownership"
-            // Check if text word contains timestamp word or vice versa
-            if (textClean.length > 5 && timestampClean.length > 3) {
+            // Handle cases where one word contains the other (e.g., "Mr." vs "Mr")
+            if (textClean.length > 0 && timestampClean.length > 0) {
               if (textClean.includes(timestampClean) || timestampClean.includes(textClean)) {
-                return true;
-              }
-            }
-            
-            // Handle common word variations (e.g., "license" vs "licensed")
-            const commonSuffixes = ['ed', 'ing', 's', 'es'];
-            for (const suffix of commonSuffixes) {
-              if (textClean + suffix === timestampClean || timestampClean + suffix === textClean) {
-                return true;
+                // Only match if lengths are similar (within 3 characters)
+                if (Math.abs(textClean.length - timestampClean.length) <= 3) {
+                  return true;
+                }
               }
             }
             
             return false;
           };
           
-          // Create a more flexible matching algorithm with better sequential matching
-          // Use a more lenient approach: try to match sequentially first, then search
-          for (let i = 0; i < words.length; i++) {
-            const word = words[i].trim();
-            if (!word) continue; // Skip whitespace
+          // CRITICAL: Use timestamp words as the PRIMARY source of truth
+          // They represent what was ACTUALLY spoken in the audio
+          // Match each timestamp word to the corresponding text word sequentially
+          
+          let timestampIndex = 0;
+          let textIndex = 0;
+          
+          // Simple sequential matching: go through timestamp words and match to text words
+          for (timestampIndex = 0; timestampIndex < allWords.length; timestampIndex++) {
+            const timestampWord = allWords[timestampIndex].text;
             
-            const normalizedWord = normalizeWord(word);
+            // Find the matching text word starting from current position
             let matched = false;
+            const searchWindow = 5; // Look ahead up to 5 words
             
-            // Try to find matching timestamp word
-            if (timestampIndex < allWords.length) {
-              const timestampWord = normalizeWord(allWords[timestampIndex].text);
-              
-              // Exact match - prioritize this
-              if (wordsMatch(word, allWords[timestampIndex].text)) {
-                map.set(i, timestampIndex);
-                timestampIndex++;
-                matched = true;
-                continue;
-              }
-              
-              // If exact match fails, try next timestamp word (might be punctuation or spacing issue)
-              if (timestampIndex + 1 < allWords.length) {
-                const nextTimestampWord = normalizeWord(allWords[timestampIndex + 1].text);
-                if (wordsMatch(word, allWords[timestampIndex + 1].text)) {
-                  map.set(i, timestampIndex + 1);
-                  timestampIndex += 2;
-                  matched = true;
-                  continue;
-                }
-              }
-              
-              // Handle compound words: check if current word matches combined next timestamp words
-              // e.g., "homeownership" (text) matches "home" + "ownership" (timestamps)
-              if (timestampIndex + 1 < allWords.length) {
-                const nextTimestampWord = normalizeWord(allWords[timestampIndex + 1].text);
-                const timestamp1Clean = timestampWord.replace(/[^a-z0-9]/g, '').toLowerCase();
-                const timestamp2Clean = nextTimestampWord.replace(/[^a-z0-9]/g, '').toLowerCase();
-                const combined = timestamp1Clean + timestamp2Clean;
-                const wordClean = normalizedWord.replace(/[^a-z0-9]/g, '').toLowerCase();
-                
-                // Check if compound word matches (text has compound, timestamp has split)
-                if (combined === wordClean) {
-                  // Map to first word, skip the second timestamp word
-                  map.set(i, timestampIndex);
-                  timestampIndex += 2; // Skip both "home" and "ownership"
-                  continue;
-                }
-                
-                // Also check reverse: if text word contains both timestamp words
-                if (wordClean.length >= combined.length - 2 && 
-                    wordClean.includes(timestamp1Clean) && 
-                    wordClean.includes(timestamp2Clean) &&
-                    wordClean.length <= combined.length + 2) {
-                  map.set(i, timestampIndex);
-                  timestampIndex += 2;
-                  continue;
-                }
-              }
-              
-              // Handle reverse: check if current + next text words match single timestamp word
-              // e.g., "home ownership" (text) matches "homeownership" (timestamp) - less common
-              if (i + 1 < words.length && timestampIndex < allWords.length) {
-                const nextTextWord = normalizeWord(words[i + 1]);
-                const combinedText = (normalizedWord.replace(/[^a-z0-9]/g, '') + nextTextWord.replace(/[^a-z0-9]/g, '')).toLowerCase();
-                const timestampClean = timestampWord.replace(/[^a-z0-9]/g, '').toLowerCase();
-                
-                if (combinedText === timestampClean && combinedText.length > 5) {
-                  // Both text words map to this single timestamp word
-                  map.set(i, timestampIndex);
-                  // Next iteration will handle the second text word
-                  timestampIndex++;
-                  continue;
-                }
-              }
-              
-              // Try to find the word in nearby timestamps (expanded search range)
-              let found = false;
-              const searchRange = 8; // Increased search range for better matching
-              for (let j = Math.max(0, timestampIndex - 2); 
-                   j < Math.min(allWords.length, timestampIndex + searchRange); 
-                   j++) {
-                if (wordsMatch(word, allWords[j].text)) {
-                  map.set(i, j);
-                  timestampIndex = j + 1;
-                  found = true;
-                  break;
-                }
-              }
-              
-              if (!found) {
-                // If no match found, try to advance timestamp index but keep word mapping
-                // This handles cases where timestamp has words not in text
-                if (timestampIndex < allWords.length - 1) {
-                  // Check if next timestamp word matches better
-                  const nextWord = timestampIndex + 1 < allWords.length ? 
-                    normalizeWord(allWords[timestampIndex + 1].text) : '';
-                  if (wordsMatch(word, allWords[timestampIndex + 1]?.text || '')) {
-                    map.set(i, timestampIndex + 1);
-                    timestampIndex += 2;
-                    continue;
+            for (let i = 0; i < searchWindow && textIndex + i < words.length; i++) {
+              const candidateTextWord = words[textIndex + i].trim();
+              if (candidateTextWord && wordsMatch(candidateTextWord, timestampWord)) {
+                // Found a match!
+                // Map all text words from current position to this match to the same timestamp
+                // (handles cases where text has extra words)
+                for (let j = 0; j <= i; j++) {
+                  if (textIndex + j < words.length && words[textIndex + j].trim()) {
+                    map.set(textIndex + j, timestampIndex);
                   }
                 }
-                // Fallback: map to current timestamp index
-                map.set(i, timestampIndex);
-                timestampIndex++;
+                textIndex += i + 1; // Move past the matched word
+                matched = true;
+                break;
               }
-            } else {
-              // If we've run out of timestamps, map to the last one
-              map.set(i, allWords.length - 1);
             }
+            
+            // If no match found, map current text word to this timestamp (best guess)
+            if (!matched && textIndex < words.length) {
+              if (words[textIndex].trim()) {
+                map.set(textIndex, timestampIndex);
+                textIndex++;
+              }
+            }
+          }
+          
+          // Map any remaining text words to the last timestamp
+          while (textIndex < words.length) {
+            if (words[textIndex].trim()) {
+              map.set(textIndex, allWords.length - 1);
+            }
+            textIndex++;
+          }
+          
+          // Log mapping for debugging
+          if (process.env.NODE_ENV === 'development') {
+            console.log('✅ Word mapping completed:', {
+              textWords: words.length,
+              timestampWords: allWords.length,
+              mappedWords: map.size,
+              sampleMappings: Array.from(map.entries()).slice(0, 10).map(([textIdx, tsIdx]) => ({
+                textWord: words[textIdx],
+                timestampWord: allWords[tsIdx]?.text,
+                timestampIdx: tsIdx,
+                timestampStart: allWords[tsIdx]?.start,
+                timestampEnd: allWords[tsIdx]?.end,
+              })),
+              firstFewTimestamps: allWords.slice(0, 5).map(ts => ({
+                text: ts.text,
+                start: ts.start,
+                end: ts.end,
+              })),
+            });
           }
           
           setWordMap(map);
@@ -383,75 +323,67 @@ export default function AudioPlayer({
 
       let highlightedIndex = -1;
       if (currentWordTimestamps.length > 0 && currentWordMap.size > 0) {
-        // Professional word highlighting algorithm
-        // Strategy: Follow EXACT timestamps from JSON file - no offsets, no early endings
-        // Highlight word when its start time is reached, move to next when end time is reached
+        // CRITICAL: Use timestamp words as PRIMARY source - they have EXACT timing
+        // Step 1: Find which TIMESTAMP word is currently being spoken (using exact timestamps)
+        // Step 2: Find which TEXT word corresponds to that timestamp word
         
-        let activeWordIndex = -1;
-        let nextWordIndex = -1;
-        let nextWordStart = Infinity;
+        let activeTimestampIndex = -1;
+        let closestTimestampIndex = -1;
+        let closestTimestampDistance = Infinity;
         
-        // First pass: Find word that should be highlighted based on EXACT timestamps
-        for (let i = 0; i < currentWords.length; i++) {
-          const timestampIndex = currentWordMap.get(i);
-          if (timestampIndex !== undefined && timestampIndex < currentWordTimestamps.length) {
-            const wordTimestamp = currentWordTimestamps[timestampIndex];
-            
-            // Use EXACT start and end times from timestamps JSON file
-            // Highlight if current time is >= word start AND < word end
-            if (current >= wordTimestamp.start && current < wordTimestamp.end) {
-              activeWordIndex = i;
-              break; // Found active word - use exact timestamps
-            }
-            
-            // Track the next word that's about to start (for smooth anticipation)
-            if (wordTimestamp.start > current && wordTimestamp.start < nextWordStart) {
-              nextWordStart = wordTimestamp.start;
-              nextWordIndex = i;
-            }
+        // Find the active timestamp word using EXACT timestamps from JSON
+        // These timestamps are the SOURCE OF TRUTH - they match the actual audio
+        for (let tsIdx = 0; tsIdx < currentWordTimestamps.length; tsIdx++) {
+          const wordTimestamp = currentWordTimestamps[tsIdx];
+          
+          // Use EXACT start and end times - highlight when current time is within range
+          // Note: We use >= for start and < for end to match exactly when word is spoken
+          if (current >= wordTimestamp.start && current < wordTimestamp.end) {
+            activeTimestampIndex = tsIdx;
+            break; // Found the active timestamp word - use it immediately
+          }
+          
+          // Track closest timestamp for fallback (if we're between words)
+          const distanceToStart = Math.abs(current - wordTimestamp.start);
+          if (distanceToStart < closestTimestampDistance) {
+            closestTimestampDistance = distanceToStart;
+            closestTimestampIndex = tsIdx;
           }
         }
         
-        // If we found an active word, use it (following exact timestamps)
-        if (activeWordIndex >= 0) {
-          highlightedIndex = activeWordIndex;
-        } 
-        // If we're very close to the next word (within 0.2s), highlight it slightly early for smooth transition
-        else if (nextWordIndex >= 0 && (nextWordStart - current) < 0.2) {
-          highlightedIndex = nextWordIndex;
-        }
-        // Fallback: Find the word we're closest to based on exact timestamps
-        else {
-          let closestIndex = -1;
-          let minDistance = Infinity;
-          
-          for (let i = 0; i < currentWords.length; i++) {
-            const timestampIndex = currentWordMap.get(i);
-            if (timestampIndex !== undefined && timestampIndex < currentWordTimestamps.length) {
-              const wordTimestamp = currentWordTimestamps[timestampIndex];
-              
-              // Use EXACT timestamps - check if we're within the word's time range
-              if (current >= wordTimestamp.start && current < wordTimestamp.end) {
-                highlightedIndex = i;
-                break; // Found word using exact timestamps
-              }
-              
-              // Calculate distance to word's start time (for fallback)
-              const distanceToStart = Math.abs(current - wordTimestamp.start);
-              if (distanceToStart < minDistance) {
-                minDistance = distanceToStart;
-                closestIndex = i;
-              }
+        // Use active timestamp if found, otherwise use closest one if very close
+        const targetTimestampIndex = activeTimestampIndex >= 0 
+          ? activeTimestampIndex 
+          : (closestTimestampIndex >= 0 && closestTimestampDistance < 0.1 ? closestTimestampIndex : -1);
+        
+        if (targetTimestampIndex >= 0) {
+          // Find the TEXT word that maps to this timestamp word
+          // Search through all text words to find which one maps to this timestamp
+          for (let textIdx = 0; textIdx < currentWords.length; textIdx++) {
+            const mappedTimestampIdx = currentWordMap.get(textIdx);
+            if (mappedTimestampIdx === targetTimestampIndex) {
+              highlightedIndex = textIdx;
+              break; // Found the matching text word
             }
           }
           
-          // Use closest word as fallback
-          if (highlightedIndex === -1 && closestIndex >= 0) {
-            highlightedIndex = closestIndex;
+          // If no exact match, find the closest text word
+          if (highlightedIndex === -1) {
+            let minDistance = Infinity;
+            for (let textIdx = 0; textIdx < currentWords.length; textIdx++) {
+              const mappedTimestampIdx = currentWordMap.get(textIdx);
+              if (mappedTimestampIdx !== undefined) {
+                const distance = Math.abs(mappedTimestampIdx - targetTimestampIndex);
+                if (distance < minDistance) {
+                  minDistance = distance;
+                  highlightedIndex = textIdx;
+                }
+              }
+            }
           }
         }
       } else if (audio.duration > 0) {
-        // Fallback to simple progress-based highlighting
+        // Fallback to simple progress-based highlighting if no timestamps available
         const progress = current / audio.duration;
         highlightedIndex = Math.floor(progress * currentWords.length);
       }
