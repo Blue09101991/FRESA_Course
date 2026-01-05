@@ -8,7 +8,7 @@ import Quiz, { QuizQuestion } from "@/components/Quiz";
 import StarsBackground from "@/components/StarsBackground";
 import TableOfContents from "@/components/TableOfContents";
 import Header from "@/components/Header";
-import AuthGuard from "@/components/AuthGuard";
+import RegistrationPrompt from "@/components/RegistrationPrompt";
 import { highlightText, highlightTextArray } from "@/lib/highlightText";
 
 // Lazy load AudioPlayer to improve initial page load
@@ -37,6 +37,8 @@ export default function Chapter1Page() {
   const [sections, setSections] = useState<Section[]>([]);
   const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>([]);
   const [searchHighlight, setSearchHighlight] = useState<string>("");
+  const [showRegistrationPrompt, setShowRegistrationPrompt] = useState(false);
+  const [quizScore, setQuizScore] = useState<{ score: number; total: number } | null>(null);
 
   useEffect(() => {
     fetchChapterData();
@@ -281,7 +283,21 @@ export default function Chapter1Page() {
       timestamp: new Date().toISOString(),
     };
     localStorage.setItem("chapter1Progress", JSON.stringify(progress));
-    router.push("/congratulations");
+    
+    // Check if user is authenticated
+    const token = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("auth-token="))
+      ?.split("=")[1];
+    
+    if (!token) {
+      // User is not authenticated - show registration prompt
+      setQuizScore({ score, total });
+      setShowRegistrationPrompt(true);
+    } else {
+      // User is authenticated - go to congratulations
+      router.push("/congratulations");
+    }
   };
 
   const currentSectionData = sections.find(s => s.id === currentSection);
@@ -289,8 +305,7 @@ export default function Chapter1Page() {
 
   if (showQuiz) {
     return (
-      <AuthGuard>
-        <main className="min-h-screen bg-gradient-to-b from-[#0a1a2e] via-[#1e3a5f] to-[#0a1a2e] relative overflow-hidden">
+      <main className="min-h-screen bg-gradient-to-b from-[#0a1a2e] via-[#1e3a5f] to-[#0a1a2e] relative overflow-hidden">
           <Header />
           <StarsBackground />
           <TableOfContents items={menuItems} currentPath="/chapter-1" />
@@ -304,14 +319,32 @@ export default function Chapter1Page() {
             <div className="text-white">No quiz questions available yet.</div>
           )}
         </div>
+        {showRegistrationPrompt && quizScore && (
+          <RegistrationPrompt
+            score={quizScore.score}
+            total={quizScore.total}
+            onRegister={() => {
+              setShowRegistrationPrompt(false);
+              sessionStorage.setItem("redirectAfterLogin", "/congratulations");
+              router.push("/signup");
+            }}
+            onLogin={() => {
+              setShowRegistrationPrompt(false);
+              sessionStorage.setItem("redirectAfterLogin", "/congratulations");
+              router.push("/login");
+            }}
+            onSkip={() => {
+              setShowRegistrationPrompt(false);
+              router.push("/congratulations");
+            }}
+          />
+        )}
       </main>
-      </AuthGuard>
     );
   }
 
   return (
-    <AuthGuard>
-      <main className="min-h-screen bg-gradient-to-b from-[#0a1a2e] via-[#1e3a5f] to-[#0a1a2e] relative overflow-hidden">
+    <main className="min-h-screen bg-gradient-to-b from-[#0a1a2e] via-[#1e3a5f] to-[#0a1a2e] relative overflow-hidden">
         <Header />
         <StarsBackground />
         <TableOfContents items={menuItems} currentPath="/chapter-1" />
@@ -424,6 +457,5 @@ export default function Chapter1Page() {
         </div>
       </div>
     </main>
-    </AuthGuard>
   );
 }

@@ -7,7 +7,6 @@ import AudioPlayer from "@/components/AudioPlayer";
 import StarsBackground from "@/components/StarsBackground";
 import TableOfContents from "@/components/TableOfContents";
 import Header from "@/components/Header";
-import AuthGuard from "@/components/AuthGuard";
 import { highlightText } from "@/lib/highlightText";
 
 export default function IntroductionPage() {
@@ -62,8 +61,7 @@ export default function IntroductionPage() {
   ];
 
   return (
-    <AuthGuard>
-      <main className="min-h-screen bg-gradient-to-b from-[#0a1a2e] via-[#1e3a5f] to-[#0a1a2e] relative overflow-hidden">
+    <main className="min-h-screen bg-gradient-to-b from-[#0a1a2e] via-[#1e3a5f] to-[#0a1a2e] relative overflow-hidden">
         <Header />
         <StarsBackground />
 
@@ -113,7 +111,6 @@ export default function IntroductionPage() {
         </button>
       </div>
     </main>
-    </AuthGuard>
   );
 }
 

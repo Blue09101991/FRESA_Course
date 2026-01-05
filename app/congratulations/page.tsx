@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import MrListings from "@/components/MrListings";
 import StarsBackground from "@/components/StarsBackground";
 import Header from "@/components/Header";
-import AuthGuard from "@/components/AuthGuard";
 
 export default function CongratulationsPage() {
   const router = useRouter();
@@ -30,8 +29,7 @@ export default function CongratulationsPage() {
   }, []);
 
   return (
-    <AuthGuard>
-      <main className="min-h-screen bg-gradient-to-b from-[#0a1a2e] via-[#1e3a5f] to-[#0a1a2e] relative overflow-hidden flex items-center justify-center p-4">
+    <main className="min-h-screen bg-gradient-to-b from-[#0a1a2e] via-[#1e3a5f] to-[#0a1a2e] relative overflow-hidden flex items-center justify-center p-4">
         <Header />
         {/* Stars background */}
         <StarsBackground />
@@ -92,7 +90,6 @@ export default function CongratulationsPage() {
         </div>
       </div>
     </main>
-    </AuthGuard>
   );
 }
 

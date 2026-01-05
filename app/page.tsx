@@ -20,37 +20,9 @@ export default function Home() {
   }, []);
 
   const handleGetStarted = async () => {
-    // Check if user is authenticated
-    const token = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("auth-token="))
-      ?.split("=")[1];
-
-    if (!token) {
-      // Store intended destination and redirect to login
-      sessionStorage.setItem("redirectAfterLogin", "/introduction");
-      router.push("/login");
-      return;
-    }
-
-    // Verify token is valid
-    try {
-      const response = await fetch("/api/auth/me", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        router.push("/introduction");
-      } else {
-        sessionStorage.setItem("redirectAfterLogin", "/introduction");
-        router.push("/login");
-      }
-    } catch (err) {
-      sessionStorage.setItem("redirectAfterLogin", "/introduction");
-      router.push("/login");
-    }
+    // Allow direct navigation to introduction without authentication
+    // Registration will be prompted after Chapter 1 completion
+    router.push("/introduction");
   };
 
   return (
