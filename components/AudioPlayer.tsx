@@ -447,8 +447,8 @@ export default function AudioPlayer({
           
           // Use EXACT start and end times - highlight when current time is within range
           // Note: We use >= for start and < for end to match exactly when word is spoken
-          // Add a small delay (0.05s) so highlighting is slightly behind speech for better visual sync
-          if (current >= wordTimestamp.start + 0.05 && current < wordTimestamp.end) {
+          // Anticipate slightly (0.03s before) so highlighting appears slightly ahead of speech for better visual sync
+          if (current >= wordTimestamp.start - 0.03 && current < wordTimestamp.end) {
             activeTimestampIndex = tsIdx;
             break; // Found the active timestamp word - use it immediately
           }
@@ -462,10 +462,10 @@ export default function AudioPlayer({
         }
         
         // Use active timestamp if found, otherwise use closest one if very close
-        // Slightly increased threshold to 0.08s to allow a small delay for better visual sync
+        // Reduced threshold to 0.05s to allow anticipation for better visual sync
         const targetTimestampIndex = activeTimestampIndex >= 0 
           ? activeTimestampIndex 
-          : (closestTimestampIndex >= 0 && closestTimestampDistance < 0.08 ? closestTimestampIndex : -1);
+          : (closestTimestampIndex >= 0 && closestTimestampDistance < 0.05 ? closestTimestampIndex : -1);
         
         if (targetTimestampIndex >= 0) {
           // Find the TEXT word that maps to this timestamp word
