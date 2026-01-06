@@ -405,7 +405,7 @@ export default function AudioPlayer({
 
   // Throttle updates to prevent excessive re-renders
   const lastUpdateTime = useRef<number>(0);
-  const updateInterval = 3; // Update every 3ms for very fast and responsive highlighting (reduced from 5ms for even faster response)
+  const updateInterval = 2; // Update every 2ms for extremely fast and responsive highlighting (reduced from 3ms for maximum speed)
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -447,8 +447,8 @@ export default function AudioPlayer({
           
           // Use EXACT start and end times - highlight when current time is within range
           // Note: We use >= for start and < for end to match exactly when word is spoken
-          // Anticipate more (0.12s before) so highlighting appears much faster/ahead of speech for better visual sync
-          if (current >= wordTimestamp.start - 0.12 && current < wordTimestamp.end + 0.08) {
+          // Anticipate much more (0.18s before) so highlighting appears very fast/ahead of speech for better visual sync
+          if (current >= wordTimestamp.start - 0.18 && current < wordTimestamp.end + 0.1) {
             activeTimestampIndex = tsIdx;
             break; // Found the active timestamp word - use it immediately
           }
