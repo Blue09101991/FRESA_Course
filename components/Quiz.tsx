@@ -43,7 +43,7 @@ export default function Quiz({ questions, onComplete, showCharacter = true, sear
   const [hasAutoPlayedQuestion, setHasAutoPlayedQuestion] = useState(false);
   const [hasAutoPlayedExplanation, setHasAutoPlayedExplanation] = useState(false);
   const questionRef = useRef<HTMLDivElement>(null);
-  const optionsRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const optionsRefs = useRef<(HTMLElement | null)[]>([]);
   const explanationRef = useRef<HTMLDivElement>(null);
 
   const currentQuestion = questions[currentQuestionIndex];

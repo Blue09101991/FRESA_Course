@@ -25,6 +25,7 @@ interface QuizQuestion {
     correct: string;
     incorrect: string[];
   };
+  chapterId?: string | null;
   audioUrl?: string | null;
   timestampsUrl?: string | null;
   explanationAudioUrl?: string | null;
