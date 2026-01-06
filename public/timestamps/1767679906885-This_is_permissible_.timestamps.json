@@ -1,0 +1,713 @@
+{
+  "text": " This is permissible, provided the broker does not represent the CMA as an appraisal. Real estate licensees are allowed to perform valuation services such as a comparative market analysis CMA for a fee. However, Florida law strictly prohibits referring to this report as an appraisal. A CMA is an estimate of value used primarily for marketing purposes, listing or selling, whereas an appraisal must strictly comply with USPAP, uniform standards of professional appraisal practice, and is usually required for financing purposes.",
+  "segments": [
+    {
+      "id": 0,
+      "seek": 0,
+      "start": 0.12,
+      "end": 4.2,
+      "text": " This is permissible, provided the broker does not represent the CMA as an appraisal.",
+      "tokens": [
+        50364,
+        639,
+        307,
+        4784,
+        41073,
+        11,
+        5649,
+        264,
+        26502,
+        775,
+        406,
+        2906,
+        264,
+        383,
+        9998,
+        382,
+        364,
+        724,
+        20769,
+        304,
+        13,
+        50604
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.14743838590734146,
+      "compression_ratio": 1.6447876447876448,
+      "no_speech_prob": 0.007526411209255457,
+      "confidence": 0.963,
+      "words": [
+        {
+          "text": "This",
+          "start": 0.12,
+          "end": 0.22,
+          "confidence": 0.96
+        },
+        {
+          "text": "is",
+          "start": 0.22,
+          "end": 0.36,
+          "confidence": 0.985
+        },
+        {
+          "text": "permissible,",
+          "start": 0.36,
+          "end": 0.86,
+          "confidence": 0.981
+        },
+        {
+          "text": "provided",
+          "start": 1.1,
+          "end": 1.34,
+          "confidence": 0.956
+        },
+        {
+          "text": "the",
+          "start": 1.34,
+          "end": 1.56,
+          "confidence": 0.969
+        },
+        {
+          "text": "broker",
+          "start": 1.56,
+          "end": 1.82,
+          "confidence": 0.994
+        },
+        {
+          "text": "does",
+          "start": 1.82,
+          "end": 2.06,
+          "confidence": 0.943
+        },
+        {
+          "text": "not",
+          "start": 2.06,
+          "end": 2.24,
+          "confidence": 0.991
+        },
+        {
+          "text": "represent",
+          "start": 2.24,
+          "end": 2.7,
+          "confidence": 0.88
+        },
+        {
+          "text": "the",
+          "start": 2.7,
+          "end": 2.92,
+          "confidence": 0.953
+        },
+        {
+          "text": "CMA",
+          "start": 2.92,
+          "end": 3.3,
+          "confidence": 0.929
+        },
+        {
+          "text": "as",
+          "start": 3.3,
+          "end": 3.52,
+          "confidence": 0.975
+        },
+        {
+          "text": "an",
+          "start": 3.52,
+          "end": 3.64,
+          "confidence": 0.984
+        },
+        {
+          "text": "appraisal.",
+          "start": 3.64,
+          "end": 4.2,
+          "confidence": 0.975
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "seek": 0,
+      "start": 4.84,
+      "end": 11.26,
+      "text": " Real estate licensees are allowed to perform valuation services such as a comparative market analysis CMA for a fee.",
+      "tokens": [
+        50604,
+        8467,
+        9749,
+        10476,
+        279,
+        366,
+        4350,
+        281,
+        2042,
+        38546,
+        3328,
+        1270,
+        382,
+        257,
+        39292,
+        2142,
+        5215,
+        383,
+        9998,
+        337,
+        257,
+        12054,
+        13,
+        50956
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.14743838590734146,
+      "compression_ratio": 1.6447876447876448,
+      "no_speech_prob": 0.007526411209255457,
+      "confidence": 0.845,
+      "words": [
+        {
+          "text": "Real",
+          "start": 4.84,
+          "end": 5.06,
+          "confidence": 0.967
+        },
+        {
+          "text": "estate",
+          "start": 5.06,
+          "end": 5.34,
+          "confidence": 0.871
+        },
+        {
+          "text": "licensees",
+          "start": 5.34,
+          "end": 6.04,
+          "confidence": 0.803
+        },
+        {
+          "text": "are",
+          "start": 6.04,
+          "end": 6.22,
+          "confidence": 0.996
+        },
+        {
+          "text": "allowed",
+          "start": 6.22,
+          "end": 6.46,
+          "confidence": 0.993
+        },
+        {
+          "text": "to",
+          "start": 6.46,
+          "end": 6.66,
+          "confidence": 0.988
+        },
+        {
+          "text": "perform",
+          "start": 6.66,
+          "end": 6.94,
+          "confidence": 0.982
+        },
+        {
+          "text": "valuation",
+          "start": 6.94,
+          "end": 7.4,
+          "confidence": 0.965
+        },
+        {
+          "text": "services",
+          "start": 7.4,
+          "end": 8.0,
+          "confidence": 0.99
+        },
+        {
+          "text": "such",
+          "start": 8.0,
+          "end": 8.38,
+          "confidence": 0.581
+        },
+        {
+          "text": "as",
+          "start": 8.38,
+          "end": 8.5,
+          "confidence": 0.973
+        },
+        {
+          "text": "a",
+          "start": 8.5,
+          "end": 8.6,
+          "confidence": 0.86
+        },
+        {
+          "text": "comparative",
+          "start": 8.6,
+          "end": 9.02,
+          "confidence": 0.866
+        },
+        {
+          "text": "market",
+          "start": 9.02,
+          "end": 9.36,
+          "confidence": 0.589
+        },
+        {
+          "text": "analysis",
+          "start": 9.36,
+          "end": 9.86,
+          "confidence": 0.717
+        },
+        {
+          "text": "CMA",
+          "start": 9.86,
+          "end": 10.52,
+          "confidence": 0.607
+        },
+        {
+          "text": "for",
+          "start": 10.52,
+          "end": 10.84,
+          "confidence": 0.933
+        },
+        {
+          "text": "a",
+          "start": 10.84,
+          "end": 11.0,
+          "confidence": 0.971
+        },
+        {
+          "text": "fee.",
+          "start": 11.0,
+          "end": 11.26,
+          "confidence": 0.989
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "seek": 0,
+      "start": 11.92,
+      "end": 16.04,
+      "text": " However, Florida law strictly prohibits referring to this report as an appraisal.",
+      "tokens": [
+        50956,
+        2908,
+        11,
+        9117,
+        2101,
+        20792,
+        16015,
+        1208,
+        13761,
+        281,
+        341,
+        2275,
+        382,
+        364,
+        724,
+        20769,
+        304,
+        13,
+        51200
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.14743838590734146,
+      "compression_ratio": 1.6447876447876448,
+      "no_speech_prob": 0.007526411209255457,
+      "confidence": 0.979,
+      "words": [
+        {
+          "text": "However,",
+          "start": 11.92,
+          "end": 12.2,
+          "confidence": 0.999
+        },
+        {
+          "text": "Florida",
+          "start": 12.52,
+          "end": 12.7,
+          "confidence": 0.933
+        },
+        {
+          "text": "law",
+          "start": 12.7,
+          "end": 13.02,
+          "confidence": 0.857
+        },
+        {
+          "text": "strictly",
+          "start": 13.02,
+          "end": 13.42,
+          "confidence": 0.946
+        },
+        {
+          "text": "prohibits",
+          "start": 13.42,
+          "end": 14.02,
+          "confidence": 0.995
+        },
+        {
+          "text": "referring",
+          "start": 14.02,
+          "end": 14.36,
+          "confidence": 0.992
+        },
+        {
+          "text": "to",
+          "start": 14.36,
+          "end": 14.6,
+          "confidence": 0.999
+        },
+        {
+          "text": "this",
+          "start": 14.6,
+          "end": 14.76,
+          "confidence": 0.997
+        },
+        {
+          "text": "report",
+          "start": 14.76,
+          "end": 15.06,
+          "confidence": 0.998
+        },
+        {
+          "text": "as",
+          "start": 15.06,
+          "end": 15.32,
+          "confidence": 0.997
+        },
+        {
+          "text": "an",
+          "start": 15.32,
+          "end": 15.44,
+          "confidence": 0.996
+        },
+        {
+          "text": "appraisal.",
+          "start": 15.44,
+          "end": 16.04,
+          "confidence": 0.997
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "seek": 0,
+      "start": 16.76,
+      "end": 21.82,
+      "text": " A CMA is an estimate of value used primarily for marketing purposes, listing or selling,",
+      "tokens": [
+        51200,
+        316,
+        383,
+        9998,
+        307,
+        364,
+        12539,
+        295,
+        2158,
+        1143,
+        10029,
+        337,
+        6370,
+        9932,
+        11,
+        22161,
+        420,
+        6511,
+        11,
+        51480
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.14743838590734146,
+      "compression_ratio": 1.6447876447876448,
+      "no_speech_prob": 0.007526411209255457,
+      "confidence": 0.961,
+      "words": [
+        {
+          "text": "A",
+          "start": 16.76,
+          "end": 16.9,
+          "confidence": 0.947
+        },
+        {
+          "text": "CMA",
+          "start": 16.9,
+          "end": 17.36,
+          "confidence": 0.996
+        },
+        {
+          "text": "is",
+          "start": 17.36,
+          "end": 17.56,
+          "confidence": 0.997
+        },
+        {
+          "text": "an",
+          "start": 17.56,
+          "end": 17.7,
+          "confidence": 0.996
+        },
+        {
+          "text": "estimate",
+          "start": 17.7,
+          "end": 18.04,
+          "confidence": 0.998
+        },
+        {
+          "text": "of",
+          "start": 18.04,
+          "end": 18.26,
+          "confidence": 0.999
+        },
+        {
+          "text": "value",
+          "start": 18.26,
+          "end": 18.6,
+          "confidence": 0.988
+        },
+        {
+          "text": "used",
+          "start": 18.6,
+          "end": 18.9,
+          "confidence": 0.993
+        },
+        {
+          "text": "primarily",
+          "start": 18.9,
+          "end": 19.46,
+          "confidence": 0.986
+        },
+        {
+          "text": "for",
+          "start": 19.46,
+          "end": 19.72,
+          "confidence": 0.984
+        },
+        {
+          "text": "marketing",
+          "start": 19.72,
+          "end": 20.08,
+          "confidence": 0.991
+        },
+        {
+          "text": "purposes,",
+          "start": 20.08,
+          "end": 20.66,
+          "confidence": 0.996
+        },
+        {
+          "text": "listing",
+          "start": 20.94,
+          "end": 21.14,
+          "confidence": 0.876
+        },
+        {
+          "text": "or",
+          "start": 21.14,
+          "end": 21.42,
+          "confidence": 0.697
+        },
+        {
+          "text": "selling,",
+          "start": 21.42,
+          "end": 21.82,
+          "confidence": 0.994
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "seek": 0,
+      "start": 22.4,
+      "end": 25.78,
+      "text": " whereas an appraisal must strictly comply with USPAP,",
+      "tokens": [
+        51480,
+        9735,
+        364,
+        724,
+        20769,
+        304,
+        1633,
+        20792,
+        27956,
+        365,
+        2546,
+        47,
+        4715,
+        11,
+        51668
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.14743838590734146,
+      "compression_ratio": 1.6447876447876448,
+      "no_speech_prob": 0.007526411209255457,
+      "confidence": 0.931,
+      "words": [
+        {
+          "text": "whereas",
+          "start": 22.4,
+          "end": 22.62,
+          "confidence": 0.95
+        },
+        {
+          "text": "an",
+          "start": 22.62,
+          "end": 22.82,
+          "confidence": 0.993
+        },
+        {
+          "text": "appraisal",
+          "start": 22.82,
+          "end": 23.3,
+          "confidence": 0.997
+        },
+        {
+          "text": "must",
+          "start": 23.3,
+          "end": 23.5,
+          "confidence": 0.997
+        },
+        {
+          "text": "strictly",
+          "start": 23.5,
+          "end": 23.9,
+          "confidence": 0.998
+        },
+        {
+          "text": "comply",
+          "start": 23.9,
+          "end": 24.38,
+          "confidence": 0.999
+        },
+        {
+          "text": "with",
+          "start": 24.38,
+          "end": 25.02,
+          "confidence": 0.972
+        },
+        {
+          "text": "USPAP,",
+          "start": 25.02,
+          "end": 25.78,
+          "confidence": 0.776
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "seek": 2608,
+      "start": 26.14,
+      "end": 31.48,
+      "text": " uniform standards of professional appraisal practice, and is usually required for financing purposes.",
+      "tokens": [
+        50364,
+        9452,
+        7787,
+        295,
+        4843,
+        724,
+        20769,
+        304,
+        3124,
+        11,
+        293,
+        307,
+        2673,
+        4739,
+        337,
+        22286,
+        9932,
+        13,
+        50656
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.22854852676391602,
+      "compression_ratio": 1.160919540229885,
+      "no_speech_prob": 0.00482516922056675,
+      "confidence": 0.964,
+      "words": [
+        {
+          "text": "uniform",
+          "start": 26.14,
+          "end": 26.44,
+          "confidence": 0.948
+        },
+        {
+          "text": "standards",
+          "start": 26.44,
+          "end": 26.98,
+          "confidence": 0.994
+        },
+        {
+          "text": "of",
+          "start": 26.98,
+          "end": 27.28,
+          "confidence": 0.995
+        },
+        {
+          "text": "professional",
+          "start": 27.28,
+          "end": 27.72,
+          "confidence": 0.995
+        },
+        {
+          "text": "appraisal",
+          "start": 27.72,
+          "end": 28.28,
+          "confidence": 0.997
+        },
+        {
+          "text": "practice,",
+          "start": 28.28,
+          "end": 28.7,
+          "confidence": 0.994
+        },
+        {
+          "text": "and",
+          "start": 29.2,
+          "end": 29.42,
+          "confidence": 0.665
+        },
+        {
+          "text": "is",
+          "start": 29.42,
+          "end": 29.54,
+          "confidence": 0.997
+        },
+        {
+          "text": "usually",
+          "start": 29.54,
+          "end": 29.8,
+          "confidence": 0.997
+        },
+        {
+          "text": "required",
+          "start": 29.8,
+          "end": 30.24,
+          "confidence": 0.991
+        },
+        {
+          "text": "for",
+          "start": 30.24,
+          "end": 30.5,
+          "confidence": 0.984
+        },
+        {
+          "text": "financing",
+          "start": 30.5,
+          "end": 30.9,
+          "confidence": 0.984
+        },
+        {
+          "text": "purposes.",
+          "start": 30.9,
+          "end": 31.48,
+          "confidence": 0.993
+        }
+      ]
+    }
+  ],
+  "language": "en",
+  "speech_activity": [
+    {
+      "start": 0.0,
+      "end": 32.0
+    }
+  ]
+}

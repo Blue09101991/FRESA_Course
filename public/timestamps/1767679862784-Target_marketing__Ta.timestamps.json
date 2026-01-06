@@ -1,0 +1,533 @@
+{
+  "text": " Target Marketing, target marketing involves defining a specific group of potential customers, prospects, and directing marketing efforts specifically toward them. Developing a database of prospects to send a tailored, specific message is a key component of this strategy. In real estate, farming is a common form of target marketing, where a licensee focuses on a specific demographic or geographic area.",
+  "segments": [
+    {
+      "id": 0,
+      "seek": 0,
+      "start": 0.1,
+      "end": 4.86,
+      "text": " Target Marketing, target marketing involves defining a specific group of potential customers,",
+      "tokens": [
+        50364,
+        24586,
+        27402,
+        11,
+        3779,
+        6370,
+        11626,
+        17827,
+        257,
+        2685,
+        1594,
+        295,
+        3995,
+        4581,
+        11,
+        50616
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.15792512893676758,
+      "compression_ratio": 1.7339055793991416,
+      "no_speech_prob": 0.004631423391401768,
+      "confidence": 0.84,
+      "words": [
+        {
+          "text": "Target",
+          "start": 0.1,
+          "end": 0.32,
+          "confidence": 0.964
+        },
+        {
+          "text": "Marketing,",
+          "start": 0.32,
+          "end": 0.8,
+          "confidence": 0.602
+        },
+        {
+          "text": "target",
+          "start": 1.02,
+          "end": 1.32,
+          "confidence": 0.535
+        },
+        {
+          "text": "marketing",
+          "start": 1.32,
+          "end": 1.74,
+          "confidence": 0.99
+        },
+        {
+          "text": "involves",
+          "start": 1.74,
+          "end": 2.2,
+          "confidence": 0.607
+        },
+        {
+          "text": "defining",
+          "start": 2.2,
+          "end": 2.72,
+          "confidence": 0.95
+        },
+        {
+          "text": "a",
+          "start": 2.72,
+          "end": 3.0,
+          "confidence": 0.93
+        },
+        {
+          "text": "specific",
+          "start": 3.0,
+          "end": 3.38,
+          "confidence": 0.99
+        },
+        {
+          "text": "group",
+          "start": 3.38,
+          "end": 3.72,
+          "confidence": 0.978
+        },
+        {
+          "text": "of",
+          "start": 3.72,
+          "end": 3.94,
+          "confidence": 0.93
+        },
+        {
+          "text": "potential",
+          "start": 3.94,
+          "end": 4.28,
+          "confidence": 0.912
+        },
+        {
+          "text": "customers,",
+          "start": 4.28,
+          "end": 4.86,
+          "confidence": 0.916
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "seek": 0,
+      "start": 5.0,
+      "end": 8.68,
+      "text": " prospects, and directing marketing efforts specifically toward them.",
+      "tokens": [
+        50616,
+        32933,
+        11,
+        293,
+        26979,
+        6370,
+        6484,
+        4682,
+        7361,
+        552,
+        13,
+        50800
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.15792512893676758,
+      "compression_ratio": 1.7339055793991416,
+      "no_speech_prob": 0.004631423391401768,
+      "confidence": 0.974,
+      "words": [
+        {
+          "text": "prospects,",
+          "start": 5.0,
+          "end": 5.56,
+          "confidence": 0.958
+        },
+        {
+          "text": "and",
+          "start": 6.1,
+          "end": 6.42,
+          "confidence": 0.977
+        },
+        {
+          "text": "directing",
+          "start": 6.42,
+          "end": 6.72,
+          "confidence": 0.996
+        },
+        {
+          "text": "marketing",
+          "start": 6.72,
+          "end": 7.16,
+          "confidence": 0.998
+        },
+        {
+          "text": "efforts",
+          "start": 7.16,
+          "end": 7.52,
+          "confidence": 0.941
+        },
+        {
+          "text": "specifically",
+          "start": 7.52,
+          "end": 8.08,
+          "confidence": 0.993
+        },
+        {
+          "text": "toward",
+          "start": 8.08,
+          "end": 8.46,
+          "confidence": 0.933
+        },
+        {
+          "text": "them.",
+          "start": 8.46,
+          "end": 8.68,
+          "confidence": 0.999
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "seek": 0,
+      "start": 9.62,
+      "end": 14.06,
+      "text": " Developing a database of prospects to send a tailored, specific message is a key component",
+      "tokens": [
+        50840,
+        11442,
+        278,
+        257,
+        8149,
+        295,
+        32933,
+        281,
+        2845,
+        257,
+        34858,
+        11,
+        2685,
+        3636,
+        307,
+        257,
+        2141,
+        6542,
+        51068
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.15792512893676758,
+      "compression_ratio": 1.7339055793991416,
+      "no_speech_prob": 0.004631423391401768,
+      "confidence": 0.956,
+      "words": [
+        {
+          "text": "Developing",
+          "start": 9.62,
+          "end": 10.04,
+          "confidence": 0.991
+        },
+        {
+          "text": "a",
+          "start": 10.04,
+          "end": 10.16,
+          "confidence": 0.999
+        },
+        {
+          "text": "database",
+          "start": 10.16,
+          "end": 10.5,
+          "confidence": 0.992
+        },
+        {
+          "text": "of",
+          "start": 10.5,
+          "end": 10.78,
+          "confidence": 0.999
+        },
+        {
+          "text": "prospects",
+          "start": 10.78,
+          "end": 11.22,
+          "confidence": 0.992
+        },
+        {
+          "text": "to",
+          "start": 11.22,
+          "end": 11.52,
+          "confidence": 0.991
+        },
+        {
+          "text": "send",
+          "start": 11.52,
+          "end": 11.7,
+          "confidence": 0.996
+        },
+        {
+          "text": "a",
+          "start": 11.7,
+          "end": 11.84,
+          "confidence": 0.993
+        },
+        {
+          "text": "tailored,",
+          "start": 11.84,
+          "end": 12.16,
+          "confidence": 0.991
+        },
+        {
+          "text": "specific",
+          "start": 12.34,
+          "end": 12.68,
+          "confidence": 0.628
+        },
+        {
+          "text": "message",
+          "start": 12.68,
+          "end": 13.14,
+          "confidence": 0.992
+        },
+        {
+          "text": "is",
+          "start": 13.14,
+          "end": 13.38,
+          "confidence": 0.959
+        },
+        {
+          "text": "a",
+          "start": 13.38,
+          "end": 13.5,
+          "confidence": 0.96
+        },
+        {
+          "text": "key",
+          "start": 13.5,
+          "end": 13.66,
+          "confidence": 0.984
+        },
+        {
+          "text": "component",
+          "start": 13.66,
+          "end": 14.06,
+          "confidence": 0.912
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "seek": 0,
+      "start": 14.1,
+      "end": 19.0,
+      "text": " of this strategy. In real estate, farming is a common form of target marketing,",
+      "tokens": [
+        51068,
+        295,
+        341,
+        5206,
+        13,
+        682,
+        957,
+        9749,
+        11,
+        16557,
+        307,
+        257,
+        2689,
+        1254,
+        295,
+        3779,
+        6370,
+        11,
+        51336
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.15792512893676758,
+      "compression_ratio": 1.7339055793991416,
+      "no_speech_prob": 0.004631423391401768,
+      "confidence": 0.96,
+      "words": [
+        {
+          "text": "of",
+          "start": 14.1,
+          "end": 14.26,
+          "confidence": 0.994
+        },
+        {
+          "text": "this",
+          "start": 14.26,
+          "end": 14.46,
+          "confidence": 0.993
+        },
+        {
+          "text": "strategy.",
+          "start": 14.46,
+          "end": 14.98,
+          "confidence": 0.999
+        },
+        {
+          "text": "In",
+          "start": 15.28,
+          "end": 15.92,
+          "confidence": 0.991
+        },
+        {
+          "text": "real",
+          "start": 15.92,
+          "end": 16.12,
+          "confidence": 0.88
+        },
+        {
+          "text": "estate,",
+          "start": 16.12,
+          "end": 16.46,
+          "confidence": 0.935
+        },
+        {
+          "text": "farming",
+          "start": 16.74,
+          "end": 17.06,
+          "confidence": 0.729
+        },
+        {
+          "text": "is",
+          "start": 17.06,
+          "end": 17.38,
+          "confidence": 0.999
+        },
+        {
+          "text": "a",
+          "start": 17.38,
+          "end": 17.52,
+          "confidence": 0.998
+        },
+        {
+          "text": "common",
+          "start": 17.52,
+          "end": 17.76,
+          "confidence": 0.999
+        },
+        {
+          "text": "form",
+          "start": 17.76,
+          "end": 18.08,
+          "confidence": 0.988
+        },
+        {
+          "text": "of",
+          "start": 18.08,
+          "end": 18.28,
+          "confidence": 0.998
+        },
+        {
+          "text": "target",
+          "start": 18.28,
+          "end": 18.54,
+          "confidence": 0.991
+        },
+        {
+          "text": "marketing,",
+          "start": 18.54,
+          "end": 19.0,
+          "confidence": 0.992
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "seek": 0,
+      "start": 19.06,
+      "end": 23.46,
+      "text": " where a licensee focuses on a specific demographic or geographic area.",
+      "tokens": [
+        51336,
+        689,
+        257,
+        10476,
+        68,
+        16109,
+        322,
+        257,
+        2685,
+        26331,
+        420,
+        32318,
+        1859,
+        13,
+        51856
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.15792512893676758,
+      "compression_ratio": 1.7339055793991416,
+      "no_speech_prob": 0.004631423391401768,
+      "confidence": 0.934,
+      "words": [
+        {
+          "text": "where",
+          "start": 19.06,
+          "end": 19.68,
+          "confidence": 0.806
+        },
+        {
+          "text": "a",
+          "start": 19.68,
+          "end": 19.82,
+          "confidence": 0.661
+        },
+        {
+          "text": "licensee",
+          "start": 19.82,
+          "end": 20.3,
+          "confidence": 0.931
+        },
+        {
+          "text": "focuses",
+          "start": 20.3,
+          "end": 20.66,
+          "confidence": 0.994
+        },
+        {
+          "text": "on",
+          "start": 20.66,
+          "end": 20.98,
+          "confidence": 0.999
+        },
+        {
+          "text": "a",
+          "start": 20.98,
+          "end": 21.14,
+          "confidence": 0.997
+        },
+        {
+          "text": "specific",
+          "start": 21.14,
+          "end": 21.48,
+          "confidence": 0.998
+        },
+        {
+          "text": "demographic",
+          "start": 21.48,
+          "end": 22.14,
+          "confidence": 0.999
+        },
+        {
+          "text": "or",
+          "start": 22.14,
+          "end": 22.46,
+          "confidence": 0.968
+        },
+        {
+          "text": "geographic",
+          "start": 22.46,
+          "end": 22.94,
+          "confidence": 0.995
+        },
+        {
+          "text": "area.",
+          "start": 22.94,
+          "end": 23.46,
+          "confidence": 0.998
+        }
+      ]
+    }
+  ],
+  "language": "en",
+  "speech_activity": [
+    {
+      "start": 0.0,
+      "end": 23.9543125
+    }
+  ]
+}

@@ -16,8 +16,6 @@ export default function IntroductionEditPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [uploadingAudio, setUploadingAudio] = useState(false);
-  const [uploadingTimestamps, setUploadingTimestamps] = useState(false);
   const [generatingAudio, setGeneratingAudio] = useState(false);
   const [introData, setIntroData] = useState<IntroductionData>({
     text: "Hello, future real estate professional. My name is Mr Listings. Welcome to my 63 hour pre-license education course for sales associates, approved by Florida Real Estate Commission.",
@@ -124,50 +122,6 @@ export default function IntroductionEditPage() {
     }
   };
 
-  const handleFileUpload = async (file: File, type: 'audio' | 'timestamps') => {
-    try {
-      if (type === 'audio') {
-        setUploadingAudio(true);
-      } else {
-        setUploadingTimestamps(true);
-      }
-
-      const token = getToken();
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('type', type);
-
-      const response = await fetch('/api/admin/upload', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        if (type === 'audio') {
-          setIntroData({ ...introData, audioUrl: data.url });
-        } else {
-          setIntroData({ ...introData, timestampsUrl: data.url });
-        }
-        alert(`File uploaded successfully! URL: ${data.url}`);
-      } else {
-        const error = await response.json();
-        alert(`Upload failed: ${error.error || 'Unknown error'}`);
-      }
-    } catch (err) {
-      console.error('Error uploading file:', err);
-      alert('Failed to upload file');
-    } finally {
-      if (type === 'audio') {
-        setUploadingAudio(false);
-      } else {
-        setUploadingTimestamps(false);
-      }
-    }
-  };
 
   const handleSave = async () => {
     setSaving(true);
@@ -256,66 +210,32 @@ export default function IntroductionEditPage() {
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 Audio URL
               </label>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={introData.audioUrl}
-                  onChange={(e) =>
-                    setIntroData({ ...introData, audioUrl: e.target.value })
-                  }
-                  className="flex-1 px-4 py-2 bg-[#0a0e27]/50 border border-purple-500/30 rounded-lg text-white"
-                  placeholder="/audio/intro.mp3"
-                />
-                <label className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-semibold rounded-lg cursor-pointer transition-all disabled:opacity-50 disabled:cursor-not-allowed">
-                  {uploadingAudio ? "Uploading..." : "📁 Upload"}
-                  <input
-                    type="file"
-                    accept=".mp3,audio/mpeg"
-                    className="hidden"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        handleFileUpload(file, 'audio');
-                      }
-                    }}
-                    disabled={uploadingAudio}
-                  />
-                </label>
-              </div>
-              <p className="text-xs text-gray-400 mt-1">Upload MP3 file or enter URL manually</p>
+              <input
+                type="text"
+                value={introData.audioUrl}
+                onChange={(e) =>
+                  setIntroData({ ...introData, audioUrl: e.target.value })
+                }
+                className="w-full px-4 py-2 bg-[#0a0e27]/50 border border-purple-500/30 rounded-lg text-white"
+                placeholder="/audio/intro.mp3"
+              />
+              <p className="text-xs text-gray-400 mt-1">Audio URL will be generated automatically when you click "Generate Audio & Timestamps"</p>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 Timestamps URL
               </label>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={introData.timestampsUrl}
-                  onChange={(e) =>
-                    setIntroData({ ...introData, timestampsUrl: e.target.value })
-                  }
-                  className="flex-1 px-4 py-2 bg-[#0a0e27]/50 border border-purple-500/30 rounded-lg text-white"
-                  placeholder="/timestamps/intro.timestamps.json"
-                />
-                <label className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold rounded-lg cursor-pointer transition-all disabled:opacity-50 disabled:cursor-not-allowed">
-                  {uploadingTimestamps ? "Uploading..." : "📁 Upload"}
-                  <input
-                    type="file"
-                    accept=".json,application/json"
-                    className="hidden"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        handleFileUpload(file, 'timestamps');
-                      }
-                    }}
-                    disabled={uploadingTimestamps}
-                  />
-                </label>
-              </div>
-              <p className="text-xs text-gray-400 mt-1">Upload JSON file or enter URL manually</p>
+              <input
+                type="text"
+                value={introData.timestampsUrl}
+                onChange={(e) =>
+                  setIntroData({ ...introData, timestampsUrl: e.target.value })
+                }
+                className="w-full px-4 py-2 bg-[#0a0e27]/50 border border-purple-500/30 rounded-lg text-white"
+                placeholder="/timestamps/intro.timestamps.json"
+              />
+              <p className="text-xs text-gray-400 mt-1">Timestamps URL will be generated automatically when you click "Generate Audio & Timestamps"</p>
             </div>
 
             <div className="flex gap-4 mt-6">

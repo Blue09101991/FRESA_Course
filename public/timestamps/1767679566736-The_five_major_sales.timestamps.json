@@ -1,0 +1,126 @@
+{
+  "text": " The five major sales specialties do not include agricultural, special use, commercial, businesses.",
+  "segments": [
+    {
+      "id": 0,
+      "seek": 0,
+      "start": 0.06,
+      "end": 8.12,
+      "text": " The five major sales specialties do not include agricultural, special use, commercial, businesses.",
+      "tokens": [
+        50364,
+        440,
+        1732,
+        2563,
+        5763,
+        2121,
+        6097,
+        360,
+        406,
+        4090,
+        19587,
+        11,
+        2121,
+        764,
+        11,
+        6841,
+        11,
+        6011,
+        13,
+        50796
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.3236925261361258,
+      "compression_ratio": 1.1529411764705881,
+      "no_speech_prob": 0.008936588652431965,
+      "confidence": 0.881,
+      "words": [
+        {
+          "text": "The",
+          "start": 0.06,
+          "end": 0.2,
+          "confidence": 0.942
+        },
+        {
+          "text": "five",
+          "start": 0.2,
+          "end": 0.46,
+          "confidence": 0.884
+        },
+        {
+          "text": "major",
+          "start": 0.46,
+          "end": 0.84,
+          "confidence": 0.996
+        },
+        {
+          "text": "sales",
+          "start": 0.84,
+          "end": 1.2,
+          "confidence": 0.969
+        },
+        {
+          "text": "specialties",
+          "start": 1.2,
+          "end": 1.9,
+          "confidence": 0.959
+        },
+        {
+          "text": "do",
+          "start": 1.9,
+          "end": 2.1,
+          "confidence": 0.975
+        },
+        {
+          "text": "not",
+          "start": 2.1,
+          "end": 2.32,
+          "confidence": 0.994
+        },
+        {
+          "text": "include",
+          "start": 2.32,
+          "end": 2.82,
+          "confidence": 0.988
+        },
+        {
+          "text": "agricultural,",
+          "start": 2.82,
+          "end": 3.92,
+          "confidence": 0.7
+        },
+        {
+          "text": "special",
+          "start": 4.46,
+          "end": 4.78,
+          "confidence": 0.776
+        },
+        {
+          "text": "use,",
+          "start": 4.78,
+          "end": 5.14,
+          "confidence": 0.975
+        },
+        {
+          "text": "commercial,",
+          "start": 5.6,
+          "end": 6.48,
+          "confidence": 0.681
+        },
+        {
+          "text": "businesses.",
+          "start": 7.04,
+          "end": 8.12,
+          "confidence": 0.668
+        }
+      ]
+    }
+  ],
+  "language": "en",
+  "speech_activity": [
+    {
+      "start": 0.0,
+      "end": 8.7249375
+    }
+  ]
+}

@@ -1,0 +1,682 @@
+{
+  "text": " appraisal. The process of developing an opinion of value, it is a regulated activity. When you become a sales associate, you may appraise properties for compensation, as long as you don't represent yourself as state certified or licensed appraiser, unless you also have an appraisal license. The Florida Real Estate Appraisal Board FRIB regulates state certified and licensed appraisers. Only a state certified or licensed appraiser can prepare an appraisal that involves a federally related transaction.",
+  "segments": [
+    {
+      "id": 0,
+      "seek": 0,
+      "start": 0.06,
+      "end": 5.96,
+      "text": " appraisal. The process of developing an opinion of value, it is a regulated activity.",
+      "tokens": [
+        50364,
+        724,
+        20769,
+        304,
+        13,
+        440,
+        1399,
+        295,
+        6416,
+        364,
+        4800,
+        295,
+        2158,
+        11,
+        309,
+        307,
+        257,
+        26243,
+        5191,
+        13,
+        50668
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.10714467672201303,
+      "compression_ratio": 1.8461538461538463,
+      "no_speech_prob": 0.060759928077459335,
+      "confidence": 0.942,
+      "words": [
+        {
+          "text": "appraisal.",
+          "start": 0.06,
+          "end": 0.7,
+          "confidence": 0.877
+        },
+        {
+          "text": "The",
+          "start": 1.14,
+          "end": 1.34,
+          "confidence": 0.927
+        },
+        {
+          "text": "process",
+          "start": 1.34,
+          "end": 1.84,
+          "confidence": 0.998
+        },
+        {
+          "text": "of",
+          "start": 1.84,
+          "end": 2.1,
+          "confidence": 0.998
+        },
+        {
+          "text": "developing",
+          "start": 2.1,
+          "end": 2.56,
+          "confidence": 0.981
+        },
+        {
+          "text": "an",
+          "start": 2.56,
+          "end": 2.88,
+          "confidence": 0.957
+        },
+        {
+          "text": "opinion",
+          "start": 2.88,
+          "end": 3.28,
+          "confidence": 0.986
+        },
+        {
+          "text": "of",
+          "start": 3.28,
+          "end": 3.44,
+          "confidence": 0.992
+        },
+        {
+          "text": "value,",
+          "start": 3.44,
+          "end": 3.86,
+          "confidence": 0.985
+        },
+        {
+          "text": "it",
+          "start": 4.1,
+          "end": 4.62,
+          "confidence": 0.841
+        },
+        {
+          "text": "is",
+          "start": 4.62,
+          "end": 4.74,
+          "confidence": 0.974
+        },
+        {
+          "text": "a",
+          "start": 4.74,
+          "end": 4.88,
+          "confidence": 0.981
+        },
+        {
+          "text": "regulated",
+          "start": 4.88,
+          "end": 5.38,
+          "confidence": 0.974
+        },
+        {
+          "text": "activity.",
+          "start": 5.38,
+          "end": 5.96,
+          "confidence": 0.875
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "seek": 0,
+      "start": 6.74,
+      "end": 10.88,
+      "text": " When you become a sales associate, you may appraise properties for compensation,",
+      "tokens": [
+        50696,
+        1133,
+        291,
+        1813,
+        257,
+        5763,
+        14644,
+        11,
+        291,
+        815,
+        724,
+        424,
+        908,
+        7221,
+        337,
+        19644,
+        11,
+        50940
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.10714467672201303,
+      "compression_ratio": 1.8461538461538463,
+      "no_speech_prob": 0.060759928077459335,
+      "confidence": 0.977,
+      "words": [
+        {
+          "text": "When",
+          "start": 6.74,
+          "end": 6.86,
+          "confidence": 0.995
+        },
+        {
+          "text": "you",
+          "start": 6.86,
+          "end": 7.0,
+          "confidence": 1.0
+        },
+        {
+          "text": "become",
+          "start": 7.0,
+          "end": 7.28,
+          "confidence": 0.998
+        },
+        {
+          "text": "a",
+          "start": 7.28,
+          "end": 7.52,
+          "confidence": 0.999
+        },
+        {
+          "text": "sales",
+          "start": 7.52,
+          "end": 7.82,
+          "confidence": 0.995
+        },
+        {
+          "text": "associate,",
+          "start": 7.82,
+          "end": 8.46,
+          "confidence": 0.993
+        },
+        {
+          "text": "you",
+          "start": 8.76,
+          "end": 9.06,
+          "confidence": 0.984
+        },
+        {
+          "text": "may",
+          "start": 9.06,
+          "end": 9.22,
+          "confidence": 0.999
+        },
+        {
+          "text": "appraise",
+          "start": 9.22,
+          "end": 9.62,
+          "confidence": 0.916
+        },
+        {
+          "text": "properties",
+          "start": 9.62,
+          "end": 10.04,
+          "confidence": 0.986
+        },
+        {
+          "text": "for",
+          "start": 10.04,
+          "end": 10.28,
+          "confidence": 0.994
+        },
+        {
+          "text": "compensation,",
+          "start": 10.28,
+          "end": 10.88,
+          "confidence": 0.989
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "seek": 0,
+      "start": 11.08,
+      "end": 16.35,
+      "text": " as long as you don't represent yourself as state certified or licensed appraiser,",
+      "tokens": [
+        50940,
+        382,
+        938,
+        382,
+        291,
+        500,
+        380,
+        2906,
+        1803,
+        382,
+        1785,
+        18580,
+        420,
+        25225,
+        724,
+        424,
+        6694,
+        11,
+        51204
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.10714467672201303,
+      "compression_ratio": 1.8461538461538463,
+      "no_speech_prob": 0.060759928077459335,
+      "confidence": 0.957,
+      "words": [
+        {
+          "text": "as",
+          "start": 11.08,
+          "end": 11.78,
+          "confidence": 0.999
+        },
+        {
+          "text": "long",
+          "start": 11.78,
+          "end": 12.0,
+          "confidence": 0.999
+        },
+        {
+          "text": "as",
+          "start": 12.0,
+          "end": 12.18,
+          "confidence": 0.999
+        },
+        {
+          "text": "you",
+          "start": 12.18,
+          "end": 12.28,
+          "confidence": 1.0
+        },
+        {
+          "text": "don't",
+          "start": 12.28,
+          "end": 12.52,
+          "confidence": 0.998
+        },
+        {
+          "text": "represent",
+          "start": 12.52,
+          "end": 12.96,
+          "confidence": 0.997
+        },
+        {
+          "text": "yourself",
+          "start": 12.96,
+          "end": 13.38,
+          "confidence": 0.996
+        },
+        {
+          "text": "as",
+          "start": 13.38,
+          "end": 13.68,
+          "confidence": 0.994
+        },
+        {
+          "text": "state",
+          "start": 13.68,
+          "end": 13.98,
+          "confidence": 0.945
+        },
+        {
+          "text": "certified",
+          "start": 13.98,
+          "end": 14.56,
+          "confidence": 0.888
+        },
+        {
+          "text": "or",
+          "start": 14.56,
+          "end": 14.98,
+          "confidence": 0.926
+        },
+        {
+          "text": "licensed",
+          "start": 14.98,
+          "end": 15.74,
+          "confidence": 0.895
+        },
+        {
+          "text": "appraiser,",
+          "start": 15.74,
+          "end": 16.35,
+          "confidence": 0.898
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "seek": 0,
+      "start": 16.35,
+      "end": 21.72,
+      "text": " unless you also have an appraisal license. The Florida Real Estate Appraisal Board FRIB",
+      "tokens": [
+        51204,
+        5969,
+        291,
+        611,
+        362,
+        364,
+        724,
+        20769,
+        304,
+        10476,
+        13,
+        440,
+        9117,
+        8467,
+        48097,
+        3132,
+        20769,
+        304,
+        10008,
+        479,
+        5577,
+        33,
+        51464
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.10714467672201303,
+      "compression_ratio": 1.8461538461538463,
+      "no_speech_prob": 0.060759928077459335,
+      "confidence": 0.856,
+      "words": [
+        {
+          "text": "unless",
+          "start": 16.35,
+          "end": 17.16,
+          "confidence": 0.998
+        },
+        {
+          "text": "you",
+          "start": 17.16,
+          "end": 17.34,
+          "confidence": 0.999
+        },
+        {
+          "text": "also",
+          "start": 17.34,
+          "end": 17.64,
+          "confidence": 0.99
+        },
+        {
+          "text": "have",
+          "start": 17.64,
+          "end": 17.86,
+          "confidence": 0.998
+        },
+        {
+          "text": "an",
+          "start": 17.86,
+          "end": 18.0,
+          "confidence": 0.997
+        },
+        {
+          "text": "appraisal",
+          "start": 18.0,
+          "end": 18.4,
+          "confidence": 0.973
+        },
+        {
+          "text": "license.",
+          "start": 18.4,
+          "end": 18.68,
+          "confidence": 0.988
+        },
+        {
+          "text": "The",
+          "start": 19.26,
+          "end": 19.56,
+          "confidence": 0.913
+        },
+        {
+          "text": "Florida",
+          "start": 19.56,
+          "end": 19.88,
+          "confidence": 0.957
+        },
+        {
+          "text": "Real",
+          "start": 19.88,
+          "end": 20.12,
+          "confidence": 0.733
+        },
+        {
+          "text": "Estate",
+          "start": 20.12,
+          "end": 20.36,
+          "confidence": 0.986
+        },
+        {
+          "text": "Appraisal",
+          "start": 20.36,
+          "end": 20.9,
+          "confidence": 0.825
+        },
+        {
+          "text": "Board",
+          "start": 20.9,
+          "end": 21.12,
+          "confidence": 0.88
+        },
+        {
+          "text": "FRIB",
+          "start": 21.12,
+          "end": 21.72,
+          "confidence": 0.541
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "seek": 0,
+      "start": 22.08,
+      "end": 27.5,
+      "text": " regulates state certified and licensed appraisers. Only a state certified or licensed appraiser",
+      "tokens": [
+        51464,
+        9837,
+        1024,
+        1785,
+        18580,
+        293,
+        25225,
+        724,
+        20769,
+        433,
+        13,
+        5686,
+        257,
+        1785,
+        18580,
+        420,
+        25225,
+        724,
+        424,
+        6694,
+        51740
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.10714467672201303,
+      "compression_ratio": 1.8461538461538463,
+      "no_speech_prob": 0.060759928077459335,
+      "confidence": 0.958,
+      "words": [
+        {
+          "text": "regulates",
+          "start": 22.08,
+          "end": 22.58,
+          "confidence": 0.994
+        },
+        {
+          "text": "state",
+          "start": 22.58,
+          "end": 22.9,
+          "confidence": 0.977
+        },
+        {
+          "text": "certified",
+          "start": 22.9,
+          "end": 23.38,
+          "confidence": 0.899
+        },
+        {
+          "text": "and",
+          "start": 23.38,
+          "end": 23.62,
+          "confidence": 0.897
+        },
+        {
+          "text": "licensed",
+          "start": 23.62,
+          "end": 23.88,
+          "confidence": 0.96
+        },
+        {
+          "text": "appraisers.",
+          "start": 23.88,
+          "end": 24.58,
+          "confidence": 0.971
+        },
+        {
+          "text": "Only",
+          "start": 25.08,
+          "end": 25.42,
+          "confidence": 0.929
+        },
+        {
+          "text": "a",
+          "start": 25.42,
+          "end": 25.56,
+          "confidence": 0.985
+        },
+        {
+          "text": "state",
+          "start": 25.56,
+          "end": 25.84,
+          "confidence": 0.99
+        },
+        {
+          "text": "certified",
+          "start": 25.84,
+          "end": 26.36,
+          "confidence": 0.993
+        },
+        {
+          "text": "or",
+          "start": 26.36,
+          "end": 26.56,
+          "confidence": 0.989
+        },
+        {
+          "text": "licensed",
+          "start": 26.56,
+          "end": 26.9,
+          "confidence": 0.978
+        },
+        {
+          "text": "appraiser",
+          "start": 26.9,
+          "end": 27.5,
+          "confidence": 0.92
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "seek": 2752,
+      "start": 27.52,
+      "end": 31.0,
+      "text": " can prepare an appraisal that involves a federally related transaction.",
+      "tokens": [
+        50364,
+        393,
+        5940,
+        364,
+        724,
+        20769,
+        304,
+        300,
+        11626,
+        257,
+        38024,
+        379,
+        4077,
+        14425,
+        13,
+        50864
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.2728048492880428,
+      "compression_ratio": 1.0597014925373134,
+      "no_speech_prob": 0.01917535811662674,
+      "confidence": 0.972,
+      "words": [
+        {
+          "text": "can",
+          "start": 27.52,
+          "end": 27.68,
+          "confidence": 0.999
+        },
+        {
+          "text": "prepare",
+          "start": 27.68,
+          "end": 27.96,
+          "confidence": 0.989
+        },
+        {
+          "text": "an",
+          "start": 27.96,
+          "end": 28.12,
+          "confidence": 0.998
+        },
+        {
+          "text": "appraisal",
+          "start": 28.12,
+          "end": 28.66,
+          "confidence": 0.992
+        },
+        {
+          "text": "that",
+          "start": 28.66,
+          "end": 29.12,
+          "confidence": 0.918
+        },
+        {
+          "text": "involves",
+          "start": 29.12,
+          "end": 29.44,
+          "confidence": 0.993
+        },
+        {
+          "text": "a",
+          "start": 29.44,
+          "end": 29.64,
+          "confidence": 0.996
+        },
+        {
+          "text": "federally",
+          "start": 29.64,
+          "end": 30.08,
+          "confidence": 0.999
+        },
+        {
+          "text": "related",
+          "start": 30.08,
+          "end": 30.36,
+          "confidence": 0.791
+        },
+        {
+          "text": "transaction.",
+          "start": 30.36,
+          "end": 31.0,
+          "confidence": 0.997
+        }
+      ]
+    }
+  ],
+  "language": "en",
+  "speech_activity": [
+    {
+      "start": 0.0,
+      "end": 31.5298125
+    }
+  ]
+}

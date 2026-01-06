@@ -802,9 +802,11 @@ export default function Chapter1Page() {
                         onPlayingChange={(isPlaying) => {
                           if (isPlaying) {
                             setActivePlayingSectionId(currentSection);
-                            // Mark as played to prevent re-playing
+                            // Mark as played to prevent auto-play from triggering again for this section
                             setHasAutoPlayedFirst(true);
                           } else {
+                            // Clear active section when paused
+                            // Note: Audio completion is handled by onComplete callback
                             setActivePlayingSectionId(null);
                           }
                         }}
@@ -851,9 +853,11 @@ export default function Chapter1Page() {
                         onPlayingChange={(isPlaying) => {
                           if (isPlaying) {
                             setActivePlayingSectionId(currentSection);
-                            // Mark as played to prevent re-playing
+                            // Mark as played to prevent auto-play from triggering again for this section
                             setHasAutoPlayedFirst(true);
                           } else {
+                            // Clear active section when paused
+                            // Note: Audio completion is handled by onComplete callback
                             setActivePlayingSectionId(null);
                           }
                         }}

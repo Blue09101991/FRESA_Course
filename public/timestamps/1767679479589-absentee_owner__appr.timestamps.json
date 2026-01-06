@@ -1,0 +1,278 @@
+{
+  "text": " absentee owner, appraisal, appraiser, broker price opinion, BPO, business broker, business opportunity, community association manager, Grady and Cam, comparative market analysis, CMA, dedication, farm area, target market.",
+  "segments": [
+    {
+      "id": 0,
+      "seek": 0,
+      "start": 0.0,
+      "end": 8.06,
+      "text": " absentee owner, appraisal, appraiser, broker price opinion, BPO, business broker, business",
+      "tokens": [
+        50364,
+        1950,
+        1576,
+        68,
+        7289,
+        11,
+        724,
+        20769,
+        304,
+        11,
+        724,
+        424,
+        6694,
+        11,
+        26502,
+        3218,
+        4800,
+        11,
+        363,
+        34885,
+        11,
+        1606,
+        26502,
+        11,
+        1606,
+        50770
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.30347144812868354,
+      "compression_ratio": 1.4733333333333334,
+      "no_speech_prob": 0.2880578637123108,
+      "confidence": 0.842,
+      "words": [
+        {
+          "text": "absentee",
+          "start": 0.0,
+          "end": 0.6,
+          "confidence": 0.872
+        },
+        {
+          "text": "owner,",
+          "start": 0.6,
+          "end": 0.88,
+          "confidence": 0.982
+        },
+        {
+          "text": "appraisal,",
+          "start": 1.2,
+          "end": 2.08,
+          "confidence": 0.943
+        },
+        {
+          "text": "appraiser,",
+          "start": 2.34,
+          "end": 3.16,
+          "confidence": 0.835
+        },
+        {
+          "text": "broker",
+          "start": 3.4,
+          "end": 4.0,
+          "confidence": 0.764
+        },
+        {
+          "text": "price",
+          "start": 4.0,
+          "end": 4.32,
+          "confidence": 0.784
+        },
+        {
+          "text": "opinion,",
+          "start": 4.32,
+          "end": 4.74,
+          "confidence": 0.633
+        },
+        {
+          "text": "BPO,",
+          "start": 5.14,
+          "end": 5.64,
+          "confidence": 0.732
+        },
+        {
+          "text": "business",
+          "start": 6.0,
+          "end": 6.74,
+          "confidence": 0.857
+        },
+        {
+          "text": "broker,",
+          "start": 6.74,
+          "end": 7.12,
+          "confidence": 0.975
+        },
+        {
+          "text": "business",
+          "start": 7.68,
+          "end": 8.06,
+          "confidence": 0.838
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "seek": 0,
+      "start": 8.06,
+      "end": 14.22,
+      "text": " opportunity, community association manager, Grady and Cam, comparative market analysis,",
+      "tokens": [
+        50770,
+        2650,
+        11,
+        1768,
+        14598,
+        6598,
+        11,
+        2606,
+        880,
+        293,
+        6886,
+        11,
+        39292,
+        2142,
+        5215,
+        11,
+        51104
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.30347144812868354,
+      "compression_ratio": 1.4733333333333334,
+      "no_speech_prob": 0.2880578637123108,
+      "confidence": 0.645,
+      "words": [
+        {
+          "text": "opportunity,",
+          "start": 8.06,
+          "end": 8.72,
+          "confidence": 0.941
+        },
+        {
+          "text": "community",
+          "start": 9.36,
+          "end": 9.72,
+          "confidence": 0.943
+        },
+        {
+          "text": "association",
+          "start": 9.72,
+          "end": 10.38,
+          "confidence": 0.984
+        },
+        {
+          "text": "manager,",
+          "start": 10.38,
+          "end": 10.92,
+          "confidence": 0.994
+        },
+        {
+          "text": "Grady",
+          "start": 11.36,
+          "end": 11.62,
+          "confidence": 0.294
+        },
+        {
+          "text": "and",
+          "start": 11.62,
+          "end": 11.78,
+          "confidence": 0.189
+        },
+        {
+          "text": "Cam,",
+          "start": 11.78,
+          "end": 12.1,
+          "confidence": 0.622
+        },
+        {
+          "text": "comparative",
+          "start": 12.76,
+          "end": 13.38,
+          "confidence": 0.929
+        },
+        {
+          "text": "market",
+          "start": 13.38,
+          "end": 13.7,
+          "confidence": 0.993
+        },
+        {
+          "text": "analysis,",
+          "start": 13.7,
+          "end": 14.22,
+          "confidence": 0.993
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "seek": 0,
+      "start": 14.58,
+      "end": 19.12,
+      "text": " CMA, dedication, farm area, target market.",
+      "tokens": [
+        51104,
+        383,
+        9998,
+        11,
+        21813,
+        11,
+        5421,
+        1859,
+        11,
+        3779,
+        2142,
+        13,
+        51325
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.30347144812868354,
+      "compression_ratio": 1.4733333333333334,
+      "no_speech_prob": 0.2880578637123108,
+      "confidence": 0.901,
+      "words": [
+        {
+          "text": "CMA,",
+          "start": 14.58,
+          "end": 15.08,
+          "confidence": 0.734
+        },
+        {
+          "text": "dedication,",
+          "start": 15.56,
+          "end": 16.44,
+          "confidence": 0.991
+        },
+        {
+          "text": "farm",
+          "start": 17.02,
+          "end": 17.68,
+          "confidence": 0.929
+        },
+        {
+          "text": "area,",
+          "start": 17.68,
+          "end": 18.06,
+          "confidence": 0.986
+        },
+        {
+          "text": "target",
+          "start": 18.46,
+          "end": 18.76,
+          "confidence": 0.991
+        },
+        {
+          "text": "market.",
+          "start": 18.76,
+          "end": 19.12,
+          "confidence": 0.995
+        }
+      ]
+    }
+  ],
+  "language": "en",
+  "speech_activity": [
+    {
+      "start": 0.0,
+      "end": 19.6440625
+    }
+  ]
+}

@@ -342,6 +342,7 @@ export default function ChapterEditPage() {
   const [generatingCorrectExplanationAudio, setGeneratingCorrectExplanationAudio] = useState(false);
   const [generatingIncorrectExplanationAudio, setGeneratingIncorrectExplanationAudio] = useState<number | null>(null);
   const [generatingAllAudio, setGeneratingAllAudio] = useState(false);
+  const [generatingAllChapterAudio, setGeneratingAllChapterAudio] = useState(false);
 
   const [questionForm, setQuestionForm] = useState<Partial<QuizQuestion>>({
     question: "",
@@ -985,6 +986,441 @@ export default function ChapterEditPage() {
     }
   };
 
+  // Generate all audio for entire chapter
+  const handleGenerateAllChapterAudio = async () => {
+    if (!chapter) {
+      alert("Chapter not loaded");
+      return;
+    }
+
+    try {
+      setGeneratingAllChapterAudio(true);
+      const token = getToken();
+      const results: string[] = [];
+      let successCount = 0;
+      let failCount = 0;
+
+      // 1. Generate audio for all sections
+      for (const section of sections) {
+        if (!section.text || section.text.trim().length === 0) {
+          results.push(`⏭️ Section "${section.title}": Skipped (no text)`);
+          continue;
+        }
+
+        try {
+          const response = await fetch('/api/admin/generate-audio', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              text: section.text.trim(),
+              type: 'both',
+              context: 'section' // Use man's voice for sections
+            }),
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            // Update section with generated audio - only update audio fields
+            const updateResponse = await fetch(`/api/admin/sections/${section.id}`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                sectionNumber: section.sectionNumber,
+                title: section.title,
+                text: section.text,
+                type: section.type,
+                order: section.order,
+                audioUrl: data.audioUrl,
+                timestampsUrl: data.timestampsUrl,
+              }),
+            });
+
+            if (updateResponse.ok) {
+              results.push(`✅ Section "${section.title}": ${data.audioUrl}`);
+              successCount++;
+            } else {
+              const updateError = await updateResponse.json();
+              results.push(`❌ Section "${section.title}": Generated but failed to update - ${updateError.error || 'Unknown error'}`);
+              failCount++;
+            }
+          } else {
+            const error = await response.json();
+            results.push(`❌ Section "${section.title}": ${error.error || 'Unknown error'}`);
+            failCount++;
+          }
+        } catch (err: any) {
+          results.push(`❌ Section "${section.title}": ${err.message || err}`);
+          failCount++;
+        }
+      }
+
+      // 2. Generate audio for all learning objectives (combined)
+      if (learningObjectives.length > 0) {
+        try {
+          const combinedText = learningObjectives.map((obj, idx) => `${idx + 1}. ${obj.text}`).join(". ");
+          const response = await fetch('/api/admin/generate-audio', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              text: combinedText,
+              type: 'both',
+              context: 'section' // Use man's voice for objectives
+            }),
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            // Update first objective with combined audio
+            if (learningObjectives.length > 0) {
+              const updateResponse = await fetch(`/api/admin/objectives/${learningObjectives[0].id}`, {
+                method: 'PUT',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                  text: learningObjectives[0].text,
+                  order: learningObjectives[0].order,
+                  audioUrl: data.audioUrl,
+                  timestampsUrl: data.timestampsUrl,
+                }),
+              });
+
+              if (updateResponse.ok) {
+                results.push(`✅ Learning Objectives (${learningObjectives.length}): ${data.audioUrl}`);
+                successCount++;
+              } else {
+                const updateError = await updateResponse.json();
+                results.push(`❌ Learning Objectives: Generated but failed to update - ${updateError.error || 'Unknown error'}`);
+                failCount++;
+              }
+            }
+          } else {
+            const error = await response.json();
+            results.push(`❌ Learning Objectives: ${error.error || 'Unknown error'}`);
+            failCount++;
+          }
+        } catch (err: any) {
+          results.push(`❌ Learning Objectives: ${err.message || err}`);
+          failCount++;
+        }
+      }
+
+      // 3. Generate audio for all key terms (combined)
+      if (keyTerms.length > 0) {
+        try {
+          const combinedText = keyTerms.map((term) => term.term).join(". ");
+          const response = await fetch('/api/admin/generate-audio', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              text: combinedText,
+              type: 'both',
+              context: 'section' // Use man's voice for key terms
+            }),
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            // Update first key term with combined audio
+            if (keyTerms.length > 0) {
+              const updateResponse = await fetch(`/api/admin/key-terms/${keyTerms[0].id}`, {
+                method: 'PUT',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                  term: keyTerms[0].term,
+                  order: keyTerms[0].order,
+                  audioUrl: data.audioUrl,
+                  timestampsUrl: data.timestampsUrl,
+                }),
+              });
+
+              if (updateResponse.ok) {
+                results.push(`✅ Key Terms (${keyTerms.length}): ${data.audioUrl}`);
+                successCount++;
+              } else {
+                const updateError = await updateResponse.json();
+                results.push(`❌ Key Terms: Generated but failed to update - ${updateError.error || 'Unknown error'}`);
+                failCount++;
+              }
+            }
+          } else {
+            const error = await response.json();
+            results.push(`❌ Key Terms: ${error.error || 'Unknown error'}`);
+            failCount++;
+          }
+        } catch (err: any) {
+          results.push(`❌ Key Terms: ${err.message || err}`);
+          failCount++;
+        }
+      }
+
+      // 4. Generate audio for all quiz questions
+      for (const question of quizQuestions) {
+        if (!question.question || !question.options || question.options.length < 2) {
+          results.push(`⏭️ Question: Skipped (incomplete)`);
+          continue;
+        }
+
+        // Fetch latest question data to avoid stale data issues
+        let currentQuestion = question;
+        try {
+          const questionFetchResponse = await fetch(`/api/admin/quiz-questions/${question.id}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          if (questionFetchResponse.ok) {
+            const questionData = await questionFetchResponse.json();
+            currentQuestion = questionData.question;
+          }
+        } catch (err) {
+          console.warn(`Failed to fetch latest question data for ${question.id}, using cached data`);
+        }
+
+        // Generate question + options audio
+        try {
+          const questionText = currentQuestion.question.trim();
+          const optionsText = currentQuestion.options.map((opt: string) => opt.trim()).join(". ");
+          const fullQuestionText = `${questionText}. ${optionsText}`;
+
+          const questionResponse = await fetch('/api/admin/generate-audio', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              text: fullQuestionText,
+              type: 'both',
+              context: 'quiz' // Use woman's voice for quiz
+            }),
+          });
+
+          if (questionResponse.ok) {
+            const questionData = await questionResponse.json();
+            
+            // Update question with audio - only update audio fields
+            const updateResponse = await fetch(`/api/admin/quiz-questions/${currentQuestion.id}`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                question: currentQuestion.question,
+                options: currentQuestion.options,
+                correctAnswer: currentQuestion.correctAnswer,
+                explanation: currentQuestion.explanation,
+                chapterId: currentQuestion.chapterId,
+                quizType: currentQuestion.quizType,
+                order: currentQuestion.order,
+                audioUrl: questionData.audioUrl,
+                timestampsUrl: questionData.timestampsUrl,
+              }),
+            });
+
+            if (updateResponse.ok) {
+              results.push(`✅ Question "${currentQuestion.question.substring(0, 30)}...": ${questionData.audioUrl}`);
+              successCount++;
+              // Update currentQuestion with new audio URLs
+              currentQuestion = { ...currentQuestion, audioUrl: questionData.audioUrl, timestampsUrl: questionData.timestampsUrl };
+            } else {
+              const updateError = await updateResponse.json();
+              results.push(`❌ Question "${currentQuestion.question.substring(0, 30)}...": Failed to update - ${updateError.error || 'Unknown error'}`);
+              failCount++;
+            }
+          } else {
+            const error = await questionResponse.json();
+            results.push(`❌ Question "${currentQuestion.question.substring(0, 30)}...": ${error.error || 'Unknown error'}`);
+            failCount++;
+          }
+        } catch (err: any) {
+          results.push(`❌ Question "${currentQuestion.question.substring(0, 30)}...": ${err.message || err}`);
+          failCount++;
+        }
+
+        // Generate correct explanation audio
+        if (currentQuestion.explanation?.correct?.trim()) {
+          try {
+            const correctResponse = await fetch('/api/admin/generate-audio', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                text: currentQuestion.explanation.correct.trim(),
+                type: 'both',
+                context: 'quiz'
+              }),
+            });
+
+            if (correctResponse.ok) {
+              const correctData = await correctResponse.json();
+              
+              // Update question with correct explanation audio - only update explanation audio fields
+              const updateResponse = await fetch(`/api/admin/quiz-questions/${currentQuestion.id}`, {
+                method: 'PUT',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                  question: currentQuestion.question,
+                  options: currentQuestion.options,
+                  correctAnswer: currentQuestion.correctAnswer,
+                  explanation: currentQuestion.explanation,
+                  chapterId: currentQuestion.chapterId,
+                  quizType: currentQuestion.quizType,
+                  order: currentQuestion.order,
+                  audioUrl: currentQuestion.audioUrl,
+                  timestampsUrl: currentQuestion.timestampsUrl,
+                  correctExplanationAudioUrl: correctData.audioUrl,
+                  correctExplanationTimestampsUrl: correctData.timestampsUrl,
+                }),
+              });
+
+              if (updateResponse.ok) {
+                results.push(`  ✅ Correct Explanation: ${correctData.audioUrl}`);
+                successCount++;
+                // Update currentQuestion with new explanation audio URLs
+                currentQuestion = { 
+                  ...currentQuestion, 
+                  correctExplanationAudioUrl: correctData.audioUrl, 
+                  correctExplanationTimestampsUrl: correctData.timestampsUrl 
+                };
+              } else {
+                const updateError = await updateResponse.json();
+                results.push(`  ❌ Correct Explanation: Failed to update - ${updateError.error || 'Unknown error'}`);
+                failCount++;
+              }
+            } else {
+              const error = await correctResponse.json();
+              results.push(`  ❌ Correct Explanation: ${error.error || 'Unknown error'}`);
+              failCount++;
+            }
+          } catch (err: any) {
+            results.push(`  ❌ Correct Explanation: ${err.message || err}`);
+            failCount++;
+          }
+        }
+
+        // Generate incorrect explanation audio for each option
+        if (currentQuestion.explanation?.incorrect && currentQuestion.explanation.incorrect.length > 0) {
+          const incorrectAudioUrls: string[] = [];
+          const incorrectTimestampsUrls: string[] = [];
+          let hasValidAudio = false;
+
+          for (let idx = 0; idx < currentQuestion.explanation.incorrect.length; idx++) {
+            const incorrectText = currentQuestion.explanation.incorrect[idx]?.trim();
+            if (!incorrectText) {
+              incorrectAudioUrls.push("");
+              incorrectTimestampsUrls.push("");
+              continue;
+            }
+
+            try {
+              const incorrectResponse = await fetch('/api/admin/generate-audio', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                  text: incorrectText,
+                  type: 'both',
+                  context: 'quiz'
+                }),
+              });
+
+              if (incorrectResponse.ok) {
+                const incorrectData = await incorrectResponse.json();
+                incorrectAudioUrls.push(incorrectData.audioUrl);
+                incorrectTimestampsUrls.push(incorrectData.timestampsUrl);
+                results.push(`  ✅ Option ${idx + 1} Incorrect Explanation: ${incorrectData.audioUrl}`);
+                successCount++;
+                hasValidAudio = true;
+              } else {
+                const error = await incorrectResponse.json();
+                incorrectAudioUrls.push("");
+                incorrectTimestampsUrls.push("");
+                results.push(`  ❌ Option ${idx + 1} Incorrect Explanation: ${error.error || 'Unknown error'}`);
+                failCount++;
+              }
+            } catch (err: any) {
+              incorrectAudioUrls.push("");
+              incorrectTimestampsUrls.push("");
+              results.push(`  ❌ Option ${idx + 1} Incorrect Explanation: ${err.message || err}`);
+              failCount++;
+            }
+          }
+
+          // Update question with incorrect explanation audio URLs - only if we have valid audio
+          if (hasValidAudio && incorrectAudioUrls.length > 0) {
+            try {
+              const updateResponse = await fetch(`/api/admin/quiz-questions/${currentQuestion.id}`, {
+                method: 'PUT',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                  question: currentQuestion.question,
+                  options: currentQuestion.options,
+                  correctAnswer: currentQuestion.correctAnswer,
+                  explanation: currentQuestion.explanation,
+                  chapterId: currentQuestion.chapterId,
+                  quizType: currentQuestion.quizType,
+                  order: currentQuestion.order,
+                  audioUrl: currentQuestion.audioUrl,
+                  timestampsUrl: currentQuestion.timestampsUrl,
+                  correctExplanationAudioUrl: currentQuestion.correctExplanationAudioUrl,
+                  correctExplanationTimestampsUrl: currentQuestion.correctExplanationTimestampsUrl,
+                  incorrectExplanationAudioUrls: incorrectAudioUrls,
+                  incorrectExplanationTimestampsUrls: incorrectTimestampsUrls,
+                }),
+              });
+
+              if (!updateResponse.ok) {
+                const updateError = await updateResponse.json();
+                results.push(`  ⚠️ Failed to update incorrect explanation URLs: ${updateError.error || 'Unknown error'}`);
+              }
+            } catch (err: any) {
+              results.push(`  ⚠️ Failed to update incorrect explanation URLs: ${err.message || err}`);
+            }
+          }
+        }
+      }
+
+      // Refresh chapter data
+      await fetchChapter();
+
+      // Show summary
+      alert(`Chapter Audio Generation Complete!\n\n✅ Success: ${successCount}\n❌ Failed: ${failCount}\n\n${results.join('\n')}`);
+    } catch (err) {
+      console.error('Error generating all chapter audio:', err);
+      alert('Failed to generate all chapter audio');
+    } finally {
+      setGeneratingAllChapterAudio(false);
+    }
+  };
+
   // Bulk add key terms
   const handleBulkAddKeyTerms = async () => {
     if (!bulkKeyTermsText.trim()) {
@@ -1054,7 +1490,7 @@ export default function ChapterEditPage() {
             {chapter ? `Chapter ${chapter.number}: ${chapter.title}` : "New Chapter"}
           </h1>
           {chapter && (
-            <div className="flex gap-4 mt-4">
+            <div className="flex gap-4 mt-4 flex-wrap">
               <Link
                 href={`/chapter-${chapter.number}`}
                 target="_blank"
@@ -1070,6 +1506,13 @@ export default function ChapterEditPage() {
                 className="px-4 py-2 bg-green-500/20 border border-green-500/30 rounded-lg text-green-400 hover:bg-green-500/30 transition-all text-sm"
               >
                 🔄 Refresh Content
+              </button>
+              <button
+                onClick={handleGenerateAllChapterAudio}
+                disabled={generatingAllChapterAudio}
+                className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 disabled:from-gray-500 disabled:to-gray-600 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-all text-sm"
+              >
+                {generatingAllChapterAudio ? "🔄 Generating All Audio..." : "🎙️ Generate All Audio & Timestamps"}
               </button>
               <button
                 onClick={() => setEditingChapterInfo(!editingChapterInfo)}
@@ -1310,6 +1753,16 @@ export default function ChapterEditPage() {
               </button>
             )}
           </div>
+
+          {/* Status Display for Combined Audio */}
+          {learningObjectives.length > 0 && learningObjectives[0] && (learningObjectives[0].audioUrl || learningObjectives[0].timestampsUrl) && (
+            <div className="mb-6 p-4 bg-[#0a0e27]/70 border border-green-500/40 rounded-lg">
+              <div className="flex gap-4 text-sm text-gray-300">
+                {learningObjectives[0].audioUrl && <span>🎵 Audio: ✓</span>}
+                {learningObjectives[0].timestampsUrl && <span>📝 Timestamps: ✓</span>}
+              </div>
+            </div>
+          )}
           
           {/* Bulk Input Area */}
           <div className="mb-6 p-4 bg-[#0a0e27]/50 border border-green-500/30 rounded-lg">
@@ -1345,12 +1798,6 @@ export default function ChapterEditPage() {
                 <div key={obj.id} className="p-3 bg-[#0a0e27]/50 border border-green-500/20 rounded-lg flex justify-between items-center">
                   <div className="flex-1">
                     <span className="text-white">{obj.text}</span>
-                    {(obj.audioUrl || obj.timestampsUrl) && (
-                      <div className="flex gap-2 mt-1 text-xs text-gray-400">
-                        {obj.audioUrl && <span>🎵 Audio: ✓</span>}
-                        {obj.timestampsUrl && <span>📝 Timestamps: ✓</span>}
-                      </div>
-                    )}
                   </div>
                   <div className="flex gap-2">
                     <button
@@ -1399,6 +1846,16 @@ export default function ChapterEditPage() {
               </button>
             )}
           </div>
+
+          {/* Status Display for Combined Audio */}
+          {keyTerms.length > 0 && keyTerms[0] && (keyTerms[0].audioUrl || keyTerms[0].timestampsUrl) && (
+            <div className="mb-6 p-4 bg-[#0a0e27]/70 border border-yellow-500/40 rounded-lg">
+              <div className="flex gap-4 text-sm text-gray-300">
+                {keyTerms[0].audioUrl && <span>🎵 Audio: ✓</span>}
+                {keyTerms[0].timestampsUrl && <span>📝 Timestamps: ✓</span>}
+              </div>
+            </div>
+          )}
           
           {/* Bulk Input Area */}
           <div className="mb-6 p-4 bg-[#0a0e27]/50 border border-yellow-500/30 rounded-lg">
@@ -1434,12 +1891,6 @@ export default function ChapterEditPage() {
                 <div key={term.id} className="p-3 bg-[#0a0e27]/50 border border-yellow-500/20 rounded-lg flex justify-between items-center">
                   <div className="flex-1">
                     <span className="text-white">{term.term}</span>
-                    {(term.audioUrl || term.timestampsUrl) && (
-                      <div className="flex gap-2 mt-1 text-xs text-gray-400">
-                        {term.audioUrl && <span>🎵 Audio: ✓</span>}
-                        {term.timestampsUrl && <span>📝 Timestamps: ✓</span>}
-                      </div>
-                    )}
                   </div>
                   <div className="flex gap-2">
                     <button

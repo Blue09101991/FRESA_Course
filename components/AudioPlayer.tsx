@@ -48,6 +48,7 @@ export default function AudioPlayer({
   const [wordTimestamps, setWordTimestamps] = useState<WordTimestamp[]>([]);
   const [wordMap, setWordMap] = useState<Map<number, number>>(new Map());
   const [hasPlayed, setHasPlayed] = useState(false);
+  const [hasCompleted, setHasCompleted] = useState(false); // Track if audio has completed
   // Load playbackRate from localStorage on mount, default to 1
   const [playbackRate, setPlaybackRate] = useState(() => {
     if (typeof window !== 'undefined') {
@@ -135,10 +136,11 @@ export default function AudioPlayer({
     return indices;
   }, [wordsWithSpaces]);
 
-  // Reset hasPlayed when audioUrl changes (new section loaded)
+  // Reset hasPlayed and hasCompleted when audioUrl changes (new section loaded)
   useEffect(() => {
     if (audioUrl) {
       setHasPlayed(false);
+      setHasCompleted(false);
       setIsPlaying(false);
       setCurrentTime(0);
       setHighlightedIndex(-1);
@@ -424,6 +426,7 @@ export default function AudioPlayer({
 
     const handleEnded = () => {
       setIsPlaying(false);
+      setHasCompleted(true); // Mark as completed to prevent replay
       setCurrentTime(audio.duration); // Keep at end, don't reset
       setHighlightedIndex(wordsRefForHighlight.current.length - 1); // Keep last word highlighted
       if (onPlayingChange) {
@@ -443,10 +446,13 @@ export default function AudioPlayer({
 
     // Auto-play when audioUrl changes or component mounts (for each new section)
     // Note: Browser autoplay policy may block this - user interaction required
-    if (autoPlay && audioUrl) {
+    // Don't auto-play if audio has already completed or if user has manually paused
+    if (autoPlay && audioUrl && !hasPlayed && !hasCompleted) {
       const playAudio = () => {
-        // Reset current time to start
-        audio.currentTime = 0;
+        // Reset current time to start only if audio hasn't been played yet
+        if (!hasPlayed) {
+          audio.currentTime = 0;
+        }
         
         const playPromise = audio.play();
         if (playPromise !== undefined) {
@@ -507,7 +513,7 @@ export default function AudioPlayer({
       audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
       audio.removeEventListener("ended", handleEnded);
     };
-  }, [audioUrl, autoPlay, hasPlayed, onTimeUpdate, onComplete]); // Removed playbackRate - handled separately
+  }, [audioUrl, autoPlay, hasPlayed, hasCompleted, onTimeUpdate, onComplete]); // Added hasCompleted to dependencies
 
   // Set initial playback rate from localStorage when audio loads
   useEffect(() => {
@@ -575,14 +581,27 @@ export default function AudioPlayer({
     if (!audio) return;
 
     if (isPlaying) {
+      // Pause audio - keep current position
       audio.pause();
       setIsPlaying(false);
       if (onPlayingChange) {
         onPlayingChange(false);
       }
     } else {
+      // Resume or start playing
+      // If audio has completed, don't restart - let onComplete handle navigation
+      if (hasCompleted) {
+        // Audio has completed, don't replay - let parent handle navigation
+        if (onComplete) {
+          onComplete();
+        }
+        return;
+      }
+      
+      // Resume from current position (don't reset to 0)
       audio.play().then(() => {
         setIsPlaying(true);
+        setHasPlayed(true); // Mark as played to prevent auto-play
         if (onPlayingChange) {
           onPlayingChange(true);
         }

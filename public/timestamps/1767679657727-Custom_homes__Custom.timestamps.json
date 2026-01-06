@@ -1,0 +1,400 @@
+{
+  "text": " Custom Homes. Custom Homes are built specifically to a buyer's unique specifications and designs. The buyer usually owns the lot and hires a builder to construct a home that meets their specific needs and desires, rather than choosing from a preset list of options.",
+  "segments": [
+    {
+      "id": 0,
+      "seek": 0,
+      "start": 0.1,
+      "end": 0.86,
+      "text": " Custom Homes.",
+      "tokens": [
+        50364,
+        16649,
+        389,
+        18168,
+        13,
+        50444
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.22619453805391906,
+      "compression_ratio": 1.5963855421686748,
+      "no_speech_prob": 0.0067612649872899055,
+      "confidence": 0.863,
+      "words": [
+        {
+          "text": "Custom",
+          "start": 0.1,
+          "end": 0.36,
+          "confidence": 0.889
+        },
+        {
+          "text": "Homes.",
+          "start": 0.36,
+          "end": 0.86,
+          "confidence": 0.85
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "seek": 0,
+      "start": 1.72,
+      "end": 5.94,
+      "text": " Custom Homes are built specifically to a buyer's unique specifications and designs.",
+      "tokens": [
+        50444,
+        16649,
+        389,
+        18168,
+        366,
+        3094,
+        4682,
+        281,
+        257,
+        24645,
+        311,
+        3845,
+        29448,
+        293,
+        11347,
+        13,
+        50696
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.22619453805391906,
+      "compression_ratio": 1.5963855421686748,
+      "no_speech_prob": 0.0067612649872899055,
+      "confidence": 0.91,
+      "words": [
+        {
+          "text": "Custom",
+          "start": 1.72,
+          "end": 2.0,
+          "confidence": 0.989
+        },
+        {
+          "text": "Homes",
+          "start": 2.0,
+          "end": 2.38,
+          "confidence": 0.72
+        },
+        {
+          "text": "are",
+          "start": 2.38,
+          "end": 2.54,
+          "confidence": 0.998
+        },
+        {
+          "text": "built",
+          "start": 2.54,
+          "end": 2.76,
+          "confidence": 0.995
+        },
+        {
+          "text": "specifically",
+          "start": 2.76,
+          "end": 3.38,
+          "confidence": 0.992
+        },
+        {
+          "text": "to",
+          "start": 3.38,
+          "end": 3.66,
+          "confidence": 0.822
+        },
+        {
+          "text": "a",
+          "start": 3.66,
+          "end": 3.8,
+          "confidence": 0.857
+        },
+        {
+          "text": "buyer's",
+          "start": 3.8,
+          "end": 4.24,
+          "confidence": 0.975
+        },
+        {
+          "text": "unique",
+          "start": 4.24,
+          "end": 4.5,
+          "confidence": 0.953
+        },
+        {
+          "text": "specifications",
+          "start": 4.5,
+          "end": 5.2,
+          "confidence": 0.904
+        },
+        {
+          "text": "and",
+          "start": 5.2,
+          "end": 5.58,
+          "confidence": 0.962
+        },
+        {
+          "text": "designs.",
+          "start": 5.58,
+          "end": 5.94,
+          "confidence": 0.947
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "seek": 0,
+      "start": 6.66,
+      "end": 12.12,
+      "text": " The buyer usually owns the lot and hires a builder to construct a home that meets their specific needs and desires,",
+      "tokens": [
+        50696,
+        440,
+        24645,
+        2673,
+        19143,
+        264,
+        688,
+        293,
+        276,
+        3145,
+        257,
+        27377,
+        281,
+        7690,
+        257,
+        1280,
+        300,
+        13961,
+        641,
+        2685,
+        2203,
+        293,
+        18005,
+        11,
+        51000
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.22619453805391906,
+      "compression_ratio": 1.5963855421686748,
+      "no_speech_prob": 0.0067612649872899055,
+      "confidence": 0.922,
+      "words": [
+        {
+          "text": "The",
+          "start": 6.66,
+          "end": 6.8,
+          "confidence": 0.994
+        },
+        {
+          "text": "buyer",
+          "start": 6.8,
+          "end": 7.08,
+          "confidence": 0.999
+        },
+        {
+          "text": "usually",
+          "start": 7.08,
+          "end": 7.48,
+          "confidence": 0.996
+        },
+        {
+          "text": "owns",
+          "start": 7.48,
+          "end": 7.78,
+          "confidence": 0.998
+        },
+        {
+          "text": "the",
+          "start": 7.78,
+          "end": 7.96,
+          "confidence": 0.992
+        },
+        {
+          "text": "lot",
+          "start": 7.96,
+          "end": 8.2,
+          "confidence": 0.974
+        },
+        {
+          "text": "and",
+          "start": 8.2,
+          "end": 8.48,
+          "confidence": 0.933
+        },
+        {
+          "text": "hires",
+          "start": 8.48,
+          "end": 8.74,
+          "confidence": 0.914
+        },
+        {
+          "text": "a",
+          "start": 8.74,
+          "end": 8.9,
+          "confidence": 0.993
+        },
+        {
+          "text": "builder",
+          "start": 8.9,
+          "end": 9.18,
+          "confidence": 0.987
+        },
+        {
+          "text": "to",
+          "start": 9.18,
+          "end": 9.4,
+          "confidence": 0.964
+        },
+        {
+          "text": "construct",
+          "start": 9.4,
+          "end": 9.74,
+          "confidence": 0.974
+        },
+        {
+          "text": "a",
+          "start": 9.74,
+          "end": 9.98,
+          "confidence": 0.993
+        },
+        {
+          "text": "home",
+          "start": 9.98,
+          "end": 10.14,
+          "confidence": 0.982
+        },
+        {
+          "text": "that",
+          "start": 10.14,
+          "end": 10.32,
+          "confidence": 0.862
+        },
+        {
+          "text": "meets",
+          "start": 10.32,
+          "end": 10.54,
+          "confidence": 0.828
+        },
+        {
+          "text": "their",
+          "start": 10.54,
+          "end": 10.76,
+          "confidence": 0.865
+        },
+        {
+          "text": "specific",
+          "start": 10.76,
+          "end": 11.16,
+          "confidence": 0.531
+        },
+        {
+          "text": "needs",
+          "start": 11.16,
+          "end": 11.48,
+          "confidence": 0.846
+        },
+        {
+          "text": "and",
+          "start": 11.48,
+          "end": 11.68,
+          "confidence": 0.928
+        },
+        {
+          "text": "desires,",
+          "start": 11.68,
+          "end": 12.12,
+          "confidence": 0.983
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "seek": 0,
+      "start": 12.8,
+      "end": 15.2,
+      "text": " rather than choosing from a preset list of options.",
+      "tokens": [
+        51000,
+        2831,
+        813,
+        10875,
+        490,
+        257,
+        32081,
+        1329,
+        295,
+        3956,
+        13,
+        51160
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.22619453805391906,
+      "compression_ratio": 1.5963855421686748,
+      "no_speech_prob": 0.0067612649872899055,
+      "confidence": 0.975,
+      "words": [
+        {
+          "text": "rather",
+          "start": 12.8,
+          "end": 13.02,
+          "confidence": 0.897
+        },
+        {
+          "text": "than",
+          "start": 13.02,
+          "end": 13.24,
+          "confidence": 0.998
+        },
+        {
+          "text": "choosing",
+          "start": 13.24,
+          "end": 13.5,
+          "confidence": 0.997
+        },
+        {
+          "text": "from",
+          "start": 13.5,
+          "end": 13.78,
+          "confidence": 0.991
+        },
+        {
+          "text": "a",
+          "start": 13.78,
+          "end": 13.9,
+          "confidence": 0.999
+        },
+        {
+          "text": "preset",
+          "start": 13.9,
+          "end": 14.26,
+          "confidence": 0.905
+        },
+        {
+          "text": "list",
+          "start": 14.26,
+          "end": 14.56,
+          "confidence": 0.999
+        },
+        {
+          "text": "of",
+          "start": 14.56,
+          "end": 14.74,
+          "confidence": 0.999
+        },
+        {
+          "text": "options.",
+          "start": 14.74,
+          "end": 15.2,
+          "confidence": 0.998
+        }
+      ]
+    }
+  ],
+  "language": "en",
+  "speech_activity": [
+    {
+      "start": 0.0,
+      "end": 15.699625
+    }
+  ]
+}

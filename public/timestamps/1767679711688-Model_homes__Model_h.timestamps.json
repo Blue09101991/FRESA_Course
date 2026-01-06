@@ -1,0 +1,317 @@
+{
+  "text": " Model Homes. Model Homes are display properties used by developers to showcase the various floor plans and features available in a subdivision. They are marketing tools rather than a specific construction category for a buyer.",
+  "segments": [
+    {
+      "id": 0,
+      "seek": 0,
+      "start": 0.1,
+      "end": 0.8,
+      "text": " Model Homes.",
+      "tokens": [
+        50364,
+        17105,
+        389,
+        18168,
+        13,
+        50414
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.1913930575052897,
+      "compression_ratio": 1.4303797468354431,
+      "no_speech_prob": 0.0047723762691020966,
+      "confidence": 0.862,
+      "words": [
+        {
+          "text": "Model",
+          "start": 0.1,
+          "end": 0.3,
+          "confidence": 0.955
+        },
+        {
+          "text": "Homes.",
+          "start": 0.3,
+          "end": 0.8,
+          "confidence": 0.818
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "seek": 0,
+      "start": 2.06,
+      "end": 8.76,
+      "text": " Model Homes are display properties used by developers to showcase the various floor plans and features available in a subdivision.",
+      "tokens": [
+        50464,
+        17105,
+        389,
+        18168,
+        366,
+        4674,
+        7221,
+        1143,
+        538,
+        8849,
+        281,
+        20388,
+        264,
+        3683,
+        4123,
+        5482,
+        293,
+        4122,
+        2435,
+        294,
+        257,
+        45331,
+        1991,
+        13,
+        50814
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.1913930575052897,
+      "compression_ratio": 1.4303797468354431,
+      "no_speech_prob": 0.0047723762691020966,
+      "confidence": 0.914,
+      "words": [
+        {
+          "text": "Model",
+          "start": 2.06,
+          "end": 2.3,
+          "confidence": 0.987
+        },
+        {
+          "text": "Homes",
+          "start": 2.3,
+          "end": 2.7,
+          "confidence": 0.857
+        },
+        {
+          "text": "are",
+          "start": 2.7,
+          "end": 2.88,
+          "confidence": 0.991
+        },
+        {
+          "text": "display",
+          "start": 2.88,
+          "end": 3.24,
+          "confidence": 0.918
+        },
+        {
+          "text": "properties",
+          "start": 3.24,
+          "end": 3.74,
+          "confidence": 0.991
+        },
+        {
+          "text": "used",
+          "start": 3.74,
+          "end": 4.1,
+          "confidence": 0.934
+        },
+        {
+          "text": "by",
+          "start": 4.1,
+          "end": 4.28,
+          "confidence": 0.948
+        },
+        {
+          "text": "developers",
+          "start": 4.28,
+          "end": 4.76,
+          "confidence": 0.935
+        },
+        {
+          "text": "to",
+          "start": 4.76,
+          "end": 5.06,
+          "confidence": 0.713
+        },
+        {
+          "text": "showcase",
+          "start": 5.06,
+          "end": 5.46,
+          "confidence": 0.977
+        },
+        {
+          "text": "the",
+          "start": 5.46,
+          "end": 5.7,
+          "confidence": 0.923
+        },
+        {
+          "text": "various",
+          "start": 5.7,
+          "end": 6.04,
+          "confidence": 0.976
+        },
+        {
+          "text": "floor",
+          "start": 6.04,
+          "end": 6.34,
+          "confidence": 0.831
+        },
+        {
+          "text": "plans",
+          "start": 6.34,
+          "end": 6.68,
+          "confidence": 0.876
+        },
+        {
+          "text": "and",
+          "start": 6.68,
+          "end": 7.0,
+          "confidence": 0.723
+        },
+        {
+          "text": "features",
+          "start": 7.0,
+          "end": 7.3,
+          "confidence": 0.961
+        },
+        {
+          "text": "available",
+          "start": 7.3,
+          "end": 7.78,
+          "confidence": 0.989
+        },
+        {
+          "text": "in",
+          "start": 7.78,
+          "end": 8.08,
+          "confidence": 0.973
+        },
+        {
+          "text": "a",
+          "start": 8.08,
+          "end": 8.2,
+          "confidence": 0.993
+        },
+        {
+          "text": "subdivision.",
+          "start": 8.2,
+          "end": 8.76,
+          "confidence": 0.92
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "seek": 0,
+      "start": 9.72,
+      "end": 13.42,
+      "text": " They are marketing tools rather than a specific construction category for a buyer.",
+      "tokens": [
+        50849,
+        814,
+        366,
+        6370,
+        3873,
+        2831,
+        813,
+        257,
+        2685,
+        6435,
+        7719,
+        337,
+        257,
+        24645,
+        13,
+        51049
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.1913930575052897,
+      "compression_ratio": 1.4303797468354431,
+      "no_speech_prob": 0.0047723762691020966,
+      "confidence": 0.99,
+      "words": [
+        {
+          "text": "They",
+          "start": 9.72,
+          "end": 9.86,
+          "confidence": 0.969
+        },
+        {
+          "text": "are",
+          "start": 9.86,
+          "end": 9.96,
+          "confidence": 0.994
+        },
+        {
+          "text": "marketing",
+          "start": 9.96,
+          "end": 10.28,
+          "confidence": 0.994
+        },
+        {
+          "text": "tools",
+          "start": 10.28,
+          "end": 10.66,
+          "confidence": 0.999
+        },
+        {
+          "text": "rather",
+          "start": 10.66,
+          "end": 11.0,
+          "confidence": 0.945
+        },
+        {
+          "text": "than",
+          "start": 11.0,
+          "end": 11.22,
+          "confidence": 0.997
+        },
+        {
+          "text": "a",
+          "start": 11.22,
+          "end": 11.36,
+          "confidence": 0.997
+        },
+        {
+          "text": "specific",
+          "start": 11.36,
+          "end": 11.72,
+          "confidence": 0.995
+        },
+        {
+          "text": "construction",
+          "start": 11.72,
+          "end": 12.24,
+          "confidence": 0.994
+        },
+        {
+          "text": "category",
+          "start": 12.24,
+          "end": 12.78,
+          "confidence": 0.997
+        },
+        {
+          "text": "for",
+          "start": 12.78,
+          "end": 13.02,
+          "confidence": 0.999
+        },
+        {
+          "text": "a",
+          "start": 13.02,
+          "end": 13.16,
+          "confidence": 0.998
+        },
+        {
+          "text": "buyer.",
+          "start": 13.16,
+          "end": 13.42,
+          "confidence": 0.998
+        }
+      ]
+    }
+  ],
+  "language": "en",
+  "speech_activity": [
+    {
+      "start": 0.0,
+      "end": 13.9755
+    }
+  ]
+}

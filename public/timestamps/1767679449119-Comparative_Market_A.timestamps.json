@@ -1,0 +1,673 @@
+{
+  "text": " Comparative Market Analysis, CMA. After you get your real estate license, and if you find a client who is looking to sell their property, they may ask you to analyze the market and let them know how much they can sell their property for. It will be your job to analyze recent sales of similar properties to determine a reasonable price for your client's property. This process is called Comparative Market Analysis.",
+  "segments": [
+    {
+      "id": 0,
+      "seek": 0,
+      "start": 0.1,
+      "end": 2.1,
+      "text": " Comparative Market Analysis, CMA.",
+      "tokens": [
+        50364,
+        2432,
+        2181,
+        1166,
+        15596,
+        38172,
+        11,
+        383,
+        9998,
+        13,
+        50504
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.15566625782087737,
+      "compression_ratio": 1.7364016736401673,
+      "no_speech_prob": 0.018454963341355324,
+      "confidence": 0.896,
+      "words": [
+        {
+          "text": "Comparative",
+          "start": 0.1,
+          "end": 0.54,
+          "confidence": 0.959
+        },
+        {
+          "text": "Market",
+          "start": 0.54,
+          "end": 0.82,
+          "confidence": 0.608
+        },
+        {
+          "text": "Analysis,",
+          "start": 0.82,
+          "end": 1.3,
+          "confidence": 0.975
+        },
+        {
+          "text": "CMA.",
+          "start": 1.66,
+          "end": 2.1,
+          "confidence": 0.942
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "seek": 0,
+      "start": 2.88,
+      "end": 4.67,
+      "text": " After you get your real estate license,",
+      "tokens": [
+        50504,
+        2381,
+        291,
+        483,
+        428,
+        957,
+        9749,
+        10476,
+        11,
+        50604
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.15566625782087737,
+      "compression_ratio": 1.7364016736401673,
+      "no_speech_prob": 0.018454963341355324,
+      "confidence": 0.985,
+      "words": [
+        {
+          "text": "After",
+          "start": 2.88,
+          "end": 3.2,
+          "confidence": 0.998
+        },
+        {
+          "text": "you",
+          "start": 3.2,
+          "end": 3.42,
+          "confidence": 0.999
+        },
+        {
+          "text": "get",
+          "start": 3.42,
+          "end": 3.64,
+          "confidence": 0.998
+        },
+        {
+          "text": "your",
+          "start": 3.64,
+          "end": 3.82,
+          "confidence": 0.995
+        },
+        {
+          "text": "real",
+          "start": 3.82,
+          "end": 3.98,
+          "confidence": 0.962
+        },
+        {
+          "text": "estate",
+          "start": 3.98,
+          "end": 4.24,
+          "confidence": 0.972
+        },
+        {
+          "text": "license,",
+          "start": 4.24,
+          "end": 4.67,
+          "confidence": 0.973
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "seek": 0,
+      "start": 4.67,
+      "end": 7.36,
+      "text": " and if you find a client who is looking to sell their property,",
+      "tokens": [
+        50604,
+        293,
+        498,
+        291,
+        915,
+        257,
+        6423,
+        567,
+        307,
+        1237,
+        281,
+        3607,
+        641,
+        4707,
+        11,
+        50756
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.15566625782087737,
+      "compression_ratio": 1.7364016736401673,
+      "no_speech_prob": 0.018454963341355324,
+      "confidence": 0.942,
+      "words": [
+        {
+          "text": "and",
+          "start": 4.67,
+          "end": 5.0,
+          "confidence": 0.997
+        },
+        {
+          "text": "if",
+          "start": 5.0,
+          "end": 5.12,
+          "confidence": 0.992
+        },
+        {
+          "text": "you",
+          "start": 5.12,
+          "end": 5.2,
+          "confidence": 1.0
+        },
+        {
+          "text": "find",
+          "start": 5.2,
+          "end": 5.42,
+          "confidence": 0.999
+        },
+        {
+          "text": "a",
+          "start": 5.42,
+          "end": 5.58,
+          "confidence": 0.999
+        },
+        {
+          "text": "client",
+          "start": 5.58,
+          "end": 5.84,
+          "confidence": 0.999
+        },
+        {
+          "text": "who",
+          "start": 5.84,
+          "end": 6.04,
+          "confidence": 0.911
+        },
+        {
+          "text": "is",
+          "start": 6.04,
+          "end": 6.16,
+          "confidence": 0.592
+        },
+        {
+          "text": "looking",
+          "start": 6.16,
+          "end": 6.36,
+          "confidence": 0.982
+        },
+        {
+          "text": "to",
+          "start": 6.36,
+          "end": 6.56,
+          "confidence": 0.902
+        },
+        {
+          "text": "sell",
+          "start": 6.56,
+          "end": 6.76,
+          "confidence": 0.995
+        },
+        {
+          "text": "their",
+          "start": 6.76,
+          "end": 6.94,
+          "confidence": 0.984
+        },
+        {
+          "text": "property,",
+          "start": 6.94,
+          "end": 7.36,
+          "confidence": 0.995
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "seek": 0,
+      "start": 7.96,
+      "end": 9.67,
+      "text": " they may ask you to analyze the market",
+      "tokens": [
+        50756,
+        436,
+        815,
+        1029,
+        291,
+        281,
+        12477,
+        264,
+        2142,
+        50856
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.15566625782087737,
+      "compression_ratio": 1.7364016736401673,
+      "no_speech_prob": 0.018454963341355324,
+      "confidence": 0.995,
+      "words": [
+        {
+          "text": "they",
+          "start": 7.96,
+          "end": 8.12,
+          "confidence": 0.998
+        },
+        {
+          "text": "may",
+          "start": 8.12,
+          "end": 8.32,
+          "confidence": 0.998
+        },
+        {
+          "text": "ask",
+          "start": 8.32,
+          "end": 8.58,
+          "confidence": 0.998
+        },
+        {
+          "text": "you",
+          "start": 8.58,
+          "end": 8.74,
+          "confidence": 0.999
+        },
+        {
+          "text": "to",
+          "start": 8.74,
+          "end": 8.86,
+          "confidence": 0.99
+        },
+        {
+          "text": "analyze",
+          "start": 8.86,
+          "end": 9.18,
+          "confidence": 0.986
+        },
+        {
+          "text": "the",
+          "start": 9.18,
+          "end": 9.4,
+          "confidence": 0.996
+        },
+        {
+          "text": "market",
+          "start": 9.4,
+          "end": 9.67,
+          "confidence": 0.997
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "seek": 0,
+      "start": 9.67,
+      "end": 12.36,
+      "text": " and let them know how much they can sell their property for.",
+      "tokens": [
+        50856,
+        293,
+        718,
+        552,
+        458,
+        577,
+        709,
+        436,
+        393,
+        3607,
+        641,
+        4707,
+        337,
+        13,
+        51016
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.15566625782087737,
+      "compression_ratio": 1.7364016736401673,
+      "no_speech_prob": 0.018454963341355324,
+      "confidence": 0.996,
+      "words": [
+        {
+          "text": "and",
+          "start": 9.67,
+          "end": 10.1,
+          "confidence": 0.999
+        },
+        {
+          "text": "let",
+          "start": 10.1,
+          "end": 10.24,
+          "confidence": 0.999
+        },
+        {
+          "text": "them",
+          "start": 10.24,
+          "end": 10.4,
+          "confidence": 1.0
+        },
+        {
+          "text": "know",
+          "start": 10.4,
+          "end": 10.6,
+          "confidence": 1.0
+        },
+        {
+          "text": "how",
+          "start": 10.6,
+          "end": 10.8,
+          "confidence": 0.99
+        },
+        {
+          "text": "much",
+          "start": 10.8,
+          "end": 11.02,
+          "confidence": 0.999
+        },
+        {
+          "text": "they",
+          "start": 11.02,
+          "end": 11.24,
+          "confidence": 0.995
+        },
+        {
+          "text": "can",
+          "start": 11.24,
+          "end": 11.38,
+          "confidence": 0.996
+        },
+        {
+          "text": "sell",
+          "start": 11.38,
+          "end": 11.58,
+          "confidence": 0.998
+        },
+        {
+          "text": "their",
+          "start": 11.58,
+          "end": 11.74,
+          "confidence": 0.99
+        },
+        {
+          "text": "property",
+          "start": 11.74,
+          "end": 12.06,
+          "confidence": 0.999
+        },
+        {
+          "text": "for.",
+          "start": 12.06,
+          "end": 12.36,
+          "confidence": 0.99
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "seek": 0,
+      "start": 13.12,
+      "end": 16.56,
+      "text": " It will be your job to analyze recent sales of similar properties",
+      "tokens": [
+        51016,
+        467,
+        486,
+        312,
+        428,
+        1691,
+        281,
+        12477,
+        5162,
+        5763,
+        295,
+        2531,
+        7221,
+        51216
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.15566625782087737,
+      "compression_ratio": 1.7364016736401673,
+      "no_speech_prob": 0.018454963341355324,
+      "confidence": 0.955,
+      "words": [
+        {
+          "text": "It",
+          "start": 13.12,
+          "end": 13.28,
+          "confidence": 0.999
+        },
+        {
+          "text": "will",
+          "start": 13.28,
+          "end": 13.42,
+          "confidence": 0.997
+        },
+        {
+          "text": "be",
+          "start": 13.42,
+          "end": 13.56,
+          "confidence": 1.0
+        },
+        {
+          "text": "your",
+          "start": 13.56,
+          "end": 13.78,
+          "confidence": 1.0
+        },
+        {
+          "text": "job",
+          "start": 13.78,
+          "end": 14.08,
+          "confidence": 1.0
+        },
+        {
+          "text": "to",
+          "start": 14.08,
+          "end": 14.3,
+          "confidence": 0.969
+        },
+        {
+          "text": "analyze",
+          "start": 14.3,
+          "end": 14.72,
+          "confidence": 0.979
+        },
+        {
+          "text": "recent",
+          "start": 14.72,
+          "end": 15.14,
+          "confidence": 0.923
+        },
+        {
+          "text": "sales",
+          "start": 15.14,
+          "end": 15.46,
+          "confidence": 0.986
+        },
+        {
+          "text": "of",
+          "start": 15.46,
+          "end": 15.7,
+          "confidence": 0.712
+        },
+        {
+          "text": "similar",
+          "start": 15.7,
+          "end": 16.04,
+          "confidence": 0.981
+        },
+        {
+          "text": "properties",
+          "start": 16.04,
+          "end": 16.56,
+          "confidence": 0.958
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "seek": 0,
+      "start": 16.7,
+      "end": 19.66,
+      "text": " to determine a reasonable price for your client's property.",
+      "tokens": [
+        51216,
+        281,
+        6997,
+        257,
+        10585,
+        3218,
+        337,
+        428,
+        6423,
+        311,
+        4707,
+        13,
+        51376
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.15566625782087737,
+      "compression_ratio": 1.7364016736401673,
+      "no_speech_prob": 0.018454963341355324,
+      "confidence": 0.979,
+      "words": [
+        {
+          "text": "to",
+          "start": 16.7,
+          "end": 17.32,
+          "confidence": 0.999
+        },
+        {
+          "text": "determine",
+          "start": 17.32,
+          "end": 17.7,
+          "confidence": 0.999
+        },
+        {
+          "text": "a",
+          "start": 17.7,
+          "end": 17.9,
+          "confidence": 0.999
+        },
+        {
+          "text": "reasonable",
+          "start": 17.9,
+          "end": 18.26,
+          "confidence": 0.999
+        },
+        {
+          "text": "price",
+          "start": 18.26,
+          "end": 18.6,
+          "confidence": 1.0
+        },
+        {
+          "text": "for",
+          "start": 18.6,
+          "end": 18.8,
+          "confidence": 0.977
+        },
+        {
+          "text": "your",
+          "start": 18.8,
+          "end": 18.92,
+          "confidence": 0.997
+        },
+        {
+          "text": "client's",
+          "start": 18.92,
+          "end": 19.34,
+          "confidence": 0.915
+        },
+        {
+          "text": "property.",
+          "start": 19.34,
+          "end": 19.66,
+          "confidence": 0.999
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "seek": 0,
+      "start": 20.34,
+      "end": 22.82,
+      "text": " This process is called Comparative Market Analysis.",
+      "tokens": [
+        51376,
+        639,
+        1399,
+        307,
+        1219,
+        2432,
+        2181,
+        1166,
+        15596,
+        38172,
+        13,
+        51528
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.15566625782087737,
+      "compression_ratio": 1.7364016736401673,
+      "no_speech_prob": 0.018454963341355324,
+      "confidence": 0.984,
+      "words": [
+        {
+          "text": "This",
+          "start": 20.34,
+          "end": 20.54,
+          "confidence": 0.978
+        },
+        {
+          "text": "process",
+          "start": 20.54,
+          "end": 21.0,
+          "confidence": 0.999
+        },
+        {
+          "text": "is",
+          "start": 21.0,
+          "end": 21.24,
+          "confidence": 0.999
+        },
+        {
+          "text": "called",
+          "start": 21.24,
+          "end": 21.46,
+          "confidence": 0.999
+        },
+        {
+          "text": "Comparative",
+          "start": 21.46,
+          "end": 22.08,
+          "confidence": 0.964
+        },
+        {
+          "text": "Market",
+          "start": 22.08,
+          "end": 22.36,
+          "confidence": 0.995
+        },
+        {
+          "text": "Analysis.",
+          "start": 22.36,
+          "end": 22.82,
+          "confidence": 0.995
+        }
+      ]
+    }
+  ],
+  "language": "en",
+  "speech_activity": [
+    {
+      "start": 0.0,
+      "end": 23.40575
+    }
+  ]
+}

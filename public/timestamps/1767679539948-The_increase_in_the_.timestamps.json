@@ -1,0 +1,178 @@
+{
+  "text": " The increase in the number of absentee owners, this has created a demand for professional property management services.",
+  "segments": [
+    {
+      "id": 0,
+      "seek": 0,
+      "start": 0.08,
+      "end": 4.78,
+      "text": " The increase in the number of absentee owners, this has created a demand for professional",
+      "tokens": [
+        50364,
+        440,
+        3488,
+        294,
+        264,
+        1230,
+        295,
+        1950,
+        1576,
+        68,
+        7710,
+        11,
+        341,
+        575,
+        2942,
+        257,
+        4733,
+        337,
+        4843,
+        50608
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.2659938600328233,
+      "compression_ratio": 1.2268041237113403,
+      "no_speech_prob": 0.0034878458827733994,
+      "confidence": 0.923,
+      "words": [
+        {
+          "text": "The",
+          "start": 0.08,
+          "end": 0.2,
+          "confidence": 0.606
+        },
+        {
+          "text": "increase",
+          "start": 0.2,
+          "end": 0.54,
+          "confidence": 0.991
+        },
+        {
+          "text": "in",
+          "start": 0.54,
+          "end": 0.78,
+          "confidence": 0.992
+        },
+        {
+          "text": "the",
+          "start": 0.78,
+          "end": 0.9,
+          "confidence": 0.993
+        },
+        {
+          "text": "number",
+          "start": 0.9,
+          "end": 1.12,
+          "confidence": 0.998
+        },
+        {
+          "text": "of",
+          "start": 1.12,
+          "end": 1.32,
+          "confidence": 0.997
+        },
+        {
+          "text": "absentee",
+          "start": 1.32,
+          "end": 1.86,
+          "confidence": 0.985
+        },
+        {
+          "text": "owners,",
+          "start": 1.86,
+          "end": 2.18,
+          "confidence": 0.973
+        },
+        {
+          "text": "this",
+          "start": 2.62,
+          "end": 3.06,
+          "confidence": 0.695
+        },
+        {
+          "text": "has",
+          "start": 3.06,
+          "end": 3.2,
+          "confidence": 0.973
+        },
+        {
+          "text": "created",
+          "start": 3.2,
+          "end": 3.56,
+          "confidence": 0.979
+        },
+        {
+          "text": "a",
+          "start": 3.56,
+          "end": 3.78,
+          "confidence": 0.987
+        },
+        {
+          "text": "demand",
+          "start": 3.78,
+          "end": 4.06,
+          "confidence": 0.95
+        },
+        {
+          "text": "for",
+          "start": 4.06,
+          "end": 4.32,
+          "confidence": 0.95
+        },
+        {
+          "text": "professional",
+          "start": 4.32,
+          "end": 4.78,
+          "confidence": 0.796
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "seek": 0,
+      "start": 4.82,
+      "end": 6.24,
+      "text": " property management services.",
+      "tokens": [
+        50608,
+        4707,
+        4592,
+        3328,
+        13,
+        50688
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.2659938600328233,
+      "compression_ratio": 1.2268041237113403,
+      "no_speech_prob": 0.0034878458827733994,
+      "confidence": 0.966,
+      "words": [
+        {
+          "text": "property",
+          "start": 4.82,
+          "end": 5.24,
+          "confidence": 0.907
+        },
+        {
+          "text": "management",
+          "start": 5.24,
+          "end": 5.66,
+          "confidence": 0.999
+        },
+        {
+          "text": "services.",
+          "start": 5.66,
+          "end": 6.24,
+          "confidence": 0.997
+        }
+      ]
+    }
+  ],
+  "language": "en",
+  "speech_activity": [
+    {
+      "start": 0.0,
+      "end": 6.76575
+    }
+  ]
+}

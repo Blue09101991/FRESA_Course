@@ -1,0 +1,210 @@
+{
+  "text": " Managing which type of property of more than 10 units requires a cam license, apartment building, commercial property, business complex, condominium complex.",
+  "segments": [
+    {
+      "id": 0,
+      "seek": 0,
+      "start": 0.06,
+      "end": 3.78,
+      "text": " Managing which type of property of more than 10 units requires a cam license,",
+      "tokens": [
+        50364,
+        2458,
+        3568,
+        597,
+        2010,
+        295,
+        4707,
+        295,
+        544,
+        813,
+        1266,
+        6815,
+        7029,
+        257,
+        1945,
+        10476,
+        11,
+        50588
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.2887618201119559,
+      "compression_ratio": 1.319327731092437,
+      "no_speech_prob": 0.00958720501512289,
+      "confidence": 0.913,
+      "words": [
+        {
+          "text": "Managing",
+          "start": 0.06,
+          "end": 0.44,
+          "confidence": 0.945
+        },
+        {
+          "text": "which",
+          "start": 0.44,
+          "end": 0.7,
+          "confidence": 0.993
+        },
+        {
+          "text": "type",
+          "start": 0.7,
+          "end": 0.92,
+          "confidence": 0.997
+        },
+        {
+          "text": "of",
+          "start": 0.92,
+          "end": 1.08,
+          "confidence": 0.998
+        },
+        {
+          "text": "property",
+          "start": 1.08,
+          "end": 1.46,
+          "confidence": 0.998
+        },
+        {
+          "text": "of",
+          "start": 1.46,
+          "end": 1.66,
+          "confidence": 0.967
+        },
+        {
+          "text": "more",
+          "start": 1.66,
+          "end": 1.84,
+          "confidence": 0.98
+        },
+        {
+          "text": "than",
+          "start": 1.84,
+          "end": 2.0,
+          "confidence": 0.981
+        },
+        {
+          "text": "10",
+          "start": 2.0,
+          "end": 2.22,
+          "confidence": 0.646
+        },
+        {
+          "text": "units",
+          "start": 2.22,
+          "end": 2.52,
+          "confidence": 0.991
+        },
+        {
+          "text": "requires",
+          "start": 2.52,
+          "end": 2.92,
+          "confidence": 0.97
+        },
+        {
+          "text": "a",
+          "start": 2.92,
+          "end": 3.18,
+          "confidence": 0.991
+        },
+        {
+          "text": "cam",
+          "start": 3.18,
+          "end": 3.4,
+          "confidence": 0.543
+        },
+        {
+          "text": "license,",
+          "start": 3.4,
+          "end": 3.78,
+          "confidence": 0.928
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "seek": 0,
+      "start": 4.58,
+      "end": 9.18,
+      "text": " apartment building, commercial property, business complex, condominium complex.",
+      "tokens": [
+        50588,
+        9587,
+        2390,
+        11,
+        6841,
+        4707,
+        11,
+        1606,
+        3997,
+        11,
+        2224,
+        6981,
+        2197,
+        3997,
+        13,
+        50844
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.2887618201119559,
+      "compression_ratio": 1.319327731092437,
+      "no_speech_prob": 0.00958720501512289,
+      "confidence": 0.919,
+      "words": [
+        {
+          "text": "apartment",
+          "start": 4.58,
+          "end": 4.94,
+          "confidence": 0.69
+        },
+        {
+          "text": "building,",
+          "start": 4.94,
+          "end": 5.42,
+          "confidence": 0.951
+        },
+        {
+          "text": "commercial",
+          "start": 5.66,
+          "end": 5.94,
+          "confidence": 0.986
+        },
+        {
+          "text": "property,",
+          "start": 5.94,
+          "end": 6.48,
+          "confidence": 0.998
+        },
+        {
+          "text": "business",
+          "start": 6.8,
+          "end": 7.26,
+          "confidence": 0.779
+        },
+        {
+          "text": "complex,",
+          "start": 7.26,
+          "end": 7.78,
+          "confidence": 0.964
+        },
+        {
+          "text": "condominium",
+          "start": 8.12,
+          "end": 8.7,
+          "confidence": 0.969
+        },
+        {
+          "text": "complex.",
+          "start": 8.7,
+          "end": 9.18,
+          "confidence": 0.973
+        }
+      ]
+    }
+  ],
+  "language": "en",
+  "speech_activity": [
+    {
+      "start": 0.0,
+      "end": 9.7436875
+    }
+  ]
+}

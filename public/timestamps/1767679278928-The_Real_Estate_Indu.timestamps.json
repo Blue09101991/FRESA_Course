@@ -1,0 +1,373 @@
+{
+  "text": " The real estate industry plays a key role in the nation's economy by driving construction, creating jobs, enabling home ownership and investment, generating tax revenue, and supporting related industries like banking, insurance, and retail, which together stimulate overall economic growth.",
+  "segments": [
+    {
+      "id": 0,
+      "seek": 0,
+      "start": 0.1,
+      "end": 2.98,
+      "text": " The real estate industry plays a key role in the nation's economy",
+      "tokens": [
+        50364,
+        440,
+        957,
+        9749,
+        3518,
+        5749,
+        257,
+        2141,
+        3090,
+        294,
+        264,
+        4790,
+        311,
+        5010,
+        50532
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.17716366669227337,
+      "compression_ratio": 1.5263157894736843,
+      "no_speech_prob": 0.005310782231390476,
+      "confidence": 0.974,
+      "words": [
+        {
+          "text": "The",
+          "start": 0.1,
+          "end": 0.2,
+          "confidence": 0.97
+        },
+        {
+          "text": "real",
+          "start": 0.2,
+          "end": 0.38,
+          "confidence": 0.95
+        },
+        {
+          "text": "estate",
+          "start": 0.38,
+          "end": 0.62,
+          "confidence": 0.99
+        },
+        {
+          "text": "industry",
+          "start": 0.62,
+          "end": 1.02,
+          "confidence": 0.998
+        },
+        {
+          "text": "plays",
+          "start": 1.02,
+          "end": 1.3,
+          "confidence": 0.984
+        },
+        {
+          "text": "a",
+          "start": 1.3,
+          "end": 1.46,
+          "confidence": 0.986
+        },
+        {
+          "text": "key",
+          "start": 1.46,
+          "end": 1.68,
+          "confidence": 0.997
+        },
+        {
+          "text": "role",
+          "start": 1.68,
+          "end": 1.94,
+          "confidence": 0.999
+        },
+        {
+          "text": "in",
+          "start": 1.94,
+          "end": 2.08,
+          "confidence": 0.902
+        },
+        {
+          "text": "the",
+          "start": 2.08,
+          "end": 2.18,
+          "confidence": 0.982
+        },
+        {
+          "text": "nation's",
+          "start": 2.18,
+          "end": 2.54,
+          "confidence": 0.965
+        },
+        {
+          "text": "economy",
+          "start": 2.54,
+          "end": 2.98,
+          "confidence": 0.976
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "seek": 0,
+      "start": 3.44,
+      "end": 8.52,
+      "text": " by driving construction, creating jobs, enabling home ownership and investment,",
+      "tokens": [
+        50532,
+        538,
+        4840,
+        6435,
+        11,
+        4084,
+        4782,
+        11,
+        23148,
+        1280,
+        15279,
+        293,
+        6078,
+        11,
+        50816
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.17716366669227337,
+      "compression_ratio": 1.5263157894736843,
+      "no_speech_prob": 0.005310782231390476,
+      "confidence": 0.919,
+      "words": [
+        {
+          "text": "by",
+          "start": 3.44,
+          "end": 3.58,
+          "confidence": 0.997
+        },
+        {
+          "text": "driving",
+          "start": 3.58,
+          "end": 3.92,
+          "confidence": 0.997
+        },
+        {
+          "text": "construction,",
+          "start": 3.92,
+          "end": 4.64,
+          "confidence": 0.998
+        },
+        {
+          "text": "creating",
+          "start": 5.1,
+          "end": 5.68,
+          "confidence": 0.95
+        },
+        {
+          "text": "jobs,",
+          "start": 5.68,
+          "end": 6.12,
+          "confidence": 0.998
+        },
+        {
+          "text": "enabling",
+          "start": 6.48,
+          "end": 7.12,
+          "confidence": 0.777
+        },
+        {
+          "text": "home",
+          "start": 7.12,
+          "end": 7.44,
+          "confidence": 0.747
+        },
+        {
+          "text": "ownership",
+          "start": 7.44,
+          "end": 7.82,
+          "confidence": 0.944
+        },
+        {
+          "text": "and",
+          "start": 7.82,
+          "end": 8.06,
+          "confidence": 0.869
+        },
+        {
+          "text": "investment,",
+          "start": 8.06,
+          "end": 8.52,
+          "confidence": 0.963
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "seek": 0,
+      "start": 9.14,
+      "end": 13.08,
+      "text": " generating tax revenue, and supporting related industries like banking,",
+      "tokens": [
+        50816,
+        17746,
+        3366,
+        9324,
+        11,
+        293,
+        7231,
+        4077,
+        13284,
+        411,
+        18261,
+        11,
+        51044
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.17716366669227337,
+      "compression_ratio": 1.5263157894736843,
+      "no_speech_prob": 0.005310782231390476,
+      "confidence": 0.977,
+      "words": [
+        {
+          "text": "generating",
+          "start": 9.14,
+          "end": 9.6,
+          "confidence": 0.998
+        },
+        {
+          "text": "tax",
+          "start": 9.6,
+          "end": 10.0,
+          "confidence": 0.999
+        },
+        {
+          "text": "revenue,",
+          "start": 10.0,
+          "end": 10.48,
+          "confidence": 0.999
+        },
+        {
+          "text": "and",
+          "start": 10.82,
+          "end": 11.14,
+          "confidence": 0.956
+        },
+        {
+          "text": "supporting",
+          "start": 11.14,
+          "end": 11.54,
+          "confidence": 0.994
+        },
+        {
+          "text": "related",
+          "start": 11.54,
+          "end": 11.92,
+          "confidence": 0.995
+        },
+        {
+          "text": "industries",
+          "start": 11.92,
+          "end": 12.44,
+          "confidence": 0.997
+        },
+        {
+          "text": "like",
+          "start": 12.44,
+          "end": 12.68,
+          "confidence": 0.887
+        },
+        {
+          "text": "banking,",
+          "start": 12.68,
+          "end": 13.08,
+          "confidence": 0.978
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "seek": 0,
+      "start": 13.68,
+      "end": 18.36,
+      "text": " insurance, and retail, which together stimulate overall economic growth.",
+      "tokens": [
+        51044,
+        7214,
+        11,
+        293,
+        10800,
+        11,
+        597,
+        1214,
+        31269,
+        4787,
+        4836,
+        4599,
+        13,
+        51316
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.17716366669227337,
+      "compression_ratio": 1.5263157894736843,
+      "no_speech_prob": 0.005310782231390476,
+      "confidence": 0.978,
+      "words": [
+        {
+          "text": "insurance,",
+          "start": 13.68,
+          "end": 14.12,
+          "confidence": 0.988
+        },
+        {
+          "text": "and",
+          "start": 14.52,
+          "end": 14.7,
+          "confidence": 0.998
+        },
+        {
+          "text": "retail,",
+          "start": 14.7,
+          "end": 15.18,
+          "confidence": 0.999
+        },
+        {
+          "text": "which",
+          "start": 15.46,
+          "end": 15.86,
+          "confidence": 0.935
+        },
+        {
+          "text": "together",
+          "start": 15.86,
+          "end": 16.28,
+          "confidence": 0.987
+        },
+        {
+          "text": "stimulate",
+          "start": 16.28,
+          "end": 16.86,
+          "confidence": 0.92
+        },
+        {
+          "text": "overall",
+          "start": 16.86,
+          "end": 17.46,
+          "confidence": 0.986
+        },
+        {
+          "text": "economic",
+          "start": 17.46,
+          "end": 17.94,
+          "confidence": 0.997
+        },
+        {
+          "text": "growth.",
+          "start": 17.94,
+          "end": 18.36,
+          "confidence": 0.998
+        }
+      ]
+    }
+  ],
+  "language": "en",
+  "speech_activity": [
+    {
+      "start": 0.0,
+      "end": 18.8343125
+    }
+  ]
+}

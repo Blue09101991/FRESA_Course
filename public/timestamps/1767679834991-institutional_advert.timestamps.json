@@ -1,0 +1,338 @@
+{
+  "text": " Institutional advertising. Institutional advertising is designed to build the reputation and brand awareness of the brokerage or company as a whole, rather than selling a specific property or targeting a specific list of prospects with a direct message.",
+  "segments": [
+    {
+      "id": 0,
+      "seek": 0,
+      "start": 0.08,
+      "end": 1.36,
+      "text": " Institutional advertising.",
+      "tokens": [
+        50364,
+        2730,
+        41859,
+        13097,
+        13,
+        50464
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.177609780255486,
+      "compression_ratio": 1.6217948717948718,
+      "no_speech_prob": 0.009112454950809479,
+      "confidence": 0.815,
+      "words": [
+        {
+          "text": "Institutional",
+          "start": 0.08,
+          "end": 0.66,
+          "confidence": 0.857
+        },
+        {
+          "text": "advertising.",
+          "start": 0.66,
+          "end": 1.36,
+          "confidence": 0.737
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "seek": 0,
+      "start": 1.5,
+      "end": 7.98,
+      "text": " Institutional advertising is designed to build the reputation and brand awareness of the brokerage or company as a whole,",
+      "tokens": [
+        50464,
+        2730,
+        41859,
+        13097,
+        307,
+        4761,
+        281,
+        1322,
+        264,
+        13061,
+        293,
+        3360,
+        8888,
+        295,
+        264,
+        26502,
+        609,
+        420,
+        2237,
+        382,
+        257,
+        1379,
+        11,
+        50764
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.177609780255486,
+      "compression_ratio": 1.6217948717948718,
+      "no_speech_prob": 0.009112454950809479,
+      "confidence": 0.939,
+      "words": [
+        {
+          "text": "Institutional",
+          "start": 1.5,
+          "end": 2.88,
+          "confidence": 0.974
+        },
+        {
+          "text": "advertising",
+          "start": 2.88,
+          "end": 3.5,
+          "confidence": 0.997
+        },
+        {
+          "text": "is",
+          "start": 3.5,
+          "end": 3.82,
+          "confidence": 0.974
+        },
+        {
+          "text": "designed",
+          "start": 3.82,
+          "end": 4.14,
+          "confidence": 0.992
+        },
+        {
+          "text": "to",
+          "start": 4.14,
+          "end": 4.38,
+          "confidence": 0.944
+        },
+        {
+          "text": "build",
+          "start": 4.38,
+          "end": 4.58,
+          "confidence": 0.965
+        },
+        {
+          "text": "the",
+          "start": 4.58,
+          "end": 4.74,
+          "confidence": 0.902
+        },
+        {
+          "text": "reputation",
+          "start": 4.74,
+          "end": 5.16,
+          "confidence": 0.964
+        },
+        {
+          "text": "and",
+          "start": 5.16,
+          "end": 5.48,
+          "confidence": 0.905
+        },
+        {
+          "text": "brand",
+          "start": 5.48,
+          "end": 5.68,
+          "confidence": 0.916
+        },
+        {
+          "text": "awareness",
+          "start": 5.68,
+          "end": 6.08,
+          "confidence": 0.955
+        },
+        {
+          "text": "of",
+          "start": 6.08,
+          "end": 6.36,
+          "confidence": 0.789
+        },
+        {
+          "text": "the",
+          "start": 6.36,
+          "end": 6.5,
+          "confidence": 0.759
+        },
+        {
+          "text": "brokerage",
+          "start": 6.5,
+          "end": 6.94,
+          "confidence": 0.965
+        },
+        {
+          "text": "or",
+          "start": 6.94,
+          "end": 7.1,
+          "confidence": 0.9
+        },
+        {
+          "text": "company",
+          "start": 7.1,
+          "end": 7.42,
+          "confidence": 0.984
+        },
+        {
+          "text": "as",
+          "start": 7.42,
+          "end": 7.62,
+          "confidence": 0.986
+        },
+        {
+          "text": "a",
+          "start": 7.62,
+          "end": 7.74,
+          "confidence": 0.988
+        },
+        {
+          "text": "whole,",
+          "start": 7.74,
+          "end": 7.98,
+          "confidence": 0.974
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "seek": 0,
+      "start": 8.6,
+      "end": 13.44,
+      "text": " rather than selling a specific property or targeting a specific list of prospects with a direct message.",
+      "tokens": [
+        50764,
+        2831,
+        813,
+        6511,
+        257,
+        2685,
+        4707,
+        420,
+        17918,
+        257,
+        2685,
+        1329,
+        295,
+        32933,
+        365,
+        257,
+        2047,
+        3636,
+        13,
+        51064
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.177609780255486,
+      "compression_ratio": 1.6217948717948718,
+      "no_speech_prob": 0.009112454950809479,
+      "confidence": 0.978,
+      "words": [
+        {
+          "text": "rather",
+          "start": 8.6,
+          "end": 8.78,
+          "confidence": 0.976
+        },
+        {
+          "text": "than",
+          "start": 8.78,
+          "end": 8.98,
+          "confidence": 0.996
+        },
+        {
+          "text": "selling",
+          "start": 8.98,
+          "end": 9.26,
+          "confidence": 0.994
+        },
+        {
+          "text": "a",
+          "start": 9.26,
+          "end": 9.46,
+          "confidence": 0.993
+        },
+        {
+          "text": "specific",
+          "start": 9.46,
+          "end": 9.8,
+          "confidence": 0.998
+        },
+        {
+          "text": "property",
+          "start": 9.8,
+          "end": 10.28,
+          "confidence": 0.998
+        },
+        {
+          "text": "or",
+          "start": 10.28,
+          "end": 10.52,
+          "confidence": 0.938
+        },
+        {
+          "text": "targeting",
+          "start": 10.52,
+          "end": 10.88,
+          "confidence": 0.988
+        },
+        {
+          "text": "a",
+          "start": 10.88,
+          "end": 11.14,
+          "confidence": 0.959
+        },
+        {
+          "text": "specific",
+          "start": 11.14,
+          "end": 11.5,
+          "confidence": 0.991
+        },
+        {
+          "text": "list",
+          "start": 11.5,
+          "end": 11.78,
+          "confidence": 0.99
+        },
+        {
+          "text": "of",
+          "start": 11.78,
+          "end": 11.96,
+          "confidence": 0.992
+        },
+        {
+          "text": "prospects",
+          "start": 11.96,
+          "end": 12.38,
+          "confidence": 0.952
+        },
+        {
+          "text": "with",
+          "start": 12.38,
+          "end": 12.72,
+          "confidence": 0.963
+        },
+        {
+          "text": "a",
+          "start": 12.72,
+          "end": 12.82,
+          "confidence": 0.923
+        },
+        {
+          "text": "direct",
+          "start": 12.82,
+          "end": 13.06,
+          "confidence": 0.99
+        },
+        {
+          "text": "message.",
+          "start": 13.06,
+          "end": 13.44,
+          "confidence": 0.997
+        }
+      ]
+    }
+  ],
+  "language": "en",
+  "speech_activity": [
+    {
+      "start": 0.0,
+      "end": 13.9755
+    }
+  ]
+}

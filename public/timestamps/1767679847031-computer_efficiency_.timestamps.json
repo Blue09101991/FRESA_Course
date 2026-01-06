@@ -1,0 +1,269 @@
+{
+  "text": " Computer efficiency, this is a general term referring to how well a computer system performs tasks. While computers are used to maintain databases, computer efficiency is not the marketing strategy itself.",
+  "segments": [
+    {
+      "id": 0,
+      "seek": 0,
+      "start": 0.08,
+      "end": 5.4,
+      "text": " Computer efficiency, this is a general term referring to how well a computer system performs tasks.",
+      "tokens": [
+        50364,
+        22289,
+        10493,
+        11,
+        341,
+        307,
+        257,
+        2674,
+        1433,
+        13761,
+        281,
+        577,
+        731,
+        257,
+        3820,
+        1185,
+        26213,
+        9608,
+        13,
+        50644
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.25223050117492674,
+      "compression_ratio": 1.4963503649635037,
+      "no_speech_prob": 0.0026755728758871555,
+      "confidence": 0.909,
+      "words": [
+        {
+          "text": "Computer",
+          "start": 0.08,
+          "end": 0.42,
+          "confidence": 0.789
+        },
+        {
+          "text": "efficiency,",
+          "start": 0.42,
+          "end": 1.06,
+          "confidence": 0.83
+        },
+        {
+          "text": "this",
+          "start": 1.44,
+          "end": 1.64,
+          "confidence": 0.933
+        },
+        {
+          "text": "is",
+          "start": 1.64,
+          "end": 1.76,
+          "confidence": 0.994
+        },
+        {
+          "text": "a",
+          "start": 1.76,
+          "end": 1.9,
+          "confidence": 0.987
+        },
+        {
+          "text": "general",
+          "start": 1.9,
+          "end": 2.18,
+          "confidence": 0.996
+        },
+        {
+          "text": "term",
+          "start": 2.18,
+          "end": 2.5,
+          "confidence": 0.981
+        },
+        {
+          "text": "referring",
+          "start": 2.5,
+          "end": 2.86,
+          "confidence": 0.881
+        },
+        {
+          "text": "to",
+          "start": 2.86,
+          "end": 3.12,
+          "confidence": 0.949
+        },
+        {
+          "text": "how",
+          "start": 3.12,
+          "end": 3.28,
+          "confidence": 0.968
+        },
+        {
+          "text": "well",
+          "start": 3.28,
+          "end": 3.52,
+          "confidence": 0.954
+        },
+        {
+          "text": "a",
+          "start": 3.52,
+          "end": 3.7,
+          "confidence": 0.964
+        },
+        {
+          "text": "computer",
+          "start": 3.7,
+          "end": 4.02,
+          "confidence": 0.974
+        },
+        {
+          "text": "system",
+          "start": 4.02,
+          "end": 4.4,
+          "confidence": 0.844
+        },
+        {
+          "text": "performs",
+          "start": 4.4,
+          "end": 4.82,
+          "confidence": 0.644
+        },
+        {
+          "text": "tasks.",
+          "start": 4.82,
+          "end": 5.4,
+          "confidence": 0.932
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "seek": 0,
+      "start": 6.72,
+      "end": 11.96,
+      "text": " While computers are used to maintain databases, computer efficiency is not the marketing strategy itself.",
+      "tokens": [
+        50696,
+        3987,
+        10807,
+        366,
+        1143,
+        281,
+        6909,
+        22380,
+        11,
+        3820,
+        10493,
+        307,
+        406,
+        264,
+        6370,
+        5206,
+        2564,
+        13,
+        50976
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.25223050117492674,
+      "compression_ratio": 1.4963503649635037,
+      "no_speech_prob": 0.0026755728758871555,
+      "confidence": 0.972,
+      "words": [
+        {
+          "text": "While",
+          "start": 6.72,
+          "end": 6.84,
+          "confidence": 0.966
+        },
+        {
+          "text": "computers",
+          "start": 6.84,
+          "end": 7.24,
+          "confidence": 0.997
+        },
+        {
+          "text": "are",
+          "start": 7.24,
+          "end": 7.5,
+          "confidence": 0.999
+        },
+        {
+          "text": "used",
+          "start": 7.5,
+          "end": 7.7,
+          "confidence": 0.998
+        },
+        {
+          "text": "to",
+          "start": 7.7,
+          "end": 7.88,
+          "confidence": 0.999
+        },
+        {
+          "text": "maintain",
+          "start": 7.88,
+          "end": 8.18,
+          "confidence": 0.995
+        },
+        {
+          "text": "databases,",
+          "start": 8.18,
+          "end": 8.78,
+          "confidence": 0.972
+        },
+        {
+          "text": "computer",
+          "start": 9.18,
+          "end": 9.48,
+          "confidence": 0.818
+        },
+        {
+          "text": "efficiency",
+          "start": 9.48,
+          "end": 10.06,
+          "confidence": 0.984
+        },
+        {
+          "text": "is",
+          "start": 10.06,
+          "end": 10.38,
+          "confidence": 0.982
+        },
+        {
+          "text": "not",
+          "start": 10.38,
+          "end": 10.58,
+          "confidence": 0.996
+        },
+        {
+          "text": "the",
+          "start": 10.58,
+          "end": 10.74,
+          "confidence": 0.971
+        },
+        {
+          "text": "marketing",
+          "start": 10.74,
+          "end": 11.04,
+          "confidence": 0.951
+        },
+        {
+          "text": "strategy",
+          "start": 11.04,
+          "end": 11.56,
+          "confidence": 0.986
+        },
+        {
+          "text": "itself.",
+          "start": 11.56,
+          "end": 11.96,
+          "confidence": 0.975
+        }
+      ]
+    }
+  ],
+  "language": "en",
+  "speech_activity": [
+    {
+      "start": 0.0,
+      "end": 12.5649375
+    }
+  ]
+}

@@ -1,0 +1,164 @@
+{
+  "text": " Agricultural property, farms and land over 10 acres is one of the five recognized sales specialties.",
+  "segments": [
+    {
+      "id": 0,
+      "seek": 0,
+      "start": 0.0,
+      "end": 6.0,
+      "text": " Agricultural property, farms and land over 10 acres is one of the five recognized sales",
+      "tokens": [
+        50364,
+        27587,
+        11056,
+        4707,
+        11,
+        20366,
+        293,
+        2117,
+        670,
+        1266,
+        19852,
+        307,
+        472,
+        295,
+        264,
+        1732,
+        9823,
+        5763,
+        50669
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.3281301498413086,
+      "compression_ratio": 1.0869565217391304,
+      "no_speech_prob": 0.004682903178036213,
+      "confidence": 0.827,
+      "words": [
+        {
+          "text": "Agricultural",
+          "start": 0.0,
+          "end": 0.74,
+          "confidence": 0.911
+        },
+        {
+          "text": "property,",
+          "start": 0.74,
+          "end": 2.06,
+          "confidence": 0.4
+        },
+        {
+          "text": "farms",
+          "start": 2.42,
+          "end": 2.64,
+          "confidence": 0.866
+        },
+        {
+          "text": "and",
+          "start": 2.64,
+          "end": 2.92,
+          "confidence": 0.703
+        },
+        {
+          "text": "land",
+          "start": 2.92,
+          "end": 3.18,
+          "confidence": 0.99
+        },
+        {
+          "text": "over",
+          "start": 3.18,
+          "end": 3.48,
+          "confidence": 0.902
+        },
+        {
+          "text": "10",
+          "start": 3.48,
+          "end": 3.72,
+          "confidence": 0.856
+        },
+        {
+          "text": "acres",
+          "start": 3.72,
+          "end": 4.02,
+          "confidence": 0.993
+        },
+        {
+          "text": "is",
+          "start": 4.02,
+          "end": 4.4,
+          "confidence": 0.641
+        },
+        {
+          "text": "one",
+          "start": 4.4,
+          "end": 4.58,
+          "confidence": 0.976
+        },
+        {
+          "text": "of",
+          "start": 4.58,
+          "end": 4.68,
+          "confidence": 0.968
+        },
+        {
+          "text": "the",
+          "start": 4.68,
+          "end": 4.78,
+          "confidence": 0.958
+        },
+        {
+          "text": "five",
+          "start": 4.78,
+          "end": 5.06,
+          "confidence": 0.879
+        },
+        {
+          "text": "recognized",
+          "start": 5.06,
+          "end": 5.62,
+          "confidence": 0.887
+        },
+        {
+          "text": "sales",
+          "start": 5.62,
+          "end": 6.0,
+          "confidence": 0.685
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "seek": 0,
+      "start": 6.14,
+      "end": 6.76,
+      "text": " specialties.",
+      "tokens": [
+        50669,
+        2121,
+        6097,
+        13,
+        50711
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.3281301498413086,
+      "compression_ratio": 1.0869565217391304,
+      "no_speech_prob": 0.004682903178036213,
+      "confidence": 0.9,
+      "words": [
+        {
+          "text": "specialties.",
+          "start": 6.14,
+          "end": 6.76,
+          "confidence": 0.9
+        }
+      ]
+    }
+  ],
+  "language": "en",
+  "speech_activity": [
+    {
+      "start": 0.0,
+      "end": 7.1836875
+    }
+  ]
+}
