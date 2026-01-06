@@ -178,8 +178,9 @@ export default function AudioPlayer({
             return word.replace(/[.,!?;:'"()\[\]{}]/g, '').toLowerCase().trim();
           };
           
-          // More flexible word matching
+          // More flexible word matching - handles punctuation differences
           const wordsMatch = (textWord: string, timestampWord: string): boolean => {
+            // Normalize both words (remove punctuation, lowercase)
             const textNorm = normalizeWord(textWord);
             const timestampNorm = normalizeWord(timestampWord);
             
@@ -189,10 +190,27 @@ export default function AudioPlayer({
             // Remove all non-alphanumeric characters and compare
             const textClean = textNorm.replace(/[^a-z0-9]/g, '');
             const timestampClean = timestampNorm.replace(/[^a-z0-9]/g, '');
+            
+            // Exact match after removing all non-alphanumeric
             if (textClean === timestampClean && textClean.length > 0) return true;
             
-            // Handle cases where one word contains the other (e.g., "Mr." vs "Mr")
+            // Handle cases where punctuation differs (e.g., "word." vs "word" or "word," vs "word")
+            // Check if the core word matches (ignoring trailing punctuation)
             if (textClean.length > 0 && timestampClean.length > 0) {
+              // Check if one is a prefix of the other (handles "word." vs "word")
+              const minLength = Math.min(textClean.length, timestampClean.length);
+              if (minLength > 0) {
+                const textPrefix = textClean.substring(0, minLength);
+                const timestampPrefix = timestampClean.substring(0, minLength);
+                if (textPrefix === timestampPrefix) {
+                  // Core words match, only difference is length (likely punctuation)
+                  if (Math.abs(textClean.length - timestampClean.length) <= 2) {
+                    return true;
+                  }
+                }
+              }
+              
+              // Check if one word contains the other (for contractions, etc.)
               if (textClean.includes(timestampClean) || timestampClean.includes(textClean)) {
                 // Only match if lengths are similar (within 3 characters)
                 if (Math.abs(textClean.length - timestampClean.length) <= 3) {
@@ -211,32 +229,48 @@ export default function AudioPlayer({
           let timestampIndex = 0;
           let textIndex = 0;
           
-          // Simple sequential matching: go through timestamp words and match to text words
+          // Improved sequential matching: go through timestamp words and match to text words
+          // This handles cases where punctuation differs between text and timestamps
           for (timestampIndex = 0; timestampIndex < allWords.length; timestampIndex++) {
             const timestampWord = allWords[timestampIndex].text;
             
             // Find the matching text word starting from current position
             let matched = false;
-            const searchWindow = 5; // Look ahead up to 5 words
+            const searchWindow = 10; // Increased search window for better matching
             
-            for (let i = 0; i < searchWindow && textIndex + i < words.length; i++) {
-              const candidateTextWord = words[textIndex + i].trim();
-              if (candidateTextWord && wordsMatch(candidateTextWord, timestampWord)) {
-                // Found a match!
-                // Map all text words from current position to this match to the same timestamp
-                // (handles cases where text has extra words)
-                for (let j = 0; j <= i; j++) {
-                  if (textIndex + j < words.length && words[textIndex + j].trim()) {
-                    map.set(textIndex + j, timestampIndex);
-                  }
-                }
-                textIndex += i + 1; // Move past the matched word
+            // First, try exact match at current position
+            if (textIndex < words.length) {
+              const currentTextWord = words[textIndex].trim();
+              if (currentTextWord && wordsMatch(currentTextWord, timestampWord)) {
+                map.set(textIndex, timestampIndex);
+                textIndex++;
                 matched = true;
-                break;
+                continue;
               }
             }
             
-            // If no match found, map current text word to this timestamp (best guess)
+            // If no exact match, search ahead
+            if (!matched) {
+              for (let i = 1; i < searchWindow && textIndex + i < words.length; i++) {
+                const candidateTextWord = words[textIndex + i].trim();
+                if (candidateTextWord && wordsMatch(candidateTextWord, timestampWord)) {
+                  // Found a match ahead!
+                  // Map all text words from current position to this match to the same timestamp
+                  // This handles cases where text has extra words (like punctuation)
+                  for (let j = 0; j <= i; j++) {
+                    if (textIndex + j < words.length && words[textIndex + j].trim()) {
+                      map.set(textIndex + j, timestampIndex);
+                    }
+                  }
+                  textIndex += i + 1; // Move past the matched word
+                  matched = true;
+                  break;
+                }
+              }
+            }
+            
+            // If still no match found, map current text word to this timestamp (best guess)
+            // This handles cases where timestamps have words not in text or vice versa
             if (!matched && textIndex < words.length) {
               if (words[textIndex].trim()) {
                 map.set(textIndex, timestampIndex);
@@ -246,6 +280,7 @@ export default function AudioPlayer({
           }
           
           // Map any remaining text words to the last timestamp
+          // This ensures all text words have a mapping
           while (textIndex < words.length) {
             if (words[textIndex].trim()) {
               map.set(textIndex, allWords.length - 1);

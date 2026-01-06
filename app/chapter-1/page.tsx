@@ -362,9 +362,9 @@ export default function Chapter1Page() {
   const currentSectionData = sections.find(s => s.id === currentSection);
   const currentIndex = sections.findIndex(s => s.id === currentSection);
 
-  // Normalize word for matching (remove punctuation, lowercase)
+  // Normalize word for matching (same as AudioPlayer)
   const normalizeWord = (word: string) => {
-    return word.toLowerCase().replace(/[^\w]/g, '');
+    return word.replace(/[.,!?;:'"()\[\]{}]/g, '').toLowerCase().trim();
   };
 
   // Helper to remove all highlights from an element
@@ -500,6 +500,15 @@ export default function Chapter1Page() {
 
   // Handle word highlighting from AudioPlayer for objectives
   const handleObjectivesHighlightedWord = (word: string, wordIndex: number) => {
+    // Ensure refs are initialized - if not, try to initialize them
+    if (objectivesRefs.current.length === 0 && learningObjectives.length > 0) {
+      objectivesRefs.current = new Array(learningObjectives.length).fill(null);
+      // Force a re-render to populate refs (this is a fallback)
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('Objectives refs not initialized, attempting to initialize');
+      }
+    }
+    
     // First, remove all highlights from all objectives
     objectivesRefs.current.forEach((ref) => {
       if (ref) {
@@ -507,48 +516,112 @@ export default function Chapter1Page() {
       }
     });
 
-    // Get the full audio text and split into words (same way AudioPlayer does)
+    // Get the full audio text EXACTLY as passed to AudioPlayer
+    // AudioPlayer uses: text.split(/\s+/).filter(word => word.length > 0)
     const audioText = currentSectionData?.text || learningObjectives.map(obj => obj.text).join(". ");
-    const audioWords = audioText.split(/\s+/).filter(w => w.trim());
+    const audioWords = audioText.split(/\s+/).filter(w => w.length > 0);
+    
+    // Debug logging
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Objectives Highlighting:', {
+        word,
+        wordIndex,
+        audioText,
+        audioWordsLength: audioWords.length,
+        audioWordAtIndex: audioWords[wordIndex],
+        objectivesCount: learningObjectives.length,
+      });
+    }
     
     // Calculate which objective this word belongs to and its position within that objective
+    // We need to match EXACTLY how AudioPlayer splits the text
+    // When joining with ". ", the period attaches to the last word: "obj1. obj2" -> ["obj1.", "obj2"]
     let cumulativeWordCount = 0;
     let foundElementIndex = -1;
     let targetPositionInElement = -1;
     
     for (let i = 0; i < learningObjectives.length; i++) {
       const objText = learningObjectives[i].text;
-      const objWords = objText.split(/\s+/).filter(w => w.trim());
+      // Split EXACTLY the same way AudioPlayer does
+      const objWords = objText.split(/\s+/).filter(w => w.length > 0);
       const objWordCount = objWords.length;
       
+      // Check if wordIndex falls within this objective's range
+      // The period from ". " separator attaches to the last word of the previous objective
+      // So "obj1. obj2" splits to ["obj1.", "obj2"] - the period is part of "obj1."
       if (wordIndex >= cumulativeWordCount && wordIndex < cumulativeWordCount + objWordCount) {
         foundElementIndex = i;
         targetPositionInElement = wordIndex - cumulativeWordCount;
+        if (process.env.NODE_ENV === 'development') {
+          console.log('Found objective match:', {
+            objectiveIndex: i,
+            objText,
+            targetPositionInElement,
+            cumulativeWordCount,
+            objWordCount,
+            audioWord: audioWords[wordIndex],
+          });
+        }
         break;
       }
       
       cumulativeWordCount += objWordCount;
-      // Add 1 for the separator ". " (counted as one word in audio when split by whitespace)
-      // But actually, when we join with ". ", the period might be attached to the last word
-      // So we need to account for the separator properly
-      // Let's check: if we have "obj1. obj2", split by /\s+/ gives ["obj1.", "obj2"]
-      // So the period is attached. But if AudioPlayer splits differently, we need to match that.
-      // For now, let's assume the separator adds 1 word (the period might be separate)
-      // Actually, let's be more careful - we need to match exactly how AudioPlayer splits
-      cumulativeWordCount += 1; // Account for separator
+      // When joining with ". ", the period attaches to the last word of each objective (except last)
+      // So "obj1. obj2" -> ["obj1.", "obj2"] - no extra word count needed
+      // The period is already part of the last word of the previous objective
     }
 
     // Highlight only in the correct element
     if (foundElementIndex >= 0 && foundElementIndex < objectivesRefs.current.length) {
       const targetRef = objectivesRefs.current[foundElementIndex];
       if (targetRef) {
+        if (process.env.NODE_ENV === 'development') {
+          console.log('Highlighting objective:', {
+            foundElementIndex,
+            targetPositionInElement,
+            elementText: targetRef.textContent,
+            word,
+            wordIndex,
+          });
+        }
         highlightWordAtPosition(targetRef, targetPositionInElement, word);
+      } else {
+        // Ref not ready yet - try again after a short delay
+        // This handles the case where audio starts before React has finished rendering
+        if (process.env.NODE_ENV === 'development') {
+          console.warn('Target ref not ready for objective index, retrying:', foundElementIndex);
+        }
+        setTimeout(() => {
+          const retryRef = objectivesRefs.current[foundElementIndex];
+          if (retryRef) {
+            highlightWordAtPosition(retryRef, targetPositionInElement, word);
+          }
+        }, 50);
+      }
+    } else {
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('No objective match found for wordIndex:', wordIndex, {
+          foundElementIndex,
+          objectivesRefsLength: objectivesRefs.current.length,
+          objectivesLength: learningObjectives.length,
+          audioWords,
+          cumulativeWordCount,
+        });
       }
     }
   };
 
   // Handle word highlighting from AudioPlayer for key terms
   const handleKeyTermsHighlightedWord = (word: string, wordIndex: number) => {
+    // Ensure refs are initialized - if not, try to initialize them
+    if (keyTermsRefs.current.length === 0 && keyTerms.length > 0) {
+      keyTermsRefs.current = new Array(keyTerms.length).fill(null);
+      // Force a re-render to populate refs (this is a fallback)
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('Key terms refs not initialized, attempting to initialize');
+      }
+    }
+    
     // First, remove all highlights from all key terms
     keyTermsRefs.current.forEach((ref) => {
       if (ref) {
@@ -556,7 +629,7 @@ export default function Chapter1Page() {
       }
     });
 
-    // Get the full audio text and split into words (EXACTLY same way AudioPlayer does)
+    // Get the full audio text EXACTLY as passed to AudioPlayer
     // AudioPlayer uses: text.split(/\s+/).filter(word => word.length > 0)
     const audioText = currentSectionData?.text || keyTerms.map(term => term.term).join(". ");
     const audioWords = audioText.split(/\s+/).filter(w => w.length > 0);
@@ -568,34 +641,28 @@ export default function Chapter1Page() {
         wordIndex,
         audioText,
         audioWordsLength: audioWords.length,
+        audioWordAtIndex: audioWords[wordIndex],
         keyTermsCount: keyTerms.length,
         keyTerms: keyTerms.map(t => t.term),
       });
     }
     
     // Calculate which key term this word belongs to and its position within that term
-    // We need to match exactly how the audio text is constructed
-    // When we join with ". ", the period attaches to the last word of each term (except last)
-    // Example: "term1" + ". " + "term2" = "term1. term2"
-    // Split: ["term1.", "term2"] - period is part of "term1."
-    
+    // We need to match EXACTLY how AudioPlayer splits the text
+    // When joining with ". ", the period attaches to the last word: "term1. term2" -> ["term1.", "term2"]
     let cumulativeWordCount = 0;
     let foundElementIndex = -1;
     let targetPositionInElement = -1;
     
     for (let i = 0; i < keyTerms.length; i++) {
       const termText = keyTerms[i].term;
-      // Split the same way AudioPlayer does
+      // Split EXACTLY the same way AudioPlayer does
       const termWords = termText.split(/\s+/).filter(w => w.length > 0);
       const termWordCount = termWords.length;
       
-      // In the joined audio text, if this is not the last term, the period attaches to the last word
-      // So the word count in audio might be the same, but we need to check the actual audio words
-      // Let's check if wordIndex falls within this term's range
-      // But we need to account for the period that might be attached
-      
-      // Check if this word index falls within this term's range
-      // The period from ". " separator attaches to the last word of the term in the audio
+      // Check if wordIndex falls within this term's range
+      // The period from ". " separator attaches to the last word of the previous term
+      // So "term1. term2" splits to ["term1.", "term2"] - the period is part of "term1."
       if (wordIndex >= cumulativeWordCount && wordIndex < cumulativeWordCount + termWordCount) {
         foundElementIndex = i;
         targetPositionInElement = wordIndex - cumulativeWordCount;
@@ -613,9 +680,9 @@ export default function Chapter1Page() {
       }
       
       cumulativeWordCount += termWordCount;
-      // When joining with ". ", the period attaches to the last word
-      // So "term1" becomes "term1." in the audio, but it's still counted as 1 word
-      // So we don't need to add anything extra - the word count is the same
+      // When joining with ". ", the period attaches to the last word of each term (except last)
+      // So "term1. term2" -> ["term1.", "term2"] - no extra word count needed
+      // The period is already part of the last word of the previous term
     }
 
     // Highlight only in the correct element
@@ -631,18 +698,26 @@ export default function Chapter1Page() {
             wordIndex,
           });
         }
-        // Pass the word as well to help with matching if position is off
         highlightWordAtPosition(targetRef, targetPositionInElement, word);
       } else {
+        // Ref not ready yet - try again after a short delay
+        // This handles the case where audio starts before React has finished rendering
         if (process.env.NODE_ENV === 'development') {
-          console.warn('Target ref not found for key term index:', foundElementIndex);
+          console.warn('Target ref not ready for key term index, retrying:', foundElementIndex);
         }
+        setTimeout(() => {
+          const retryRef = keyTermsRefs.current[foundElementIndex];
+          if (retryRef) {
+            highlightWordAtPosition(retryRef, targetPositionInElement, word);
+          }
+        }, 50);
       }
     } else {
       if (process.env.NODE_ENV === 'development') {
         console.warn('No key term match found for wordIndex:', wordIndex, {
           foundElementIndex,
           keyTermsRefsLength: keyTermsRefs.current.length,
+          keyTermsLength: keyTerms.length,
           audioWords,
           cumulativeWordCount,
         });
@@ -650,14 +725,67 @@ export default function Chapter1Page() {
     }
   };
 
-  // Reset highlights when section changes
+  // Reset highlights and initialize refs arrays when section changes
   useEffect(() => {
     objectivesRefs.current.forEach(removeHighlights);
     keyTermsRefs.current.forEach(removeHighlights);
-    // Clear refs arrays
-    objectivesRefs.current = [];
-    keyTermsRefs.current = [];
-  }, [currentSection]);
+    
+    // Initialize refs arrays with correct length based on current section
+    if (currentSection === 'objectives' && learningObjectives.length > 0) {
+      objectivesRefs.current = new Array(learningObjectives.length).fill(null);
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Initialized objectives refs:', learningObjectives.length);
+      }
+    } else {
+      objectivesRefs.current = [];
+    }
+    
+    if (currentSection === 'key-terms' && keyTerms.length > 0) {
+      keyTermsRefs.current = new Array(keyTerms.length).fill(null);
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Initialized key terms refs:', keyTerms.length);
+      }
+    } else {
+      keyTermsRefs.current = [];
+    }
+  }, [currentSection, learningObjectives.length, keyTerms.length]);
+
+  // Additional effect to ensure refs are ready after render
+  useEffect(() => {
+    // Small delay to ensure DOM elements are rendered and refs are populated
+    const timer = setTimeout(() => {
+      if (currentSection === 'key-terms' && keyTerms.length > 0) {
+        const refsReady = keyTermsRefs.current.every((ref, idx) => {
+          // Check if ref exists or if we're still waiting for it
+          return ref !== null || idx >= keyTerms.length;
+        });
+        if (process.env.NODE_ENV === 'development') {
+          console.log('Key terms refs check:', {
+            refsReady,
+            refsLength: keyTermsRefs.current.length,
+            keyTermsLength: keyTerms.length,
+            refs: keyTermsRefs.current.map((r, i) => ({ index: i, hasRef: r !== null })),
+          });
+        }
+      }
+      
+      if (currentSection === 'objectives' && learningObjectives.length > 0) {
+        const refsReady = objectivesRefs.current.every((ref, idx) => {
+          return ref !== null || idx >= learningObjectives.length;
+        });
+        if (process.env.NODE_ENV === 'development') {
+          console.log('Objectives refs check:', {
+            refsReady,
+            refsLength: objectivesRefs.current.length,
+            objectivesLength: learningObjectives.length,
+            refs: objectivesRefs.current.map((r, i) => ({ index: i, hasRef: r !== null })),
+          });
+        }
+      }
+    }, 100); // Small delay to allow React to finish rendering
+    
+    return () => clearTimeout(timer);
+  }, [currentSection, keyTerms, learningObjectives]);
 
   // Auto-advance to next section when audio completes
   const handleAudioComplete = () => {
@@ -769,27 +897,37 @@ export default function Chapter1Page() {
                     Learning Objectives
                   </h2>
                   <div className="space-y-4 mb-6">
-                    {learningObjectives.map((objective, index) => (
-                      <div
-                        key={index}
-                        className="flex items-start gap-4 p-4 bg-[#0a1a2e] rounded-lg border border-blue-500/20 hover:border-blue-500/40 transition-all duration-200 animate-slide-up"
-                        style={{ animationDelay: `${index * 0.1}s` }}
-                      >
-                        <div className="flex-shrink-0 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
-                          {index + 1}
-                        </div>
-                        <p 
-                          className="text-white text-base md:text-lg flex-1"
-                          ref={(el) => {
-                            if (el) {
-                              objectivesRefs.current[index] = el;
-                            }
-                          }}
+                    {learningObjectives.map((objective, index) => {
+                      // Ensure refs array is initialized with correct length
+                      if (objectivesRefs.current.length < learningObjectives.length) {
+                        objectivesRefs.current = new Array(learningObjectives.length).fill(null);
+                      }
+                      
+                      return (
+                        <div
+                          key={index}
+                          className="flex items-start gap-4 p-4 bg-[#0a1a2e] rounded-lg border border-blue-500/20 hover:border-blue-500/40 transition-all duration-200 animate-slide-up"
+                          style={{ animationDelay: `${index * 0.1}s` }}
                         >
-                          {searchHighlight ? highlightText(objective.text, searchHighlight) : objective.text}
-                        </p>
-                      </div>
-                    ))}
+                          <div className="flex-shrink-0 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                            {index + 1}
+                          </div>
+                          <p 
+                            className="text-white text-base md:text-lg flex-1"
+                            ref={(el) => {
+                              if (el) {
+                                objectivesRefs.current[index] = el;
+                                if (process.env.NODE_ENV === 'development') {
+                                  console.log('Objective ref set:', { index, text: objective.text, refsLength: objectivesRefs.current.length });
+                                }
+                              }
+                            }}
+                          >
+                            {searchHighlight ? highlightText(objective.text, searchHighlight) : objective.text}
+                          </p>
+                        </div>
+                      );
+                    })}
                   </div>
                   {currentSectionData?.audioUrl && (
                     <div className="pt-4 border-t border-blue-500/20">
@@ -823,24 +961,34 @@ export default function Chapter1Page() {
                     Key Terms you will learn about:
                   </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
-                    {keyTerms.map((term, index) => (
-                      <div
-                        key={index}
-                        className="p-4 bg-[#0a1a2e] rounded-lg border border-blue-500/20 hover:border-blue-500/40 transition-all duration-200 animate-scale-in"
-                        style={{ animationDelay: `${index * 0.05}s` }}
-                      >
-                        <p 
-                          className="text-blue-300 font-semibold text-base md:text-lg"
-                          ref={(el) => {
-                            if (el) {
-                              keyTermsRefs.current[index] = el;
-                            }
-                          }}
+                    {keyTerms.map((term, index) => {
+                      // Ensure refs array is initialized with correct length
+                      if (keyTermsRefs.current.length < keyTerms.length) {
+                        keyTermsRefs.current = new Array(keyTerms.length).fill(null);
+                      }
+                      
+                      return (
+                        <div
+                          key={index}
+                          className="p-4 bg-[#0a1a2e] rounded-lg border border-blue-500/20 hover:border-blue-500/40 transition-all duration-200 animate-scale-in"
+                          style={{ animationDelay: `${index * 0.05}s` }}
                         >
-                          {searchHighlight ? highlightText(term.term, searchHighlight) : term.term}
-                        </p>
-                      </div>
-                    ))}
+                          <p 
+                            className="text-blue-300 font-semibold text-base md:text-lg"
+                            ref={(el) => {
+                              if (el) {
+                                keyTermsRefs.current[index] = el;
+                                if (process.env.NODE_ENV === 'development') {
+                                  console.log('Key term ref set:', { index, term: term.term, refsLength: keyTermsRefs.current.length });
+                                }
+                              }
+                            }}
+                          >
+                            {searchHighlight ? highlightText(term.term, searchHighlight) : term.term}
+                          </p>
+                        </div>
+                      );
+                    })}
                   </div>
                   {currentSectionData?.audioUrl && (
                     <div className="pt-4 border-t border-blue-500/20">
