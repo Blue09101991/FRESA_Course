@@ -116,6 +116,19 @@ export default function Quiz({ questions, onComplete, showCharacter = true, sear
 
   // Handle word highlighting from AudioPlayer - highlight only the current word at the correct position
   const handleHighlightedWord = (word: string, wordIndex: number) => {
+    // Debug logging in development
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🎯 Quiz handleHighlightedWord:', {
+        word,
+        wordIndex,
+        currentOptionIndex,
+        isQuestion: currentOptionIndex === -1,
+        isOption: currentOptionIndex >= 0,
+        questionText: currentOptionIndex === -1 ? questionText : undefined,
+        optionText: currentOptionIndex >= 0 ? currentQuestion?.options[currentOptionIndex] : undefined,
+      });
+    }
+    
     // First, remove all highlights
     removeHighlights(questionRef.current);
     optionsRefs.current.forEach((ref) => {
@@ -128,6 +141,8 @@ export default function Quiz({ questions, onComplete, showCharacter = true, sear
     if (currentOptionIndex === -1) {
       if (questionRef.current) {
         highlightWordAtPosition(questionRef.current, wordIndex, word);
+      } else if (process.env.NODE_ENV === 'development') {
+        console.warn('⚠️ questionRef.current is null');
       }
     } 
     // If playing option audio
@@ -135,6 +150,11 @@ export default function Quiz({ questions, onComplete, showCharacter = true, sear
       const optionRef = optionsRefs.current[currentOptionIndex];
       if (optionRef) {
         highlightWordAtPosition(optionRef, wordIndex, word);
+      } else if (process.env.NODE_ENV === 'development') {
+        console.warn('⚠️ optionRef is null:', {
+          currentOptionIndex,
+          optionsRefsLength: optionsRefs.current.length,
+        });
       }
     }
   };
@@ -143,7 +163,7 @@ export default function Quiz({ questions, onComplete, showCharacter = true, sear
   const highlightWordAtPosition = (element: HTMLElement | null, targetPosition: number, targetWord?: string) => {
     if (!element || targetPosition < 0) return;
 
-    // Remove previous highlights
+    // Remove previous highlights first
     removeHighlights(element);
 
     // Get the full text - use textContent to get plain text without HTML tags
@@ -155,29 +175,71 @@ export default function Quiz({ questions, onComplete, showCharacter = true, sear
       fullText = (element as any).innerText;
     }
     
-    // Split text the same way AudioPlayer does
+    // CRITICAL: Split text EXACTLY the same way AudioPlayer does
+    // AudioPlayer uses: text.split(/\s+/).filter(w => w.length > 0)
     const words = fullText.split(/\s+/).filter(w => w.length > 0);
+    
+    // Debug logging in development
+    if (process.env.NODE_ENV === 'development' && targetWord) {
+      console.log('🎯 Quiz highlightWordAtPosition:', {
+        targetPosition,
+        targetWord,
+        wordsLength: words.length,
+        words: words.slice(Math.max(0, targetPosition - 2), Math.min(words.length, targetPosition + 3)),
+        wordAtTarget: words[targetPosition],
+        fullText: fullText.substring(0, 100),
+      });
+    }
     
     // If position is out of range, try to find word by content using wordsMatch (same as AudioPlayer)
     if (targetPosition >= words.length && targetWord) {
-      // Search for the word near the expected position (within 5 words)
-      const searchStart = Math.max(0, targetPosition - 5);
-      const searchEnd = Math.min(words.length, targetPosition + 5);
+      // First, try to find the word near the expected position (within 10 words for better matching)
+      const searchStart = Math.max(0, targetPosition - 10);
+      const searchEnd = Math.min(words.length, targetPosition + 10);
       
+      let foundIndex = -1;
       for (let i = searchStart; i < searchEnd; i++) {
         if (wordsMatch(words[i], targetWord)) {
-          // Found the word by content, highlight it
-          targetPosition = i;
+          foundIndex = i;
           break;
         }
       }
       
-      // If still not found, try searching the entire text
-      if (targetPosition >= words.length) {
+      // If found near expected position, use it
+      if (foundIndex >= 0) {
+        targetPosition = foundIndex;
+        if (process.env.NODE_ENV === 'development') {
+          console.log('✅ Found word near expected position:', {
+            originalPosition: targetPosition,
+            foundPosition: foundIndex,
+            targetWord,
+            foundWord: words[foundIndex],
+          });
+        }
+      } else {
+        // If still not found, try searching the entire text (but prefer positions closer to expected)
+        let bestMatch = -1;
+        let bestDistance = Infinity;
         for (let i = 0; i < words.length; i++) {
           if (wordsMatch(words[i], targetWord)) {
-            targetPosition = i;
-            break;
+            const distance = Math.abs(i - targetPosition);
+            if (distance < bestDistance) {
+              bestDistance = distance;
+              bestMatch = i;
+            }
+          }
+        }
+        
+        if (bestMatch >= 0) {
+          targetPosition = bestMatch;
+          if (process.env.NODE_ENV === 'development') {
+            console.log('✅ Found word in entire text:', {
+              originalPosition: targetPosition,
+              foundPosition: bestMatch,
+              distance: bestDistance,
+              targetWord,
+              foundWord: words[bestMatch],
+            });
           }
         }
       }
@@ -185,20 +247,30 @@ export default function Quiz({ questions, onComplete, showCharacter = true, sear
       // If still not found, return
       if (targetPosition >= words.length) {
         if (process.env.NODE_ENV === 'development') {
-          console.warn('Could not find word to highlight:', {
+          console.warn('❌ Could not find word to highlight:', {
             targetPosition,
             targetWord,
             wordsLength: words.length,
-            words: words.slice(0, 10),
+            words: words.slice(0, 20),
+            fullText: fullText.substring(0, 200),
           });
         }
         return;
       }
     } else if (targetPosition >= words.length) {
+      // Position out of range and no targetWord to search for
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('❌ Position out of range:', {
+          targetPosition,
+          wordsLength: words.length,
+          targetWord,
+        });
+      }
       return;
     }
 
     // Now highlight the word at the specific position
+    // Use TreeWalker to iterate through text nodes, matching word positions exactly
     const walker = document.createTreeWalker(
       element,
       NodeFilter.SHOW_TEXT,
@@ -213,6 +285,7 @@ export default function Quiz({ questions, onComplete, showCharacter = true, sear
       }
     }
 
+    // Count words across all text nodes to match targetPosition
     let currentWordPosition = 0;
     let highlighted = false;
     
@@ -220,23 +293,44 @@ export default function Quiz({ questions, onComplete, showCharacter = true, sear
       if (highlighted) return;
       
       const text = textNode.textContent || '';
+      // Split preserving spaces for reconstruction - same as AudioPlayer logic
       const parts = text.split(/(\s+)/);
       
       let newHTML = '';
       parts.forEach((part) => {
-        if (part.trim()) {
+        // Check if this part is a word (not just whitespace)
+        const trimmedPart = part.trim();
+        if (trimmedPart.length > 0) {
+          // This is a word - check if it matches our target position
           if (currentWordPosition === targetPosition && !highlighted) {
-            newHTML += `<span data-audio-highlight style="background: linear-gradient(120deg, rgba(59, 130, 246, 0.35) 0%, rgba(59, 130, 246, 0.55) 100%); background-size: 100% 85%; background-position: center; background-repeat: no-repeat; color: #fef08a; border-radius: 3px; text-shadow: 0 0 10px rgba(251, 191, 36, 0.7), 0 0 15px rgba(59, 130, 246, 0.5); transition: background 0.15s ease, color 0.15s ease, text-shadow 0.15s ease;">${part}</span>`;
-            highlighted = true;
+            // Verify the word matches (if targetWord provided) for extra safety
+            if (!targetWord || wordsMatch(trimmedPart, targetWord)) {
+              newHTML += `<span data-audio-highlight style="background: linear-gradient(120deg, rgba(59, 130, 246, 0.35) 0%, rgba(59, 130, 246, 0.55) 100%); background-size: 100% 85%; background-position: center; background-repeat: no-repeat; color: #fef08a; border-radius: 3px; text-shadow: 0 0 10px rgba(251, 191, 36, 0.7), 0 0 15px rgba(59, 130, 246, 0.5); transition: background 0.15s ease, color 0.15s ease, text-shadow 0.15s ease;">${part}</span>`;
+              highlighted = true;
+              
+              if (process.env.NODE_ENV === 'development') {
+                console.log('✅ Highlighted word:', {
+                  position: currentWordPosition,
+                  word: trimmedPart,
+                  targetWord,
+                  matches: targetWord ? wordsMatch(trimmedPart, targetWord) : 'N/A',
+                });
+              }
+            } else {
+              // Word at position doesn't match - skip highlighting this one
+              newHTML += part;
+            }
           } else {
             newHTML += part;
           }
           currentWordPosition++;
         } else {
+          // This is whitespace - keep it as is
           newHTML += part;
         }
       });
 
+      // Only replace the text node if we actually highlighted something
       if (newHTML !== text && highlighted) {
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = newHTML;
@@ -247,6 +341,16 @@ export default function Quiz({ questions, onComplete, showCharacter = true, sear
         textNode.parentNode?.replaceChild(fragment, textNode);
       }
     });
+    
+    // If we didn't highlight anything, log a warning
+    if (!highlighted && process.env.NODE_ENV === 'development') {
+      console.warn('⚠️ Word not highlighted after processing all text nodes:', {
+        targetPosition,
+        targetWord,
+        wordsLength: words.length,
+        totalWordsProcessed: currentWordPosition,
+      });
+    }
   };
 
   // Helper to remove all highlights from an element
@@ -600,6 +704,8 @@ export default function Quiz({ questions, onComplete, showCharacter = true, sear
             {/* Explanation Text with Highlighting Support */}
             <div className="mb-4" data-explanation-text ref={explanationRef}>
               <p className="text-white text-base md:text-lg leading-relaxed">
+                {/* Store the plain text in a data attribute for exact matching */}
+                <span data-plain-text={getExplanationText()} style={{ display: 'none' }}></span>
                 {searchHighlight ? highlightText(getExplanationText(), searchHighlight) : getExplanationText()}
               </p>
             </div>
@@ -615,6 +721,15 @@ export default function Quiz({ questions, onComplete, showCharacter = true, sear
                   autoPlay={!hasAutoPlayedExplanation}
                   hideText={true}
                   onHighlightedWord={(word, wordIndex) => {
+                    // Debug logging in development
+                    if (process.env.NODE_ENV === 'development') {
+                      console.log('🎯 Quiz explanation handleHighlightedWord:', {
+                        word,
+                        wordIndex,
+                        explanationText: getExplanationText(),
+                      });
+                    }
+                    
                     // Highlight only the current word at the correct position in explanation text
                     // Use the same approach as section pages - clear all highlights first, then highlight current word
                     if (explanationRef.current) {
@@ -622,6 +737,8 @@ export default function Quiz({ questions, onComplete, showCharacter = true, sear
                       removeHighlights(explanationRef.current);
                       // Then highlight the word at the correct position
                       highlightWordAtPosition(explanationRef.current, wordIndex, word);
+                    } else if (process.env.NODE_ENV === 'development') {
+                      console.warn('⚠️ explanationRef.current is null');
                     }
                   }}
                   onComplete={() => {
