@@ -264,15 +264,37 @@ export default function Quiz({ questions, onComplete, showCharacter = true, sear
 
   return (
     <div className="w-full max-w-3xl mx-auto">
+      {/* Progress Indicator - Modern Design */}
+      <div className="mb-6">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <div className="bg-blue-500/20 border border-blue-500/40 rounded-xl px-4 py-2 backdrop-blur-sm">
+              <span className="text-blue-300 text-sm font-medium">Question</span>
+              <span className="text-white text-lg font-bold ml-2">
+                {currentQuestionIndex + 1} <span className="text-blue-400">/</span> {questions.length}
+              </span>
+            </div>
+          </div>
+          <div className="flex-1 mx-4">
+            <div className="h-2 bg-[#0a1a2e] rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full transition-all duration-500 ease-out"
+                style={{ width: `${((currentQuestionIndex + 1) / questions.length) * 100}%` }}
+              />
+            </div>
+          </div>
+          <div className="text-right">
+            <div className="text-blue-300 text-sm font-medium">
+              {Math.round(((currentQuestionIndex + 1) / questions.length) * 100)}%
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Character */}
       {showCharacter && (
         <div className="flex justify-center mb-6">
-          <div className="relative">
-            <div className="absolute -top-2 -right-2 bg-blue-500 rounded-full w-12 h-12 flex items-center justify-center text-white font-bold text-lg shadow-lg">
-              {currentQuestionIndex + 1}/{questions.length}
-            </div>
-            <MrListings size="medium" animation={characterAnimation} />
-          </div>
+          <MrListings size="medium" animation={characterAnimation} />
         </div>
       )}
 
