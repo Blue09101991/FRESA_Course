@@ -165,9 +165,30 @@ export default function AudioPlayer({
           // Extract all words from segments - these are the ACTUAL spoken words with timestamps
           const allWords: WordTimestamp[] = [];
           data.segments.forEach((segment) => {
-            allWords.push(...segment.words);
+            if (segment.words && Array.isArray(segment.words)) {
+              segment.words.forEach((word) => {
+                // Clean up timestamp words - remove extra whitespace, trim
+                const cleanedWord = {
+                  ...word,
+                  text: word.text ? word.text.trim() : '',
+                };
+                // Only add non-empty words
+                if (cleanedWord.text.length > 0) {
+                  allWords.push(cleanedWord);
+                }
+              });
+            }
           });
           setWordTimestamps(allWords);
+          
+          if (process.env.NODE_ENV === 'development') {
+            console.log('📝 Loaded timestamps:', {
+              totalWords: allWords.length,
+              firstFew: allWords.slice(0, 5).map(w => ({ text: w.text, start: w.start, end: w.end })),
+              textWords: words.length,
+              textPreview: words.slice(0, 5),
+            });
+          }
 
           // Create a map from text word index to timestamp word index
           // Use timestamp words as the source of truth - they represent what was actually spoken
@@ -178,43 +199,50 @@ export default function AudioPlayer({
             return word.replace(/[.,!?;:'"()\[\]{}]/g, '').toLowerCase().trim();
           };
           
-          // More flexible word matching - handles punctuation differences
+          // More accurate word matching - handles punctuation differences but is stricter
           const wordsMatch = (textWord: string, timestampWord: string): boolean => {
+            // Trim both words first
+            const textTrimmed = textWord.trim();
+            const timestampTrimmed = timestampWord.trim();
+            
+            // Exact match (case-insensitive)
+            if (textTrimmed.toLowerCase() === timestampTrimmed.toLowerCase()) {
+              return true;
+            }
+            
             // Normalize both words (remove punctuation, lowercase)
-            const textNorm = normalizeWord(textWord);
-            const timestampNorm = normalizeWord(timestampWord);
+            const textNorm = normalizeWord(textTrimmed);
+            const timestampNorm = normalizeWord(timestampTrimmed);
             
             // Exact match after normalization
-            if (textNorm === timestampNorm) return true;
+            if (textNorm === timestampNorm && textNorm.length > 0) {
+              return true;
+            }
             
             // Remove all non-alphanumeric characters and compare
             const textClean = textNorm.replace(/[^a-z0-9]/g, '');
             const timestampClean = timestampNorm.replace(/[^a-z0-9]/g, '');
             
             // Exact match after removing all non-alphanumeric
-            if (textClean === timestampClean && textClean.length > 0) return true;
+            if (textClean === timestampClean && textClean.length > 0) {
+              return true;
+            }
             
-            // Handle cases where punctuation differs (e.g., "word." vs "word" or "word," vs "word")
-            // Check if the core word matches (ignoring trailing punctuation)
+            // Handle cases where punctuation differs (e.g., "word." vs "word")
+            // But be more strict - only match if the core word is the same
             if (textClean.length > 0 && timestampClean.length > 0) {
               // Check if one is a prefix of the other (handles "word." vs "word")
+              // But only if the shorter one is at least 3 characters (to avoid false matches)
               const minLength = Math.min(textClean.length, timestampClean.length);
-              if (minLength > 0) {
+              if (minLength >= 3) {
                 const textPrefix = textClean.substring(0, minLength);
                 const timestampPrefix = timestampClean.substring(0, minLength);
                 if (textPrefix === timestampPrefix) {
                   // Core words match, only difference is length (likely punctuation)
+                  // Be strict: only allow 1-2 character difference
                   if (Math.abs(textClean.length - timestampClean.length) <= 2) {
                     return true;
                   }
-                }
-              }
-              
-              // Check if one word contains the other (for contractions, etc.)
-              if (textClean.includes(timestampClean) || timestampClean.includes(textClean)) {
-                // Only match if lengths are similar (within 3 characters)
-                if (Math.abs(textClean.length - timestampClean.length) <= 3) {
-                  return true;
                 }
               }
             }
@@ -225,20 +253,23 @@ export default function AudioPlayer({
           // CRITICAL: Use timestamp words as the PRIMARY source of truth
           // They represent what was ACTUALLY spoken in the audio
           // Match each timestamp word to the corresponding text word sequentially
+          // Use a more conservative approach: smaller search window, stricter matching
           
           let timestampIndex = 0;
           let textIndex = 0;
           
-          // Improved sequential matching: go through timestamp words and match to text words
-          // This handles cases where punctuation differs between text and timestamps
+          // More conservative sequential matching
+          // Only search a small window ahead to prevent incorrect matches
+          const searchWindow = 3; // Reduced from 10 to 3 for more accurate matching
+          
           for (timestampIndex = 0; timestampIndex < allWords.length; timestampIndex++) {
-            const timestampWord = allWords[timestampIndex].text;
+            const timestampWord = allWords[timestampIndex].text.trim();
+            if (!timestampWord) continue; // Skip empty timestamp words
             
             // Find the matching text word starting from current position
             let matched = false;
-            const searchWindow = 10; // Increased search window for better matching
             
-            // First, try exact match at current position
+            // Strategy 1: Try exact match at current position (most common case)
             if (textIndex < words.length) {
               const currentTextWord = words[textIndex].trim();
               if (currentTextWord && wordsMatch(currentTextWord, timestampWord)) {
@@ -249,19 +280,22 @@ export default function AudioPlayer({
               }
             }
             
-            // If no exact match, search ahead
+            // Strategy 2: Search ahead in a small window (handles minor punctuation differences)
             if (!matched) {
-              for (let i = 1; i < searchWindow && textIndex + i < words.length; i++) {
+              for (let i = 1; i <= searchWindow && textIndex + i < words.length; i++) {
                 const candidateTextWord = words[textIndex + i].trim();
                 if (candidateTextWord && wordsMatch(candidateTextWord, timestampWord)) {
-                  // Found a match ahead!
-                  // Map all text words from current position to this match to the same timestamp
-                  // This handles cases where text has extra words (like punctuation)
-                  for (let j = 0; j <= i; j++) {
+                  // Found a match ahead - this means there might be extra words in text
+                  // Map the skipped words to the previous timestamp (or current if first)
+                  for (let j = 0; j < i; j++) {
                     if (textIndex + j < words.length && words[textIndex + j].trim()) {
-                      map.set(textIndex + j, timestampIndex);
+                      // Map skipped words to previous timestamp (or current if first)
+                      const prevTimestampIdx = timestampIndex > 0 ? timestampIndex - 1 : timestampIndex;
+                      map.set(textIndex + j, prevTimestampIdx);
                     }
                   }
+                  // Map the matched word to current timestamp
+                  map.set(textIndex + i, timestampIndex);
                   textIndex += i + 1; // Move past the matched word
                   matched = true;
                   break;
@@ -269,10 +303,11 @@ export default function AudioPlayer({
               }
             }
             
-            // If still no match found, map current text word to this timestamp (best guess)
-            // This handles cases where timestamps have words not in text or vice versa
+            // Strategy 3: If still no match, map current text word to this timestamp (best guess)
+            // This handles cases where timestamps have words not in text
             if (!matched && textIndex < words.length) {
-              if (words[textIndex].trim()) {
+              const currentTextWord = words[textIndex].trim();
+              if (currentTextWord) {
                 map.set(textIndex, timestampIndex);
                 textIndex++;
               }
@@ -290,22 +325,41 @@ export default function AudioPlayer({
           
           // Log mapping for debugging
           if (process.env.NODE_ENV === 'development') {
+            // Check for potential mismatches
+            const mismatches: Array<{ textIdx: number; textWord: string; tsIdx: number; tsWord: string }> = [];
+            for (let i = 0; i < Math.min(20, words.length, allWords.length); i++) {
+              const mappedTsIdx = map.get(i);
+              if (mappedTsIdx !== undefined && mappedTsIdx < allWords.length) {
+                const textWord = words[i];
+                const tsWord = allWords[mappedTsIdx].text;
+                const textNorm = normalizeWord(textWord);
+                const tsNorm = normalizeWord(tsWord);
+                if (textNorm !== tsNorm && Math.abs(i - mappedTsIdx) > 2) {
+                  mismatches.push({ textIdx: i, textWord, tsIdx: mappedTsIdx, tsWord });
+                }
+              }
+            }
+            
             console.log('✅ Word mapping completed:', {
               textWords: words.length,
               timestampWords: allWords.length,
               mappedWords: map.size,
-              sampleMappings: Array.from(map.entries()).slice(0, 10).map(([textIdx, tsIdx]) => ({
+              sampleMappings: Array.from(map.entries()).slice(0, 15).map(([textIdx, tsIdx]) => ({
+                textIdx,
                 textWord: words[textIdx],
-                timestampWord: allWords[tsIdx]?.text,
                 timestampIdx: tsIdx,
+                timestampWord: allWords[tsIdx]?.text,
                 timestampStart: allWords[tsIdx]?.start,
                 timestampEnd: allWords[tsIdx]?.end,
+                normalizedMatch: normalizeWord(words[textIdx]) === normalizeWord(allWords[tsIdx]?.text || ''),
               })),
-              firstFewTimestamps: allWords.slice(0, 5).map(ts => ({
+              firstFewTimestamps: allWords.slice(0, 10).map(ts => ({
                 text: ts.text,
                 start: ts.start,
                 end: ts.end,
               })),
+              firstFewTextWords: words.slice(0, 10),
+              potentialMismatches: mismatches.slice(0, 5),
             });
           }
           
@@ -330,6 +384,7 @@ export default function AudioPlayer({
   const wordTimestampsRef = useRef<WordTimestamp[]>([]);
   const wordMapRef = useRef<Map<number, number>>(new Map());
   const wordsRefForHighlight = useRef<string[]>([]);
+  const onHighlightedWordRef = useRef(onHighlightedWord);
 
   // Update refs when state changes
   useEffect(() => {
@@ -344,9 +399,13 @@ export default function AudioPlayer({
     wordsRefForHighlight.current = words;
   }, [words]);
 
+  useEffect(() => {
+    onHighlightedWordRef.current = onHighlightedWord;
+  }, [onHighlightedWord]);
+
   // Throttle updates to prevent excessive re-renders
   const lastUpdateTime = useRef<number>(0);
-  const updateInterval = 15; // Update every 15ms for very smooth and responsive highlighting
+  const updateInterval = 5; // Update every 5ms for very fast and responsive highlighting (reduced from 15ms)
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -388,9 +447,17 @@ export default function AudioPlayer({
           
           // Use EXACT start and end times - highlight when current time is within range
           // Note: We use >= for start and < for end to match exactly when word is spoken
+          // Also check if we're very close to the start (within 0.02s) for faster highlighting
           if (current >= wordTimestamp.start && current < wordTimestamp.end) {
             activeTimestampIndex = tsIdx;
             break; // Found the active timestamp word - use it immediately
+          }
+          
+          // Also highlight if we're very close to the start of a word (anticipate slightly)
+          // This makes highlighting feel more responsive and match speech better
+          if (current >= wordTimestamp.start - 0.02 && current < wordTimestamp.start) {
+            activeTimestampIndex = tsIdx;
+            break;
           }
           
           // Track closest timestamp for fallback (if we're between words)
@@ -402,9 +469,10 @@ export default function AudioPlayer({
         }
         
         // Use active timestamp if found, otherwise use closest one if very close
+        // Reduced threshold from 0.1s to 0.05s for faster, more accurate highlighting
         const targetTimestampIndex = activeTimestampIndex >= 0 
           ? activeTimestampIndex 
-          : (closestTimestampIndex >= 0 && closestTimestampDistance < 0.1 ? closestTimestampIndex : -1);
+          : (closestTimestampIndex >= 0 && closestTimestampDistance < 0.05 ? closestTimestampIndex : -1);
         
         if (targetTimestampIndex >= 0) {
           // Find the TEXT word that maps to this timestamp word
@@ -417,18 +485,41 @@ export default function AudioPlayer({
             }
           }
           
-          // If no exact match, find the closest text word
+          // If no exact match, find the closest text word (but be more strict)
           if (highlightedIndex === -1) {
             let minDistance = Infinity;
+            let bestTextIdx = -1;
             for (let textIdx = 0; textIdx < currentWords.length; textIdx++) {
               const mappedTimestampIdx = currentWordMap.get(textIdx);
               if (mappedTimestampIdx !== undefined) {
                 const distance = Math.abs(mappedTimestampIdx - targetTimestampIndex);
-                if (distance < minDistance) {
+                // Only use if distance is small (within 1 position for faster, more accurate matching)
+                if (distance < minDistance && distance <= 1) {
                   minDistance = distance;
-                  highlightedIndex = textIdx;
+                  bestTextIdx = textIdx;
                 }
               }
+            }
+            if (bestTextIdx >= 0) {
+              highlightedIndex = bestTextIdx;
+            }
+          }
+          
+          // Debug logging in development
+          if (process.env.NODE_ENV === 'development' && highlightedIndex >= 0) {
+            const timestampWord = currentWordTimestamps[targetTimestampIndex]?.text;
+            const textWord = currentWords[highlightedIndex];
+            const mappedTsIdx = currentWordMap.get(highlightedIndex);
+            if (mappedTsIdx !== targetTimestampIndex) {
+              // Log mismatches for debugging
+              console.log('⚠️ Highlight mismatch:', {
+                currentTime: current.toFixed(3),
+                targetTimestampIdx: targetTimestampIndex,
+                timestampWord,
+                highlightedTextIdx: highlightedIndex,
+                textWord,
+                mappedTimestampIdx: mappedTsIdx,
+              });
             }
           }
         }
@@ -443,9 +534,34 @@ export default function AudioPlayer({
         lastHighlightedIndexRef.current = highlightedIndex;
         setHighlightedIndex(highlightedIndex);
         
-        // Call onHighlightedWord callback if provided
-        if (onHighlightedWord && highlightedIndex >= 0 && highlightedIndex < words.length) {
-          onHighlightedWord(words[highlightedIndex], highlightedIndex);
+        // Call onHighlightedWord callback if provided (use ref to get latest callback)
+        const currentCallback = onHighlightedWordRef.current;
+        const currentWords = wordsRefForHighlight.current;
+        
+        if (currentCallback && highlightedIndex >= 0 && highlightedIndex < currentWords.length) {
+          const word = currentWords[highlightedIndex];
+          // Always log in development to debug
+          console.log('📢 AudioPlayer calling onHighlightedWord:', { 
+            word, 
+            highlightedIndex, 
+            wordsLength: currentWords.length,
+            hasCallback: !!currentCallback,
+            currentTime: current.toFixed(3),
+          });
+          try {
+            currentCallback(word, highlightedIndex);
+          } catch (error) {
+            console.error('❌ Error in onHighlightedWord callback:', error);
+          }
+        } else if (currentCallback) {
+          // Log why callback wasn't called (always log, not just in dev)
+          console.warn('⚠️ onHighlightedWord not called:', {
+            hasCallback: !!currentCallback,
+            highlightedIndex,
+            wordsLength: currentWords.length,
+            condition: highlightedIndex >= 0 && highlightedIndex < currentWords.length,
+            currentTime: current.toFixed(3),
+          });
         }
       }
     };
@@ -548,7 +664,7 @@ export default function AudioPlayer({
       audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
       audio.removeEventListener("ended", handleEnded);
     };
-  }, [audioUrl, autoPlay, hasPlayed, hasCompleted, onTimeUpdate, onComplete]); // Added hasCompleted to dependencies
+  }, [audioUrl, autoPlay, hasPlayed, hasCompleted, onTimeUpdate, onComplete, onHighlightedWord, words]); // Added onHighlightedWord and words to dependencies
 
   // Set initial playback rate from localStorage when audio loads
   useEffect(() => {

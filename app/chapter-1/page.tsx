@@ -45,8 +45,8 @@ export default function Chapter1Page() {
   const [quizScore, setQuizScore] = useState<{ score: number; total: number } | null>(null);
   const [activePlayingSectionId, setActivePlayingSectionId] = useState<string | null>(null);
   const [hasAutoPlayedFirst, setHasAutoPlayedFirst] = useState(false);
-  const objectivesRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const keyTermsRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const objectivesRefs = useRef<(HTMLElement | null)[]>([]);
+  const keyTermsRefs = useRef<(HTMLElement | null)[]>([]);
 
   useEffect(() => {
     fetchChapterData();
@@ -530,26 +530,43 @@ export default function Chapter1Page() {
         audioWordsLength: audioWords.length,
         audioWordAtIndex: audioWords[wordIndex],
         objectivesCount: learningObjectives.length,
+        allAudioWords: audioWords,
       });
     }
     
     // Calculate which objective this word belongs to and its position within that objective
     // We need to match EXACTLY how AudioPlayer splits the text
     // When joining with ". ", the period attaches to the last word: "obj1. obj2" -> ["obj1.", "obj2"]
+    // BUT: We need to reconstruct the audio text word-by-word to match exactly
     let cumulativeWordCount = 0;
     let foundElementIndex = -1;
     let targetPositionInElement = -1;
     
+    // Reconstruct audio words from objectives to ensure exact matching
+    const reconstructedAudioWords: string[] = [];
     for (let i = 0; i < learningObjectives.length; i++) {
       const objText = learningObjectives[i].text;
-      // Split EXACTLY the same way AudioPlayer does
       const objWords = objText.split(/\s+/).filter(w => w.length > 0);
-      const objWordCount = objWords.length;
+      
+      // Add words from this objective
+      objWords.forEach(w => reconstructedAudioWords.push(w));
+      
+      // If not the last objective, the period from ". " attaches to the last word
+      // So we need to check if the last word in reconstructedAudioWords should have a period
+      if (i < learningObjectives.length - 1 && reconstructedAudioWords.length > 0) {
+        // The period should be attached to the last word we just added
+        const lastIdx = reconstructedAudioWords.length - 1;
+        const lastWord = reconstructedAudioWords[lastIdx];
+        // Check if the actual audio word has a period (it should, from the join)
+        if (cumulativeWordCount + objWords.length - 1 < audioWords.length) {
+          const actualAudioWord = audioWords[cumulativeWordCount + objWords.length - 1];
+          // If the actual audio word ends with period, our reconstructed word should too
+          // But actually, we don't need to modify - the split already handles this
+        }
+      }
       
       // Check if wordIndex falls within this objective's range
-      // The period from ". " separator attaches to the last word of the previous objective
-      // So "obj1. obj2" splits to ["obj1.", "obj2"] - the period is part of "obj1."
-      if (wordIndex >= cumulativeWordCount && wordIndex < cumulativeWordCount + objWordCount) {
+      if (wordIndex >= cumulativeWordCount && wordIndex < cumulativeWordCount + objWords.length) {
         foundElementIndex = i;
         targetPositionInElement = wordIndex - cumulativeWordCount;
         if (process.env.NODE_ENV === 'development') {
@@ -558,17 +575,16 @@ export default function Chapter1Page() {
             objText,
             targetPositionInElement,
             cumulativeWordCount,
-            objWordCount,
+            objWordCount: objWords.length,
             audioWord: audioWords[wordIndex],
+            expectedWordInObj: objWords[targetPositionInElement],
           });
         }
         break;
       }
       
-      cumulativeWordCount += objWordCount;
-      // When joining with ". ", the period attaches to the last word of each objective (except last)
-      // So "obj1. obj2" -> ["obj1.", "obj2"] - no extra word count needed
-      // The period is already part of the last word of the previous objective
+      cumulativeWordCount += objWords.length;
+      // No need to add extra for separator - the period is already part of the word when split
     }
 
     // Highlight only in the correct element
@@ -611,15 +627,50 @@ export default function Chapter1Page() {
     }
   };
 
+  // Queue for pending highlight requests when refs aren't ready
+  const pendingHighlightsRef = useRef<Array<{ word: string; wordIndex: number; foundElementIndex: number; targetPositionInElement: number }>>([]);
+  
+  // Process pending highlights once refs are ready
+  const processPendingHighlights = () => {
+    if (pendingHighlightsRef.current.length === 0) return;
+    
+    const pending = [...pendingHighlightsRef.current];
+    pendingHighlightsRef.current = []; // Clear queue
+    
+    pending.forEach(({ word, wordIndex, foundElementIndex, targetPositionInElement }) => {
+      if (foundElementIndex >= 0 && foundElementIndex < keyTermsRefs.current.length) {
+        const targetRef = keyTermsRefs.current[foundElementIndex];
+        if (targetRef) {
+          highlightWordAtPosition(targetRef, targetPositionInElement, word);
+        } else {
+          // Still not ready, add back to queue
+          pendingHighlightsRef.current.push({ word, wordIndex, foundElementIndex, targetPositionInElement });
+        }
+      }
+    });
+  };
+
   // Handle word highlighting from AudioPlayer for key terms
   const handleKeyTermsHighlightedWord = (word: string, wordIndex: number) => {
+    // CRITICAL: Always log when callback is called to debug
+    console.log('🔵 handleKeyTermsHighlightedWord called:', { word, wordIndex, keyTermsLength: keyTerms.length });
+    
     // Ensure refs are initialized - if not, try to initialize them
     if (keyTermsRefs.current.length === 0 && keyTerms.length > 0) {
       keyTermsRefs.current = new Array(keyTerms.length).fill(null);
-      // Force a re-render to populate refs (this is a fallback)
-      if (process.env.NODE_ENV === 'development') {
-        console.warn('Key terms refs not initialized, attempting to initialize');
-      }
+      console.warn('⚠️ Key terms refs not initialized, attempting to initialize');
+    }
+    
+    // Try to find refs in DOM if they're not in the refs array (fallback)
+    if (keyTermsRefs.current.filter(r => r !== null).length < keyTerms.length) {
+      // Query DOM directly for key term elements
+      const keyTermElements = document.querySelectorAll('[data-key-term-index]');
+      keyTermElements.forEach((el, idx) => {
+        if (idx < keyTermsRefs.current.length) {
+          keyTermsRefs.current[idx] = el as HTMLElement;
+        }
+      });
+      console.log('🔍 Queried DOM for key terms, found:', keyTermElements.length);
     }
     
     // First, remove all highlights from all key terms
@@ -627,6 +678,11 @@ export default function Chapter1Page() {
       if (ref) {
         removeHighlights(ref);
       }
+    });
+    
+    // Also remove highlights from DOM directly (fallback)
+    document.querySelectorAll('[data-key-term-index]').forEach((el) => {
+      removeHighlights(el as HTMLElement);
     });
 
     // Get the full audio text EXACTLY as passed to AudioPlayer
@@ -644,6 +700,9 @@ export default function Chapter1Page() {
         audioWordAtIndex: audioWords[wordIndex],
         keyTermsCount: keyTerms.length,
         keyTerms: keyTerms.map(t => t.term),
+        allAudioWords: audioWords,
+        refsReady: keyTermsRefs.current.filter(r => r !== null).length,
+        refsTotal: keyTermsRefs.current.length,
       });
     }
     
@@ -674,6 +733,7 @@ export default function Chapter1Page() {
             cumulativeWordCount,
             termWordCount,
             audioWord: audioWords[wordIndex],
+            expectedWordInTerm: termWords[targetPositionInElement],
           });
         }
         break;
@@ -686,31 +746,73 @@ export default function Chapter1Page() {
     }
 
     // Highlight only in the correct element
-    if (foundElementIndex >= 0 && foundElementIndex < keyTermsRefs.current.length) {
-      const targetRef = keyTermsRefs.current[foundElementIndex];
+    if (foundElementIndex >= 0) {
+      let targetRef = keyTermsRefs.current[foundElementIndex];
+      
+      // FALLBACK: If ref is not ready, try to find it in DOM directly
+      if (!targetRef) {
+        const domElement = document.querySelector(`[data-key-term-index="${foundElementIndex}"]`) as HTMLElement;
+        if (domElement) {
+          targetRef = domElement;
+          keyTermsRefs.current[foundElementIndex] = domElement;
+          console.log('🔍 Found key term element in DOM fallback:', foundElementIndex);
+        }
+      }
+      
       if (targetRef) {
-        if (process.env.NODE_ENV === 'development') {
-          console.log('Highlighting key term:', {
-            foundElementIndex,
-            targetPositionInElement,
-            elementText: targetRef.textContent,
-            word,
-            wordIndex,
-          });
-        }
+        console.log('✅ Highlighting key term:', {
+          foundElementIndex,
+          targetPositionInElement,
+          elementText: targetRef.textContent?.substring(0, 50),
+          word,
+          wordIndex,
+        });
         highlightWordAtPosition(targetRef, targetPositionInElement, word);
+        // Process any pending highlights
+        processPendingHighlights();
       } else {
-        // Ref not ready yet - try again after a short delay
-        // This handles the case where audio starts before React has finished rendering
-        if (process.env.NODE_ENV === 'development') {
-          console.warn('Target ref not ready for key term index, retrying:', foundElementIndex);
-        }
-        setTimeout(() => {
-          const retryRef = keyTermsRefs.current[foundElementIndex];
-          if (retryRef) {
-            highlightWordAtPosition(retryRef, targetPositionInElement, word);
-          }
-        }, 50);
+        // Ref not ready yet - add to queue and retry with exponential backoff
+        pendingHighlightsRef.current.push({ word, wordIndex, foundElementIndex, targetPositionInElement });
+        
+        console.warn('⚠️ Target ref not ready for key term index, queuing:', foundElementIndex, {
+          queueLength: pendingHighlightsRef.current.length,
+          refsReady: keyTermsRefs.current.filter(r => r !== null).length,
+          totalNeeded: keyTerms.length,
+        });
+        
+        // Retry with increasing delays: 10ms, 50ms, 100ms, 200ms, 500ms
+        const retryDelays = [10, 50, 100, 200, 500];
+        retryDelays.forEach((delay, attempt) => {
+          setTimeout(() => {
+            // Try ref first
+            let retryRef = keyTermsRefs.current[foundElementIndex];
+            
+            // If still not found, try DOM query
+            if (!retryRef) {
+              retryRef = document.querySelector(`[data-key-term-index="${foundElementIndex}"]`) as HTMLElement;
+              if (retryRef) {
+                keyTermsRefs.current[foundElementIndex] = retryRef;
+              }
+            }
+            
+            if (retryRef) {
+              console.log('✅ Retry successful, highlighting:', { foundElementIndex, attempt, delay });
+              highlightWordAtPosition(retryRef, targetPositionInElement, word);
+              // Process any pending highlights
+              processPendingHighlights();
+            } else if (attempt === retryDelays.length - 1) {
+              // Last attempt failed - log error
+              console.error('❌ Failed to highlight after all retries:', {
+                foundElementIndex,
+                targetPositionInElement,
+                word,
+                wordIndex,
+                refsState: keyTermsRefs.current.map((r, i) => ({ index: i, hasRef: r !== null })),
+                domElements: document.querySelectorAll('[data-key-term-index]').length,
+              });
+            }
+          }, delay);
+        });
       }
     } else {
       if (process.env.NODE_ENV === 'development') {
@@ -730,6 +832,11 @@ export default function Chapter1Page() {
     objectivesRefs.current.forEach(removeHighlights);
     keyTermsRefs.current.forEach(removeHighlights);
     
+    // Reset refs ready state
+    setKeyTermsRefsReady(false);
+    setCanAutoPlayKeyTerms(false);
+    pendingHighlightsRef.current = [];
+    
     // Initialize refs arrays with correct length based on current section
     if (currentSection === 'objectives' && learningObjectives.length > 0) {
       objectivesRefs.current = new Array(learningObjectives.length).fill(null);
@@ -745,47 +852,127 @@ export default function Chapter1Page() {
       if (process.env.NODE_ENV === 'development') {
         console.log('Initialized key terms refs:', keyTerms.length);
       }
+      
+      // Force check refs after a delay to account for render timing
+      setTimeout(() => {
+        checkRefsReady();
+      }, 50);
     } else {
       keyTermsRefs.current = [];
     }
   }, [currentSection, learningObjectives.length, keyTerms.length]);
 
-  // Additional effect to ensure refs are ready after render
+  // Additional effect to ensure refs are ready after render and process pending highlights
   useEffect(() => {
-    // Small delay to ensure DOM elements are rendered and refs are populated
-    const timer = setTimeout(() => {
-      if (currentSection === 'key-terms' && keyTerms.length > 0) {
-        const refsReady = keyTermsRefs.current.every((ref, idx) => {
-          // Check if ref exists or if we're still waiting for it
-          return ref !== null || idx >= keyTerms.length;
-        });
+    // Clear pending highlights when section changes
+    pendingHighlightsRef.current = [];
+    
+    // Use multiple checks with increasing delays to catch refs at different render stages
+    const timers: NodeJS.Timeout[] = [];
+    
+    if (currentSection === 'key-terms' && keyTerms.length > 0) {
+      // Check immediately
+      timers.push(setTimeout(() => {
+        checkRefsReady();
+      }, 0));
+      
+      // Check after a short delay
+      timers.push(setTimeout(() => {
+        const refsReady = keyTermsRefs.current.filter(r => r !== null).length;
+        const refsTotal = keyTermsRefs.current.length;
+        
         if (process.env.NODE_ENV === 'development') {
-          console.log('Key terms refs check:', {
+          console.log('Key terms refs check (50ms):', {
             refsReady,
-            refsLength: keyTermsRefs.current.length,
+            refsTotal,
             keyTermsLength: keyTerms.length,
             refs: keyTermsRefs.current.map((r, i) => ({ index: i, hasRef: r !== null })),
           });
         }
-      }
+        
+        checkRefsReady();
+        // If refs are ready, process any pending highlights
+        if (refsReady === keyTerms.length && refsReady > 0) {
+          processPendingHighlights();
+        }
+      }, 50));
       
-      if (currentSection === 'objectives' && learningObjectives.length > 0) {
-        const refsReady = objectivesRefs.current.every((ref, idx) => {
-          return ref !== null || idx >= learningObjectives.length;
-        });
+      // Check after a longer delay
+      timers.push(setTimeout(() => {
+        const refsReady = keyTermsRefs.current.filter(r => r !== null).length;
+        const refsTotal = keyTermsRefs.current.length;
+        
+        if (process.env.NODE_ENV === 'development') {
+          console.log('Key terms refs check (200ms):', {
+            refsReady,
+            refsTotal,
+            keyTermsLength: keyTerms.length,
+            refs: keyTermsRefs.current.map((r, i) => ({ index: i, hasRef: r !== null })),
+          });
+        }
+        
+        checkRefsReady();
+        // If refs are ready, process any pending highlights
+        if (refsReady === keyTerms.length && refsReady > 0) {
+          processPendingHighlights();
+        }
+      }, 200));
+    }
+    
+    if (currentSection === 'objectives' && learningObjectives.length > 0) {
+      timers.push(setTimeout(() => {
+        const refsReady = objectivesRefs.current.filter(r => r !== null).length;
+        const refsTotal = objectivesRefs.current.length;
+        
         if (process.env.NODE_ENV === 'development') {
           console.log('Objectives refs check:', {
             refsReady,
-            refsLength: objectivesRefs.current.length,
+            refsTotal,
             objectivesLength: learningObjectives.length,
             refs: objectivesRefs.current.map((r, i) => ({ index: i, hasRef: r !== null })),
           });
         }
-      }
-    }, 100); // Small delay to allow React to finish rendering
+      }, 100));
+    }
     
-    return () => clearTimeout(timer);
+    return () => {
+      timers.forEach(timer => clearTimeout(timer));
+    };
   }, [currentSection, keyTerms, learningObjectives]);
+  
+  // State to track when refs are ready (updated in ref callbacks)
+  const [keyTermsRefsReady, setKeyTermsRefsReady] = useState(false);
+  const [canAutoPlayKeyTerms, setCanAutoPlayKeyTerms] = useState(false);
+  
+  // Check if all refs are ready and update state
+  const checkRefsReady = () => {
+    if (currentSection === 'key-terms' && keyTerms.length > 0) {
+      const refsReady = keyTermsRefs.current.filter(r => r !== null).length;
+      const allReady = refsReady === keyTerms.length && refsReady > 0;
+      setKeyTermsRefsReady(allReady);
+      
+      // If all refs are ready, allow auto-play after a small delay
+      if (allReady && !canAutoPlayKeyTerms) {
+        // Small delay to ensure DOM is fully ready
+        setTimeout(() => {
+          setCanAutoPlayKeyTerms(true);
+          if (process.env.NODE_ENV === 'development') {
+            console.log('✅ Key terms refs ready, auto-play enabled');
+          }
+        }, 100);
+      }
+      
+      return allReady;
+    }
+    return false;
+  };
+  
+  // Process pending highlights when refs become ready
+  useEffect(() => {
+    if (keyTermsRefsReady && pendingHighlightsRef.current.length > 0) {
+      processPendingHighlights();
+    }
+  }, [keyTermsRefsReady, currentSection]);
 
   // Auto-advance to next section when audio completes
   const handleAudioComplete = () => {
@@ -975,12 +1162,31 @@ export default function Chapter1Page() {
                         >
                           <p 
                             className="text-blue-300 font-semibold text-base md:text-lg"
+                            data-key-term-index={index}
                             ref={(el) => {
                               if (el) {
                                 keyTermsRefs.current[index] = el;
-                                if (process.env.NODE_ENV === 'development') {
-                                  console.log('Key term ref set:', { index, term: term.term, refsLength: keyTermsRefs.current.length });
-                                }
+                                // Set data attribute for DOM query fallback
+                                el.setAttribute('data-key-term-index', index.toString());
+                                console.log('✅ Key term ref set:', { 
+                                  index, 
+                                  term: term.term, 
+                                  refsLength: keyTermsRefs.current.length,
+                                  refsReady: keyTermsRefs.current.filter(r => r !== null).length,
+                                  totalNeeded: keyTerms.length,
+                                });
+                                // Check if all refs are now ready - use requestAnimationFrame for better timing
+                                requestAnimationFrame(() => {
+                                  if (checkRefsReady()) {
+                                    // Process any pending highlights
+                                    if (pendingHighlightsRef.current.length > 0) {
+                                      processPendingHighlights();
+                                    }
+                                  }
+                                });
+                              } else {
+                                // Ref was removed
+                                keyTermsRefs.current[index] = null;
                               }
                             }}
                           >
@@ -996,13 +1202,31 @@ export default function Chapter1Page() {
                         text={currentSectionData.text || keyTerms.map(term => term.term).join(". ")}
                         audioUrl={currentSectionData.audioUrl || undefined}
                         timestampsUrl={currentSectionData.timestampsUrl || undefined}
-                        autoPlay={!hasAutoPlayedFirst}
+                        // Only auto-play if refs are ready (for key-terms) or if it's not key-terms
+                        autoPlay={!hasAutoPlayedFirst && (currentSection !== 'key-terms' || canAutoPlayKeyTerms)}
                         onComplete={handleAudioComplete}
                         onPlayingChange={(isPlaying) => {
                           if (isPlaying) {
                             setActivePlayingSectionId(currentSection);
                             // Mark as played to prevent auto-play from triggering again for this section
                             setHasAutoPlayedFirst(true);
+                            
+                            // Process any pending highlights immediately
+                            if (currentSection === 'key-terms') {
+                              const refsReady = keyTermsRefs.current.filter(r => r !== null).length;
+                              if (process.env.NODE_ENV === 'development') {
+                                console.log('Audio started, refs status:', {
+                                  refsReady,
+                                  refsTotal: keyTermsRefs.current.length,
+                                  keyTermsLength: keyTerms.length,
+                                  canAutoPlay: canAutoPlayKeyTerms,
+                                });
+                              }
+                              // Process any pending highlights
+                              if (refsReady === keyTerms.length && refsReady > 0) {
+                                processPendingHighlights();
+                              }
+                            }
                           } else {
                             // Clear active section when paused
                             // Note: Audio completion is handled by onComplete callback
@@ -1010,7 +1234,10 @@ export default function Chapter1Page() {
                           }
                         }}
                         hideText={true}
-                        onHighlightedWord={handleKeyTermsHighlightedWord}
+                        onHighlightedWord={(word, wordIndex) => {
+                          console.log('🎯 AudioPlayer calling onHighlightedWord:', { word, wordIndex });
+                          handleKeyTermsHighlightedWord(word, wordIndex);
+                        }}
                         highlightQuery={searchHighlight}
                       />
                     </div>
