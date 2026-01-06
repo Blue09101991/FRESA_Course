@@ -10,9 +10,10 @@ function sanitizeText(text: string): string {
   return text.substring(0, 20).replace(/[^a-zA-Z0-9]/g, '_')
 }
 
-// Helper function to check if filename matches content
-function filenameMatchesContent(filename: string, content: string): boolean {
-  const sanitizedContent = sanitizeText(content).toLowerCase()
+// Improved matching function with multiple strategies
+function filenameMatchesContent(filename: string, content: string, title?: string): number {
+  // Returns a score from 0-100, higher = better match
+  let score = 0
   const filenameLower = filename.toLowerCase()
   
   // Remove timestamp prefix (numbers at start) and extension
@@ -20,29 +21,96 @@ function filenameMatchesContent(filename: string, content: string): boolean {
     .replace(/^\d+-/, '') // Remove timestamp prefix
     .replace(/\.(mp3|timestamps\.json)$/, '') // Remove extension
   
-  // Check if sanitized content appears in filename (exact match or substring)
-  if (filenameWithoutExt.includes(sanitizedContent) || sanitizedContent.includes(filenameWithoutExt)) {
-    return true
+  // Strategy 1: Check sanitized content match (exact)
+  const sanitizedContent = sanitizeText(content).toLowerCase()
+  if (filenameWithoutExt === sanitizedContent) {
+    score += 50 // Exact match gets high score
+  } else if (filenameWithoutExt.includes(sanitizedContent) || sanitizedContent.includes(filenameWithoutExt)) {
+    score += 30 // Partial match
   }
   
-  // Also check for key words from content (first 5 words, longer than 3 chars)
+  // Strategy 2: Check title if provided
+  if (title) {
+    const sanitizedTitle = sanitizeText(title).toLowerCase()
+    if (filenameWithoutExt === sanitizedTitle) {
+      score += 40
+    } else if (filenameWithoutExt.includes(sanitizedTitle) || sanitizedTitle.includes(filenameWithoutExt)) {
+      score += 20
+    }
+  }
+  
+  // Strategy 3: Check for key words from content (first 5 words, longer than 3 chars)
   const words = content.split(/\s+/).slice(0, 5).map(w => 
     w.replace(/[^a-zA-Z0-9]/g, '').toLowerCase()
   ).filter(w => w.length > 3)
   
-  // Count how many words match
   let matchCount = 0
   for (const word of words) {
     if (filenameWithoutExt.includes(word)) {
       matchCount++
+      score += 10 // Each matching word adds to score
     }
   }
   
-  // If 2 or more words match, consider it a match (more accurate)
-  return matchCount >= 2
+  // Strategy 4: Check for specific patterns
+  // Handle numbered items (e.g., "1__Describe" matches "1. Describe")
+  if (content.match(/^\d+\.\s/)) {
+    const numberMatch = content.match(/^(\d+)\.\s/)
+    if (numberMatch) {
+      const number = numberMatch[1]
+      if (filenameWithoutExt.includes(`${number}__`) || filenameWithoutExt.startsWith(`${number}_`)) {
+        score += 15
+      }
+    }
+  }
+  
+  return score
+}
+
+// Find best matching file from fileMap
+function findBestMatch(
+  fileMap: Map<string, { audio: string; timestamps: string }>,
+  content: string,
+  title?: string,
+  keywords?: string[]
+): { audio: string; timestamps: string } | null {
+  let bestMatch: { audio: string; timestamps: string } | null = null
+  let bestScore = 0
+  
+  for (const [timestamp, files] of fileMap.entries()) {
+    const audioFilename = files.audio.split('/').pop() || ''
+    const score = filenameMatchesContent(audioFilename, content, title)
+    
+    // Also check keywords if provided
+    let keywordScore = 0
+    if (keywords) {
+      for (const keyword of keywords) {
+        if (audioFilename.toLowerCase().includes(keyword.toLowerCase())) {
+          keywordScore += 10
+        }
+      }
+    }
+    
+    const totalScore = score + keywordScore
+    
+    if (totalScore > bestScore) {
+      bestScore = totalScore
+      bestMatch = files
+    }
+  }
+  
+  // Only return match if score is above threshold
+  return bestScore >= 20 ? bestMatch : null
 }
 
 async function main() {
+  // Check for force update flag
+  const forceUpdate = process.argv.includes('--force') || process.argv.includes('-f')
+  
+  if (forceUpdate) {
+    console.log('⚠️  FORCE UPDATE MODE: Will update all records, even if they already have audio/timestamps\n')
+  }
+  
   console.log('🔍 Scanning existing audio and timestamp files...\n')
 
   // Read all audio files
@@ -77,11 +145,17 @@ async function main() {
           audio: `/audio/${audioFile}`,
           timestamps: `/timestamps/${matchingTimestamp}`
         })
+      } else {
+        console.warn(`⚠️  No matching timestamp file for audio: ${audioFile}`)
       }
     }
   }
 
   console.log(`✅ Mapped ${fileMap.size} audio/timestamp pairs\n`)
+
+  let updatedCount = 0
+  let skippedCount = 0
+  let notFoundCount = 0
 
   // 1. Map Introduction
   console.log('📝 Mapping Introduction...')
@@ -92,31 +166,27 @@ async function main() {
   if (introSection) {
     const introText = introSection.text || "Hello, future real estate professional. My name is Mr Listings. Welcome to my 63 hour pre-license education course for sales associates, approved by Florida Real Estate Commission."
     
-    // Look for file matching "Hello" or intro keywords
-    let matchedFile: { audio: string; timestamps: string } | null = null
-    for (const [timestamp, files] of fileMap.entries()) {
-      const audioFilename = files.audio.split('/').pop() || ''
-      if (filenameMatchesContent(audioFilename, introText) || 
-          audioFilename.toLowerCase().includes('hello') ||
-          audioFilename.toLowerCase().includes('future_real')) {
-        matchedFile = files
-        break
+    const matchedFile = findBestMatch(fileMap, introText, 'Introduction', ['hello', 'future_real'])
+    
+    if (matchedFile) {
+      // Update if force mode or if missing audio/timestamps
+      if (forceUpdate || !introSection.audioUrl || !introSection.timestampsUrl) {
+        await prisma.section.update({
+          where: { id: introSection.id },
+          data: {
+            audioUrl: matchedFile.audio,
+            timestampsUrl: matchedFile.timestamps,
+          },
+        })
+        console.log(`  ✅ Updated Introduction: ${matchedFile.audio}`)
+        updatedCount++
+      } else {
+        console.log(`  ℹ️  Introduction already has audio/timestamps (use --force to update)`)
+        skippedCount++
       }
-    }
-
-    if (matchedFile && (!introSection.audioUrl || !introSection.timestampsUrl)) {
-      await prisma.section.update({
-        where: { id: introSection.id },
-        data: {
-          audioUrl: matchedFile.audio,
-          timestampsUrl: matchedFile.timestamps,
-        },
-      })
-      console.log(`  ✅ Updated Introduction: ${matchedFile.audio}`)
-    } else if (introSection.audioUrl && introSection.timestampsUrl) {
-      console.log(`  ℹ️  Introduction already has audio/timestamps`)
     } else {
       console.log(`  ⚠️  Could not find matching audio for Introduction`)
+      notFoundCount++
     }
   }
 
@@ -131,34 +201,27 @@ async function main() {
     const sections = chapter1.sections.filter(s => s.type === 'content')
     
     for (const section of sections) {
-      if (section.audioUrl && section.timestampsUrl) {
-        console.log(`  ℹ️  Section "${section.title}" already has audio/timestamps`)
-        continue
-      }
-
-      let matchedFile: { audio: string; timestamps: string } | null = null
+      const matchedFile = findBestMatch(fileMap, section.text, section.title)
       
-      // Try to match by content
-      for (const [timestamp, files] of fileMap.entries()) {
-        const audioFilename = files.audio.split('/').pop() || ''
-        if (filenameMatchesContent(audioFilename, section.text) ||
-            filenameMatchesContent(audioFilename, section.title)) {
-          matchedFile = files
-          break
-        }
-      }
-
       if (matchedFile) {
-        await prisma.section.update({
-          where: { id: section.id },
-          data: {
-            audioUrl: matchedFile.audio,
-            timestampsUrl: matchedFile.timestamps,
-          },
-        })
-        console.log(`  ✅ Updated Section "${section.title}": ${matchedFile.audio}`)
+        // Update if force mode or if missing audio/timestamps
+        if (forceUpdate || !section.audioUrl || !section.timestampsUrl) {
+          await prisma.section.update({
+            where: { id: section.id },
+            data: {
+              audioUrl: matchedFile.audio,
+              timestampsUrl: matchedFile.timestamps,
+            },
+          })
+          console.log(`  ✅ Updated Section "${section.title}": ${matchedFile.audio}`)
+          updatedCount++
+        } else {
+          console.log(`  ℹ️  Section "${section.title}" already has audio/timestamps (use --force to update)`)
+          skippedCount++
+        }
       } else {
         console.log(`  ⚠️  Could not find matching audio for Section "${section.title}"`)
+        notFoundCount++
       }
     }
   }
@@ -172,34 +235,36 @@ async function main() {
     })
 
     if (objectives.length > 0) {
-      // Look for file matching first objective or "Describe_the_various"
+      // Combine all objectives text for matching
+      const combinedText = objectives.map(obj => obj.text).join('. ')
       const firstObjective = objectives[0]
-      let matchedFile: { audio: string; timestamps: string } | null = null
       
-      for (const [timestamp, files] of fileMap.entries()) {
-        const audioFilename = files.audio.split('/').pop() || ''
-        if (filenameMatchesContent(audioFilename, firstObjective.text) ||
-            audioFilename.toLowerCase().includes('describe_the_vari') ||
-            audioFilename.toLowerCase().includes('1__describe')) {
-          matchedFile = files
-          break
+      const matchedFile = findBestMatch(
+        fileMap, 
+        combinedText, 
+        undefined,
+        ['describe_the_vari', '1__describe', 'learning_objectives']
+      )
+      
+      if (matchedFile) {
+        // Update if force mode or if missing audio/timestamps
+        if (forceUpdate || !objectives[0].audioUrl || !objectives[0].timestampsUrl) {
+          await prisma.learningObjective.update({
+            where: { id: objectives[0].id },
+            data: {
+              audioUrl: matchedFile.audio,
+              timestampsUrl: matchedFile.timestamps,
+            },
+          })
+          console.log(`  ✅ Updated Learning Objectives: ${matchedFile.audio}`)
+          updatedCount++
+        } else {
+          console.log(`  ℹ️  Learning Objectives already have audio/timestamps (use --force to update)`)
+          skippedCount++
         }
-      }
-
-      // Update first objective with combined audio (as per current implementation)
-      if (matchedFile && (!objectives[0].audioUrl || !objectives[0].timestampsUrl)) {
-        await prisma.learningObjective.update({
-          where: { id: objectives[0].id },
-          data: {
-            audioUrl: matchedFile.audio,
-            timestampsUrl: matchedFile.timestamps,
-          },
-        })
-        console.log(`  ✅ Updated Learning Objectives: ${matchedFile.audio}`)
-      } else if (objectives[0].audioUrl && objectives[0].timestampsUrl) {
-        console.log(`  ℹ️  Learning Objectives already have audio/timestamps`)
       } else {
         console.log(`  ⚠️  Could not find matching audio for Learning Objectives`)
+        notFoundCount++
       }
     }
   }
@@ -213,34 +278,36 @@ async function main() {
     })
 
     if (keyTerms.length > 0) {
-      // Look for file matching first key term or "absentee_owner"
+      // Combine all key terms text for matching
+      const combinedText = keyTerms.map(term => term.term).join('. ')
       const firstKeyTerm = keyTerms[0]
-      let matchedFile: { audio: string; timestamps: string } | null = null
       
-      for (const [timestamp, files] of fileMap.entries()) {
-        const audioFilename = files.audio.split('/').pop() || ''
-        if (filenameMatchesContent(audioFilename, firstKeyTerm.term) ||
-            audioFilename.toLowerCase().includes('absentee_owner') ||
-            audioFilename.toLowerCase().includes('appr')) {
-          matchedFile = files
-          break
+      const matchedFile = findBestMatch(
+        fileMap,
+        combinedText,
+        undefined,
+        ['absentee_owner', 'appr', 'key_terms']
+      )
+      
+      if (matchedFile) {
+        // Update if force mode or if missing audio/timestamps
+        if (forceUpdate || !keyTerms[0].audioUrl || !keyTerms[0].timestampsUrl) {
+          await prisma.keyTerm.update({
+            where: { id: keyTerms[0].id },
+            data: {
+              audioUrl: matchedFile.audio,
+              timestampsUrl: matchedFile.timestamps,
+            },
+          })
+          console.log(`  ✅ Updated Key Terms: ${matchedFile.audio}`)
+          updatedCount++
+        } else {
+          console.log(`  ℹ️  Key Terms already have audio/timestamps (use --force to update)`)
+          skippedCount++
         }
-      }
-
-      // Update first key term with combined audio (as per current implementation)
-      if (matchedFile && (!keyTerms[0].audioUrl || !keyTerms[0].timestampsUrl)) {
-        await prisma.keyTerm.update({
-          where: { id: keyTerms[0].id },
-          data: {
-            audioUrl: matchedFile.audio,
-            timestampsUrl: matchedFile.timestamps,
-          },
-        })
-        console.log(`  ✅ Updated Key Terms: ${matchedFile.audio}`)
-      } else if (keyTerms[0].audioUrl && keyTerms[0].timestampsUrl) {
-        console.log(`  ℹ️  Key Terms already have audio/timestamps`)
       } else {
         console.log(`  ⚠️  Could not find matching audio for Key Terms`)
+        notFoundCount++
       }
     }
   }
@@ -254,19 +321,13 @@ async function main() {
     })
 
     for (const question of quizQuestions) {
-      // Match question audio
-      if (!question.audioUrl || !question.timestampsUrl) {
-        let matchedFile: { audio: string; timestamps: string } | null = null
-        
-        for (const [timestamp, files] of fileMap.entries()) {
-          const audioFilename = files.audio.split('/').pop() || ''
-          if (filenameMatchesContent(audioFilename, question.question)) {
-            matchedFile = files
-            break
-          }
-        }
-
-        if (matchedFile) {
+      // Match question audio (question + options)
+      const questionText = `${question.question}. ${question.options.join('. ')}`
+      const matchedFile = findBestMatch(fileMap, questionText, question.question)
+      
+      if (matchedFile) {
+        // Update if force mode or if missing audio/timestamps
+        if (forceUpdate || !question.audioUrl || !question.timestampsUrl) {
           await prisma.quizQuestion.update({
             where: { id: question.id },
             data: {
@@ -275,33 +336,38 @@ async function main() {
             },
           })
           console.log(`  ✅ Updated Question "${question.question.substring(0, 40)}...": ${matchedFile.audio}`)
+          updatedCount++
+        } else {
+          console.log(`  ℹ️  Question already has audio/timestamps (use --force to update)`)
+          skippedCount++
         }
+      } else {
+        console.log(`  ⚠️  Could not find matching audio for Question "${question.question.substring(0, 40)}..."`)
+        notFoundCount++
       }
 
       // Match correct explanation audio
       if (question.explanation && typeof question.explanation === 'object') {
         const explanation = question.explanation as { correct?: string; incorrect?: string[] }
         
-        if (explanation.correct && !question.correctExplanationAudioUrl) {
-          let matchedFile: { audio: string; timestamps: string } | null = null
+        if (explanation.correct) {
+          const matchedFile = findBestMatch(fileMap, explanation.correct)
           
-          for (const [timestamp, files] of fileMap.entries()) {
-            const audioFilename = files.audio.split('/').pop() || ''
-            if (filenameMatchesContent(audioFilename, explanation.correct)) {
-              matchedFile = files
-              break
-            }
-          }
-
           if (matchedFile) {
-            await prisma.quizQuestion.update({
-              where: { id: question.id },
-              data: {
-                correctExplanationAudioUrl: matchedFile.audio,
-                correctExplanationTimestampsUrl: matchedFile.timestamps,
-              },
-            })
-            console.log(`    ✅ Updated Correct Explanation: ${matchedFile.audio}`)
+            // Update if force mode or if missing audio/timestamps
+            if (forceUpdate || !question.correctExplanationAudioUrl || !question.correctExplanationTimestampsUrl) {
+              await prisma.quizQuestion.update({
+                where: { id: question.id },
+                data: {
+                  correctExplanationAudioUrl: matchedFile.audio,
+                  correctExplanationTimestampsUrl: matchedFile.timestamps,
+                },
+              })
+              console.log(`    ✅ Updated Correct Explanation: ${matchedFile.audio}`)
+              updatedCount++
+            } else {
+              skippedCount++
+            }
           }
         }
 
@@ -312,16 +378,8 @@ async function main() {
 
           for (let i = 0; i < explanation.incorrect.length; i++) {
             const incorrectText = explanation.incorrect[i]
-            let matchedFile: { audio: string; timestamps: string } | null = null
+            const matchedFile = findBestMatch(fileMap, incorrectText)
             
-            for (const [timestamp, files] of fileMap.entries()) {
-              const audioFilename = files.audio.split('/').pop() || ''
-              if (filenameMatchesContent(audioFilename, incorrectText)) {
-                matchedFile = files
-                break
-              }
-            }
-
             if (matchedFile) {
               incorrectAudioUrls.push(matchedFile.audio)
               incorrectTimestampsUrls.push(matchedFile.timestamps)
@@ -333,14 +391,22 @@ async function main() {
 
           // Only update if we found at least one match
           if (incorrectAudioUrls.some(url => url !== '')) {
-            await prisma.quizQuestion.update({
-              where: { id: question.id },
-              data: {
-                incorrectExplanationAudioUrls: incorrectAudioUrls,
-                incorrectExplanationTimestampsUrls: incorrectTimestampsUrls,
-              },
-            })
-            console.log(`    ✅ Updated ${incorrectAudioUrls.filter(url => url !== '').length} Incorrect Explanations`)
+            // Update if force mode or if missing audio/timestamps
+            const existingUrls = question.incorrectExplanationAudioUrls as string[] | null
+            if (forceUpdate || !existingUrls || existingUrls.length === 0 || existingUrls.every(url => !url)) {
+              await prisma.quizQuestion.update({
+                where: { id: question.id },
+                data: {
+                  incorrectExplanationAudioUrls: incorrectAudioUrls,
+                  incorrectExplanationTimestampsUrls: incorrectTimestampsUrls,
+                },
+              })
+              const matchedCount = incorrectAudioUrls.filter(url => url !== '').length
+              console.log(`    ✅ Updated ${matchedCount} Incorrect Explanations`)
+              updatedCount++
+            } else {
+              skippedCount++
+            }
           }
         }
       }
@@ -352,6 +418,21 @@ async function main() {
   console.log(`   - Audio files scanned: ${audioFiles.length}`)
   console.log(`   - Timestamp files scanned: ${timestampFiles.length}`)
   console.log(`   - File pairs mapped: ${fileMap.size}`)
+  console.log(`   - Records updated: ${updatedCount}`)
+  console.log(`   - Records skipped (already have audio): ${skippedCount}`)
+  console.log(`   - Records not found: ${notFoundCount}`)
+  
+  if (skippedCount > 0 && !forceUpdate) {
+    console.log(`\n💡 Tip: Use --force flag to update all records, including those that already have audio/timestamps`)
+    console.log(`   Example: npm run db:map-audio -- --force`)
+  }
+  
+  if (notFoundCount > 0) {
+    console.log('\n⚠️  Some files could not be matched. You may need to:')
+    console.log('   1. Check if filenames match the content')
+    console.log('   2. Manually update via admin panel')
+    console.log('   3. Regenerate audio files if needed')
+  }
 }
 
 main()
@@ -362,4 +443,3 @@ main()
   .finally(async () => {
     await prisma.$disconnect()
   })
-
