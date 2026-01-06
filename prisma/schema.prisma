@@ -51,25 +51,29 @@ model Section {
 }
 
 model LearningObjective {
-  id        String   @id @default(cuid())
-  chapterId String
-  text      String
-  order     Int      @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  chapter   Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  id            String   @id @default(cuid())
+  chapterId     String
+  text          String
+  audioUrl      String?
+  timestampsUrl String?
+  order         Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  chapter       Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
 
   @@index([chapterId])
 }
 
 model KeyTerm {
-  id        String   @id @default(cuid())
-  chapterId String
-  term      String
-  order     Int      @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  chapter   Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  id            String   @id @default(cuid())
+  chapterId     String
+  term          String
+  audioUrl      String?
+  timestampsUrl String?
+  order         Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  chapter       Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
 
   @@index([chapterId])
 }

@@ -40,12 +40,16 @@ interface QuizQuestion {
 interface LearningObjective {
   id: string;
   text: string;
+  audioUrl?: string | null;
+  timestampsUrl?: string | null;
   order: number;
 }
 
 interface KeyTerm {
   id: string;
   term: string;
+  audioUrl?: string | null;
+  timestampsUrl?: string | null;
   order: number;
 }
 
@@ -96,6 +100,8 @@ export default function ChapterEditPage() {
   const [uploadingAudio, setUploadingAudio] = useState(false);
   const [uploadingTimestamps, setUploadingTimestamps] = useState(false);
   const [generatingAudio, setGeneratingAudio] = useState(false);
+  const [generatingObjectivesAudio, setGeneratingObjectivesAudio] = useState(false);
+  const [generatingKeyTermsAudio, setGeneratingKeyTermsAudio] = useState(false);
 
   const handleFileUpload = async (file: File, type: 'audio' | 'timestamps') => {
     try {
@@ -728,11 +734,15 @@ export default function ChapterEditPage() {
 
   const [objectiveForm, setObjectiveForm] = useState<Partial<LearningObjective>>({
     text: "",
+    audioUrl: null,
+    timestampsUrl: null,
     order: 0,
   });
 
   const [keyTermForm, setKeyTermForm] = useState<Partial<KeyTerm>>({
     term: "",
+    audioUrl: null,
+    timestampsUrl: null,
     order: 0,
   });
 
@@ -764,7 +774,7 @@ export default function ChapterEditPage() {
         await fetchChapter();
         setShowObjectiveForm(false);
         setEditingObjective(null);
-        setObjectiveForm({ text: "", order: 0 });
+        setObjectiveForm({ text: "", audioUrl: null, timestampsUrl: null, order: 0 });
       }
     } catch (err) {
       console.error("Error saving objective:", err);
@@ -795,7 +805,7 @@ export default function ChapterEditPage() {
         await fetchChapter();
         setShowKeyTermForm(false);
         setEditingKeyTerm(null);
-        setKeyTermForm({ term: "", order: 0 });
+        setKeyTermForm({ term: "", audioUrl: null, timestampsUrl: null, order: 0 });
       }
     } catch (err) {
       console.error("Error saving key term:", err);
@@ -844,6 +854,134 @@ export default function ChapterEditPage() {
     } catch (err) {
       console.error("Error bulk adding objectives:", err);
       alert("Failed to add objectives. Please try again.");
+    }
+  };
+
+  // Generate audio for all Learning Objectives combined
+  const handleGenerateObjectivesAudio = async () => {
+    if (learningObjectives.length === 0) {
+      alert("Please add learning objectives first");
+      return;
+    }
+
+    try {
+      setGeneratingObjectivesAudio(true);
+      const token = getToken();
+      
+      // Combine all objectives into one text
+      const combinedText = learningObjectives.map((obj, idx) => `${idx + 1}. ${obj.text}`).join(". ");
+      
+      const response = await fetch('/api/admin/generate-audio', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ 
+          text: combinedText, 
+          type: 'both',
+          context: 'section' // Use man's voice for objectives
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        
+        // Update the first objective with the combined audio (as per chapter-1 page logic)
+        if (learningObjectives.length > 0) {
+          const firstObjective = learningObjectives[0];
+          const token = getToken();
+          
+          await fetch(`/api/admin/objectives/${firstObjective.id}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              text: firstObjective.text,
+              order: firstObjective.order,
+              audioUrl: data.audioUrl,
+              timestampsUrl: data.timestampsUrl,
+            }),
+          });
+        }
+        
+        await fetchChapter();
+        alert(`✅ Learning Objectives audio and timestamps generated successfully!\n\nAudio: ${data.audioUrl}\nTimestamps: ${data.timestampsUrl}\n\nThis audio will play for all objectives combined.`);
+      } else {
+        const error = await response.json();
+        alert(`❌ Generation failed: ${error.error || 'Unknown error'}`);
+      }
+    } catch (err) {
+      console.error('Error generating objectives audio:', err);
+      alert('Failed to generate objectives audio');
+    } finally {
+      setGeneratingObjectivesAudio(false);
+    }
+  };
+
+  // Generate audio for all Key Terms combined
+  const handleGenerateKeyTermsAudio = async () => {
+    if (keyTerms.length === 0) {
+      alert("Please add key terms first");
+      return;
+    }
+
+    try {
+      setGeneratingKeyTermsAudio(true);
+      const token = getToken();
+      
+      // Combine all key terms into one text
+      const combinedText = keyTerms.map((term) => term.term).join(". ");
+      
+      const response = await fetch('/api/admin/generate-audio', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ 
+          text: combinedText, 
+          type: 'both',
+          context: 'section' // Use man's voice for key terms
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        
+        // Update the first key term with the combined audio (as per chapter-1 page logic)
+        if (keyTerms.length > 0) {
+          const firstKeyTerm = keyTerms[0];
+          const token = getToken();
+          
+          await fetch(`/api/admin/key-terms/${firstKeyTerm.id}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              term: firstKeyTerm.term,
+              order: firstKeyTerm.order,
+              audioUrl: data.audioUrl,
+              timestampsUrl: data.timestampsUrl,
+            }),
+          });
+        }
+        
+        await fetchChapter();
+        alert(`✅ Key Terms audio and timestamps generated successfully!\n\nAudio: ${data.audioUrl}\nTimestamps: ${data.timestampsUrl}\n\nThis audio will play for all key terms combined.`);
+      } else {
+        const error = await response.json();
+        alert(`❌ Generation failed: ${error.error || 'Unknown error'}`);
+      }
+    } catch (err) {
+      console.error('Error generating key terms audio:', err);
+      alert('Failed to generate key terms audio');
+    } finally {
+      setGeneratingKeyTermsAudio(false);
     }
   };
 
@@ -1162,6 +1300,15 @@ export default function ChapterEditPage() {
         <div className="bg-[#1a1f3a]/90 backdrop-blur-lg rounded-2xl shadow-2xl border border-green-500/20 p-6 mb-6">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-white">Learning Objectives</h2>
+            {learningObjectives.length > 0 && (
+              <button
+                onClick={handleGenerateObjectivesAudio}
+                disabled={generatingObjectivesAudio}
+                className="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 disabled:from-gray-500 disabled:to-gray-600 disabled:cursor-not-allowed text-white font-semibold rounded-lg shadow-lg hover:shadow-green-500/50 transition-all duration-300"
+              >
+                {generatingObjectivesAudio ? "🔄 Generating..." : "🎙️ Generate Audio & Timestamps"}
+              </button>
+            )}
           </div>
           
           {/* Bulk Input Area */}
@@ -1196,7 +1343,15 @@ export default function ChapterEditPage() {
             ) : (
               learningObjectives.map((obj) => (
                 <div key={obj.id} className="p-3 bg-[#0a0e27]/50 border border-green-500/20 rounded-lg flex justify-between items-center">
-                  <span className="text-white">{obj.text}</span>
+                  <div className="flex-1">
+                    <span className="text-white">{obj.text}</span>
+                    {(obj.audioUrl || obj.timestampsUrl) && (
+                      <div className="flex gap-2 mt-1 text-xs text-gray-400">
+                        {obj.audioUrl && <span>🎵 Audio: ✓</span>}
+                        {obj.timestampsUrl && <span>📝 Timestamps: ✓</span>}
+                      </div>
+                    )}
+                  </div>
                   <div className="flex gap-2">
                     <button
                       onClick={() => {
@@ -1234,6 +1389,15 @@ export default function ChapterEditPage() {
         <div className="bg-[#1a1f3a]/90 backdrop-blur-lg rounded-2xl shadow-2xl border border-yellow-500/20 p-6 mb-6">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-white">Key Terms</h2>
+            {keyTerms.length > 0 && (
+              <button
+                onClick={handleGenerateKeyTermsAudio}
+                disabled={generatingKeyTermsAudio}
+                className="px-4 py-2 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 disabled:from-gray-500 disabled:to-gray-600 disabled:cursor-not-allowed text-white font-semibold rounded-lg shadow-lg hover:shadow-yellow-500/50 transition-all duration-300"
+              >
+                {generatingKeyTermsAudio ? "🔄 Generating..." : "🎙️ Generate Audio & Timestamps"}
+              </button>
+            )}
           </div>
           
           {/* Bulk Input Area */}
@@ -1268,7 +1432,15 @@ export default function ChapterEditPage() {
             ) : (
               keyTerms.map((term) => (
                 <div key={term.id} className="p-3 bg-[#0a0e27]/50 border border-yellow-500/20 rounded-lg flex justify-between items-center">
-                  <span className="text-white">{term.term}</span>
+                  <div className="flex-1">
+                    <span className="text-white">{term.term}</span>
+                    {(term.audioUrl || term.timestampsUrl) && (
+                      <div className="flex gap-2 mt-1 text-xs text-gray-400">
+                        {term.audioUrl && <span>🎵 Audio: ✓</span>}
+                        {term.timestampsUrl && <span>📝 Timestamps: ✓</span>}
+                      </div>
+                    )}
+                  </div>
                   <div className="flex gap-2">
                     <button
                       onClick={() => {
@@ -1844,9 +2016,59 @@ export default function ChapterEditPage() {
               </h2>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Objective Text
-                  </label>
+                  <div className="flex justify-between items-center mb-2">
+                    <label className="block text-sm font-medium text-gray-300">
+                      Objective Text
+                    </label>
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        if (!objectiveForm.text || objectiveForm.text.trim().length === 0) {
+                          alert("Please enter objective text first");
+                          return;
+                        }
+                        try {
+                          setGeneratingObjectivesAudio(true);
+                          const token = getToken();
+                          
+                          const response = await fetch('/api/admin/generate-audio', {
+                            method: 'POST',
+                            headers: {
+                              'Content-Type': 'application/json',
+                              Authorization: `Bearer ${token}`,
+                            },
+                            body: JSON.stringify({ 
+                              text: objectiveForm.text, 
+                              type: 'both',
+                              context: 'section' // Use man's voice
+                            }),
+                          });
+
+                          if (response.ok) {
+                            const data = await response.json();
+                            setObjectiveForm({
+                              ...objectiveForm,
+                              audioUrl: data.audioUrl,
+                              timestampsUrl: data.timestampsUrl,
+                            });
+                            alert(`✅ Audio and timestamps generated successfully!\n\nAudio: ${data.audioUrl}\nTimestamps: ${data.timestampsUrl}`);
+                          } else {
+                            const error = await response.json();
+                            alert(`❌ Generation failed: ${error.error || 'Unknown error'}`);
+                          }
+                        } catch (err) {
+                          console.error('Error generating audio:', err);
+                          alert('Failed to generate audio');
+                        } finally {
+                          setGeneratingObjectivesAudio(false);
+                        }
+                      }}
+                      disabled={generatingObjectivesAudio || !objectiveForm.text || objectiveForm.text.trim().length === 0}
+                      className="px-3 py-1 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white text-sm font-semibold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {generatingObjectivesAudio ? "🔄 Generating..." : "🎙️ Generate Audio"}
+                    </button>
+                  </div>
                   <textarea
                     value={objectiveForm.text || ""}
                     onChange={(e) =>
@@ -1855,6 +2077,34 @@ export default function ChapterEditPage() {
                     rows={3}
                     className="w-full px-4 py-2 bg-[#0a0e27]/50 border border-green-500/30 rounded-lg text-white"
                     placeholder="Enter learning objective..."
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Audio URL
+                  </label>
+                  <input
+                    type="text"
+                    value={objectiveForm.audioUrl || ""}
+                    onChange={(e) =>
+                      setObjectiveForm({ ...objectiveForm, audioUrl: e.target.value })
+                    }
+                    className="w-full px-4 py-2 bg-[#0a0e27]/50 border border-green-500/30 rounded-lg text-white"
+                    placeholder="/audio/chapter1-objectives.mp3"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Timestamps URL
+                  </label>
+                  <input
+                    type="text"
+                    value={objectiveForm.timestampsUrl || ""}
+                    onChange={(e) =>
+                      setObjectiveForm({ ...objectiveForm, timestampsUrl: e.target.value })
+                    }
+                    className="w-full px-4 py-2 bg-[#0a0e27]/50 border border-green-500/30 rounded-lg text-white"
+                    placeholder="/timestamps/chapter1-objectives.timestamps.json"
                   />
                 </div>
                 <div>
@@ -1904,9 +2154,59 @@ export default function ChapterEditPage() {
               </h2>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Term
-                  </label>
+                  <div className="flex justify-between items-center mb-2">
+                    <label className="block text-sm font-medium text-gray-300">
+                      Term
+                    </label>
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        if (!keyTermForm.term || keyTermForm.term.trim().length === 0) {
+                          alert("Please enter key term first");
+                          return;
+                        }
+                        try {
+                          setGeneratingKeyTermsAudio(true);
+                          const token = getToken();
+                          
+                          const response = await fetch('/api/admin/generate-audio', {
+                            method: 'POST',
+                            headers: {
+                              'Content-Type': 'application/json',
+                              Authorization: `Bearer ${token}`,
+                            },
+                            body: JSON.stringify({ 
+                              text: keyTermForm.term, 
+                              type: 'both',
+                              context: 'section' // Use man's voice
+                            }),
+                          });
+
+                          if (response.ok) {
+                            const data = await response.json();
+                            setKeyTermForm({
+                              ...keyTermForm,
+                              audioUrl: data.audioUrl,
+                              timestampsUrl: data.timestampsUrl,
+                            });
+                            alert(`✅ Audio and timestamps generated successfully!\n\nAudio: ${data.audioUrl}\nTimestamps: ${data.timestampsUrl}`);
+                          } else {
+                            const error = await response.json();
+                            alert(`❌ Generation failed: ${error.error || 'Unknown error'}`);
+                          }
+                        } catch (err) {
+                          console.error('Error generating audio:', err);
+                          alert('Failed to generate audio');
+                        } finally {
+                          setGeneratingKeyTermsAudio(false);
+                        }
+                      }}
+                      disabled={generatingKeyTermsAudio || !keyTermForm.term || keyTermForm.term.trim().length === 0}
+                      className="px-3 py-1 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white text-sm font-semibold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {generatingKeyTermsAudio ? "🔄 Generating..." : "🎙️ Generate Audio"}
+                    </button>
+                  </div>
                   <input
                     type="text"
                     value={keyTermForm.term || ""}
@@ -1915,6 +2215,34 @@ export default function ChapterEditPage() {
                     }
                     className="w-full px-4 py-2 bg-[#0a0e27]/50 border border-yellow-500/30 rounded-lg text-white"
                     placeholder="Enter key term..."
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Audio URL
+                  </label>
+                  <input
+                    type="text"
+                    value={keyTermForm.audioUrl || ""}
+                    onChange={(e) =>
+                      setKeyTermForm({ ...keyTermForm, audioUrl: e.target.value })
+                    }
+                    className="w-full px-4 py-2 bg-[#0a0e27]/50 border border-yellow-500/30 rounded-lg text-white"
+                    placeholder="/audio/chapter1-keyterms.mp3"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Timestamps URL
+                  </label>
+                  <input
+                    type="text"
+                    value={keyTermForm.timestampsUrl || ""}
+                    onChange={(e) =>
+                      setKeyTermForm({ ...keyTermForm, timestampsUrl: e.target.value })
+                    }
+                    className="w-full px-4 py-2 bg-[#0a0e27]/50 border border-yellow-500/30 rounded-lg text-white"
+                    placeholder="/timestamps/chapter1-keyterms.timestamps.json"
                   />
                 </div>
                 <div>

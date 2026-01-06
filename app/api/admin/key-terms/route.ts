@@ -47,13 +47,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
-    const { chapterId, term, order } = await request.json()
+    const { chapterId, term, order, audioUrl, timestampsUrl } = await request.json()
 
     const keyTerm = await prisma.keyTerm.create({
       data: {
         chapterId,
         term,
         order: order || 0,
+        audioUrl: audioUrl || null,
+        timestampsUrl: timestampsUrl || null,
       },
     })
 

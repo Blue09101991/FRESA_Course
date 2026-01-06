@@ -47,13 +47,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
-    const { chapterId, text, order } = await request.json()
+    const { chapterId, text, order, audioUrl, timestampsUrl } = await request.json()
 
     const objective = await prisma.learningObjective.create({
       data: {
         chapterId,
         text,
         order: order || 0,
+        audioUrl: audioUrl || null,
+        timestampsUrl: timestampsUrl || null,
       },
     })
 

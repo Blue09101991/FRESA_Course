@@ -20,13 +20,15 @@ export async function PUT(
     }
 
     const { id } = await params
-    const { text, order } = await request.json()
+    const { text, order, audioUrl, timestampsUrl } = await request.json()
 
     const objective = await prisma.learningObjective.update({
       where: { id },
       data: {
         text,
         order: order || 0,
+        audioUrl: audioUrl || null,
+        timestampsUrl: timestampsUrl || null,
       },
     })
 

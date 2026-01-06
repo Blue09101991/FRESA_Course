@@ -20,13 +20,15 @@ export async function PUT(
     }
 
     const { id } = await params
-    const { term, order } = await request.json()
+    const { term, order, audioUrl, timestampsUrl } = await request.json()
 
     const keyTerm = await prisma.keyTerm.update({
       where: { id },
       data: {
         term,
         order: order || 0,
+        audioUrl: audioUrl || null,
+        timestampsUrl: timestampsUrl || null,
       },
     })
 
