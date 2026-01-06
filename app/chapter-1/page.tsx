@@ -51,6 +51,16 @@ export default function Chapter1Page() {
   useEffect(() => {
     fetchChapterData();
     
+    // Check for search highlight query from search results
+    const searchQuery = sessionStorage.getItem('searchHighlight');
+    if (searchQuery) {
+      setSearchHighlight(searchQuery);
+      // Clear after a delay to allow highlighting to be applied
+      setTimeout(() => {
+        sessionStorage.removeItem('searchHighlight');
+      }, 5000); // Clear after 5 seconds
+    }
+    
     // Listen for section navigation events from TableOfContents
     const handleNavigateToSection = (event: CustomEvent) => {
       const sectionId = event.detail?.sectionId;
@@ -690,7 +700,7 @@ export default function Chapter1Page() {
             {chapterData ? `Chapter ${chapterData.number} Quiz` : "Chapter 1 Quiz"}
           </h1>
           {quizQuestions.length > 0 ? (
-            <Quiz questions={quizQuestions} onComplete={handleQuizComplete} />
+            <Quiz questions={quizQuestions} onComplete={handleQuizComplete} searchHighlight={searchHighlight} />
           ) : (
             <div className="text-white">No quiz questions available yet.</div>
           )}

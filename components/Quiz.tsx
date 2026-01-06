@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import MrListings from "./MrListings";
 import AudioPlayer from "./AudioPlayer";
+import { highlightText } from "@/lib/highlightText";
 
 export interface QuizQuestion {
   id: string;
@@ -27,9 +28,10 @@ interface QuizProps {
   questions: QuizQuestion[];
   onComplete: (score: number, total: number) => void;
   showCharacter?: boolean;
+  searchHighlight?: string; // Search query to highlight in questions and options
 }
 
-export default function Quiz({ questions, onComplete, showCharacter = true }: QuizProps) {
+export default function Quiz({ questions, onComplete, showCharacter = true, searchHighlight }: QuizProps) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showExplanation, setShowExplanation] = useState(false);
@@ -38,15 +40,18 @@ export default function Quiz({ questions, onComplete, showCharacter = true }: Qu
   const [currentQuestionScore, setCurrentQuestionScore] = useState(0);
   const [characterAnimation, setCharacterAnimation] = useState<"idle" | "thumbs-up" | "thumbs-down" | "congratulations">("idle");
   const [highlightedWord, setHighlightedWord] = useState<string | null>(null);
+  const [hasAutoPlayedQuestion, setHasAutoPlayedQuestion] = useState(false);
+  const [hasAutoPlayedExplanation, setHasAutoPlayedExplanation] = useState(false);
   const questionRef = useRef<HTMLDivElement>(null);
   const optionsRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const explanationRef = useRef<HTMLDivElement>(null);
 
   const currentQuestion = questions[currentQuestionIndex];
   const isLastQuestion = currentQuestionIndex === questions.length - 1;
 
-  // Build question text with options for AudioPlayer
+  // Build question text with options for AudioPlayer (without "Option 1:", "Option 2:", etc.)
   const questionText = currentQuestion 
-    ? `${currentQuestion.question}. ${currentQuestion.options.map((opt, idx) => `Option ${idx + 1}: ${opt}`).join(". ")}`
+    ? `${currentQuestion.question}. ${currentQuestion.options.join(". ")}`
     : "";
 
   // Normalize word for matching (remove punctuation, lowercase)
@@ -54,35 +59,59 @@ export default function Quiz({ questions, onComplete, showCharacter = true }: Qu
     return word.toLowerCase().replace(/[^\w]/g, '');
   };
 
-  // Handle word highlighting from AudioPlayer
+  // Handle word highlighting from AudioPlayer - highlight only the current word at the correct position
   const handleHighlightedWord = (word: string, wordIndex: number) => {
-    const normalizedWord = normalizeWord(word);
-    setHighlightedWord(normalizedWord);
-    
-    // Highlight words in question and options
-    if (questionRef.current) {
-      highlightWordsInElement(questionRef.current, normalizedWord);
-    }
+    // First, remove all highlights
+    removeHighlights(questionRef.current);
     optionsRefs.current.forEach((ref) => {
       if (ref) {
-        highlightWordsInElement(ref, normalizedWord);
+        removeHighlights(ref);
       }
     });
+
+    // Get the full audio text and split into words (same way AudioPlayer does)
+    const audioWords = questionText.split(/\s+/).filter(w => w.length > 0);
+    
+    // Calculate which part (question or option) this word belongs to
+    const questionWords = currentQuestion.question.split(/\s+/).filter(w => w.length > 0);
+    const questionWordCount = questionWords.length;
+    
+    if (wordIndex < questionWordCount) {
+      // Word is in the question
+      highlightWordAtPosition(questionRef.current, wordIndex);
+    } else {
+      // Word is in one of the options
+      let cumulativeWordCount = questionWordCount + 1; // +1 for the period/separator
+      for (let i = 0; i < currentQuestion.options.length; i++) {
+        const optionText = currentQuestion.options[i];
+        const optionWords = optionText.split(/\s+/).filter(w => w.length > 0);
+        const optionWordCount = optionWords.length;
+        
+        if (wordIndex >= cumulativeWordCount && wordIndex < cumulativeWordCount + optionWordCount) {
+          const positionInOption = wordIndex - cumulativeWordCount;
+          highlightWordAtPosition(optionsRefs.current[i], positionInOption);
+          break;
+        }
+        
+        cumulativeWordCount += optionWordCount + 1; // +1 for separator
+      }
+    }
   };
 
-  // Highlight matching words in an element
-  const highlightWordsInElement = (element: HTMLElement, targetWord: string) => {
-    // Remove previous highlights
-    const highlightedSpans = element.querySelectorAll('span[data-audio-highlight]');
-    highlightedSpans.forEach((span) => {
-      const parent = span.parentNode;
-      if (parent) {
-        parent.replaceChild(document.createTextNode(span.textContent || ''), span);
-        parent.normalize();
-      }
-    });
+  // Highlight a specific word at a specific position in an element
+  const highlightWordAtPosition = (element: HTMLElement | null, targetPosition: number) => {
+    if (!element || targetPosition < 0) return;
 
-    // Find and highlight matching words
+    // Remove previous highlights
+    removeHighlights(element);
+
+    // Get the full text and split it the same way we count words
+    const fullText = element.textContent || '';
+    const words = fullText.split(/\s+/).filter(w => w.length > 0);
+    
+    if (targetPosition >= words.length) return;
+
+    // Now highlight the word at the specific position
     const walker = document.createTreeWalker(
       element,
       NodeFilter.SHOW_TEXT,
@@ -97,20 +126,31 @@ export default function Quiz({ questions, onComplete, showCharacter = true }: Qu
       }
     }
 
+    let currentWordPosition = 0;
+    let highlighted = false;
+    
     textNodes.forEach((textNode) => {
+      if (highlighted) return;
+      
       const text = textNode.textContent || '';
-      const words = text.split(/(\s+)/);
+      const parts = text.split(/(\s+)/);
       
       let newHTML = '';
-      words.forEach((word) => {
-        if (word.trim() && normalizeWord(word) === targetWord) {
-          newHTML += `<span data-audio-highlight style="background: linear-gradient(120deg, rgba(59, 130, 246, 0.35) 0%, rgba(59, 130, 246, 0.55) 100%); background-size: 100% 85%; background-position: center; background-repeat: no-repeat; color: #fef08a; border-radius: 3px; text-shadow: 0 0 10px rgba(251, 191, 36, 0.7), 0 0 15px rgba(59, 130, 246, 0.5); transition: background 0.15s ease, color 0.15s ease, text-shadow 0.15s ease;">${word}</span>`;
+      parts.forEach((part) => {
+        if (part.trim()) {
+          if (currentWordPosition === targetPosition && !highlighted) {
+            newHTML += `<span data-audio-highlight style="background: linear-gradient(120deg, rgba(59, 130, 246, 0.35) 0%, rgba(59, 130, 246, 0.55) 100%); background-size: 100% 85%; background-position: center; background-repeat: no-repeat; color: #fef08a; border-radius: 3px; text-shadow: 0 0 10px rgba(251, 191, 36, 0.7), 0 0 15px rgba(59, 130, 246, 0.5); transition: background 0.15s ease, color 0.15s ease, text-shadow 0.15s ease;">${part}</span>`;
+            highlighted = true;
+          } else {
+            newHTML += part;
+          }
+          currentWordPosition++;
         } else {
-          newHTML += word;
+          newHTML += part;
         }
       });
 
-      if (newHTML !== text) {
+      if (newHTML !== text && highlighted) {
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = newHTML;
         const fragment = document.createDocumentFragment();
@@ -138,6 +178,8 @@ export default function Quiz({ questions, onComplete, showCharacter = true }: Qu
   // Reset highlights and refs when question changes
   useEffect(() => {
     setHighlightedWord(null);
+    setHasAutoPlayedQuestion(false);
+    setHasAutoPlayedExplanation(false);
     // Clear options refs array - will be repopulated when options render
     optionsRefs.current = new Array(currentQuestion?.options.length || 0).fill(null);
     // Remove highlights from previous question
@@ -158,6 +200,7 @@ export default function Quiz({ questions, onComplete, showCharacter = true }: Qu
     setIsCorrect(correct);
     setShowExplanation(true);
     setCurrentQuestionScore(correct ? 1 : 0);
+    setHasAutoPlayedExplanation(false); // Reset to allow auto-play of explanation
 
     if (correct) {
       setScore(prevScore => prevScore + 1);
@@ -238,7 +281,7 @@ export default function Quiz({ questions, onComplete, showCharacter = true }: Qu
         {/* Question Text - Clear and Prominent */}
         <div className="mb-6" ref={questionRef}>
           <h2 className="text-xl md:text-2xl font-semibold text-white leading-relaxed">
-            {currentQuestion.question}
+            {searchHighlight ? highlightText(currentQuestion.question, searchHighlight) : currentQuestion.question}
           </h2>
         </div>
 
@@ -300,7 +343,7 @@ export default function Quiz({ questions, onComplete, showCharacter = true }: Qu
                       }
                     }}
                   >
-                    {option}
+                    {searchHighlight ? highlightText(option, searchHighlight) : option}
                   </span>
                 </div>
               </button>
@@ -316,9 +359,14 @@ export default function Quiz({ questions, onComplete, showCharacter = true }: Qu
               text={questionText}
               audioUrl={currentQuestion.audioUrl}
               timestampsUrl={currentQuestion.timestampsUrl || undefined}
-              autoPlay={false}
+              autoPlay={!hasAutoPlayedQuestion}
               hideText={true}
               onHighlightedWord={handleHighlightedWord}
+              onPlayingChange={(isPlaying) => {
+                if (isPlaying) {
+                  setHasAutoPlayedQuestion(true);
+                }
+              }}
             />
           </div>
         )}
@@ -344,9 +392,9 @@ export default function Quiz({ questions, onComplete, showCharacter = true }: Qu
             </div>
             
             {/* Explanation Text with Highlighting Support */}
-            <div className="mb-4" data-explanation-text>
+            <div className="mb-4" data-explanation-text ref={explanationRef}>
               <p className="text-white text-base md:text-lg leading-relaxed">
-                {getExplanationText()}
+                {searchHighlight ? highlightText(getExplanationText(), searchHighlight) : getExplanationText()}
               </p>
             </div>
             
@@ -358,14 +406,17 @@ export default function Quiz({ questions, onComplete, showCharacter = true }: Qu
                   text={getExplanationText()}
                   audioUrl={getExplanationAudioUrl() || undefined}
                   timestampsUrl={getExplanationTimestampsUrl() || undefined}
-                  autoPlay={false}
+                  autoPlay={!hasAutoPlayedExplanation}
                   hideText={true}
-                  onHighlightedWord={(word) => {
-                    // Highlight words in explanation text
-                    const explanationElement = document.querySelector('[data-explanation-text]') as HTMLElement;
-                    if (explanationElement) {
-                      const normalizedWord = normalizeWord(word);
-                      highlightWordsInElement(explanationElement, normalizedWord);
+                  onHighlightedWord={(word, wordIndex) => {
+                    // Highlight only the current word at the correct position in explanation text
+                    if (explanationRef.current) {
+                      highlightWordAtPosition(explanationRef.current, wordIndex);
+                    }
+                  }}
+                  onPlayingChange={(isPlaying) => {
+                    if (isPlaying) {
+                      setHasAutoPlayedExplanation(true);
                     }
                   }}
                 />

@@ -366,10 +366,10 @@ export default function ChapterEditPage() {
       setGeneratingQuizAudio(true);
       const token = getToken();
       
-      // Combine question and all options
+      // Combine question and all options (without "Option 1:", "Option 2:", etc.)
       const questionText = questionForm.question.trim();
       const optionsText = questionForm.options
-        .map((opt, idx) => `Option ${idx + 1}: ${opt.trim()}`)
+        .map((opt) => opt.trim())
         .join(". ");
       const fullText = `${questionText}. ${optionsText}`;
       
@@ -535,10 +535,10 @@ export default function ChapterEditPage() {
       const token = getToken();
       const results: string[] = [];
 
-      // 1. Generate question + options audio
+      // 1. Generate question + options audio (without "Option 1:", "Option 2:", etc.)
       const questionText = questionForm.question.trim();
       const optionsText = questionForm.options
-        .map((opt, idx) => `Option ${idx + 1}: ${opt.trim()}`)
+        .map((opt) => opt.trim())
         .join(". ");
       const fullQuestionText = `${questionText}. ${optionsText}`;
       
