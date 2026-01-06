@@ -1,0 +1,87 @@
+{
+  "text": " Explain the three phases of development and construction.",
+  "segments": [
+    {
+      "id": 0,
+      "seek": 0,
+      "start": 0.08,
+      "end": 2.78,
+      "text": " Explain the three phases of development and construction.",
+      "tokens": [
+        50364,
+        39574,
+        264,
+        1045,
+        18764,
+        295,
+        3250,
+        293,
+        6435,
+        13,
+        50514
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.2869524558385213,
+      "compression_ratio": 0.9193548387096774,
+      "no_speech_prob": 0.050023287534713745,
+      "confidence": 0.973,
+      "words": [
+        {
+          "text": "Explain",
+          "start": 0.08,
+          "end": 0.42,
+          "confidence": 0.9
+        },
+        {
+          "text": "the",
+          "start": 0.42,
+          "end": 0.6,
+          "confidence": 0.984
+        },
+        {
+          "text": "three",
+          "start": 0.6,
+          "end": 0.82,
+          "confidence": 0.953
+        },
+        {
+          "text": "phases",
+          "start": 0.82,
+          "end": 1.2,
+          "confidence": 0.996
+        },
+        {
+          "text": "of",
+          "start": 1.2,
+          "end": 1.42,
+          "confidence": 0.996
+        },
+        {
+          "text": "development",
+          "start": 1.42,
+          "end": 1.86,
+          "confidence": 0.985
+        },
+        {
+          "text": "and",
+          "start": 1.86,
+          "end": 2.26,
+          "confidence": 0.983
+        },
+        {
+          "text": "construction.",
+          "start": 2.26,
+          "end": 2.78,
+          "confidence": 0.992
+        }
+      ]
+    }
+  ],
+  "language": "en",
+  "speech_activity": [
+    {
+      "start": 0.0,
+      "end": 3.2914375
+    }
+  ]
+}

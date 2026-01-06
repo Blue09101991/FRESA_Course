@@ -1,0 +1,459 @@
+{
+  "text": " Special Use. The five major sales specialties defined in the real estate industry and Florida course curriculum are residential, commercial, industrial, agricultural, and businesses. Special use is typically a category used in appraisal or zoning, referring to properties like schools, churches, or cemeteries, rather than a primary sales specialty for licensees.",
+  "segments": [
+    {
+      "id": 0,
+      "seek": 0,
+      "start": 0.1,
+      "end": 5.7,
+      "text": " Special Use. The five major sales specialties defined in the real estate industry and Florida",
+      "tokens": [
+        50364,
+        11863,
+        8278,
+        13,
+        440,
+        1732,
+        2563,
+        5763,
+        2121,
+        6097,
+        7642,
+        294,
+        264,
+        957,
+        9749,
+        3518,
+        293,
+        9117,
+        50652
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.14592346778282753,
+      "compression_ratio": 1.6133333333333333,
+      "no_speech_prob": 0.005737210623919964,
+      "confidence": 0.864,
+      "words": [
+        {
+          "text": "Special",
+          "start": 0.1,
+          "end": 0.4,
+          "confidence": 0.923
+        },
+        {
+          "text": "Use.",
+          "start": 0.4,
+          "end": 0.76,
+          "confidence": 0.521
+        },
+        {
+          "text": "The",
+          "start": 1.08,
+          "end": 1.62,
+          "confidence": 0.767
+        },
+        {
+          "text": "five",
+          "start": 1.62,
+          "end": 1.94,
+          "confidence": 0.838
+        },
+        {
+          "text": "major",
+          "start": 1.94,
+          "end": 2.34,
+          "confidence": 0.99
+        },
+        {
+          "text": "sales",
+          "start": 2.34,
+          "end": 2.72,
+          "confidence": 0.983
+        },
+        {
+          "text": "specialties",
+          "start": 2.72,
+          "end": 3.48,
+          "confidence": 0.96
+        },
+        {
+          "text": "defined",
+          "start": 3.48,
+          "end": 3.84,
+          "confidence": 0.8
+        },
+        {
+          "text": "in",
+          "start": 3.84,
+          "end": 4.06,
+          "confidence": 0.967
+        },
+        {
+          "text": "the",
+          "start": 4.06,
+          "end": 4.18,
+          "confidence": 0.98
+        },
+        {
+          "text": "real",
+          "start": 4.18,
+          "end": 4.36,
+          "confidence": 0.984
+        },
+        {
+          "text": "estate",
+          "start": 4.36,
+          "end": 4.62,
+          "confidence": 0.934
+        },
+        {
+          "text": "industry",
+          "start": 4.62,
+          "end": 5.12,
+          "confidence": 0.958
+        },
+        {
+          "text": "and",
+          "start": 5.12,
+          "end": 5.36,
+          "confidence": 0.802
+        },
+        {
+          "text": "Florida",
+          "start": 5.36,
+          "end": 5.7,
+          "confidence": 0.651
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "seek": 0,
+      "start": 5.74,
+      "end": 12.58,
+      "text": " course curriculum are residential, commercial, industrial, agricultural, and businesses. Special",
+      "tokens": [
+        50652,
+        1164,
+        14302,
+        366,
+        17389,
+        11,
+        6841,
+        11,
+        9987,
+        11,
+        19587,
+        11,
+        293,
+        6011,
+        13,
+        11863,
+        50996
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.14592346778282753,
+      "compression_ratio": 1.6133333333333333,
+      "no_speech_prob": 0.005737210623919964,
+      "confidence": 0.941,
+      "words": [
+        {
+          "text": "course",
+          "start": 5.74,
+          "end": 6.06,
+          "confidence": 0.93
+        },
+        {
+          "text": "curriculum",
+          "start": 6.06,
+          "end": 6.56,
+          "confidence": 0.995
+        },
+        {
+          "text": "are",
+          "start": 6.56,
+          "end": 6.86,
+          "confidence": 0.994
+        },
+        {
+          "text": "residential,",
+          "start": 6.86,
+          "end": 7.42,
+          "confidence": 0.98
+        },
+        {
+          "text": "commercial,",
+          "start": 7.84,
+          "end": 8.4,
+          "confidence": 0.992
+        },
+        {
+          "text": "industrial,",
+          "start": 8.74,
+          "end": 9.24,
+          "confidence": 0.996
+        },
+        {
+          "text": "agricultural,",
+          "start": 9.58,
+          "end": 10.42,
+          "confidence": 0.988
+        },
+        {
+          "text": "and",
+          "start": 10.88,
+          "end": 11.04,
+          "confidence": 0.981
+        },
+        {
+          "text": "businesses.",
+          "start": 11.04,
+          "end": 11.44,
+          "confidence": 0.996
+        },
+        {
+          "text": "Special",
+          "start": 12.2,
+          "end": 12.58,
+          "confidence": 0.631
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "seek": 0,
+      "start": 12.6,
+      "end": 18.26,
+      "text": " use is typically a category used in appraisal or zoning, referring to properties like schools,",
+      "tokens": [
+        50996,
+        764,
+        307,
+        5850,
+        257,
+        7719,
+        1143,
+        294,
+        724,
+        20769,
+        304,
+        420,
+        37184,
+        11,
+        13761,
+        281,
+        7221,
+        411,
+        4656,
+        11,
+        51284
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.14592346778282753,
+      "compression_ratio": 1.6133333333333333,
+      "no_speech_prob": 0.005737210623919964,
+      "confidence": 0.975,
+      "words": [
+        {
+          "text": "use",
+          "start": 12.6,
+          "end": 12.96,
+          "confidence": 0.925
+        },
+        {
+          "text": "is",
+          "start": 12.96,
+          "end": 13.26,
+          "confidence": 0.997
+        },
+        {
+          "text": "typically",
+          "start": 13.26,
+          "end": 13.6,
+          "confidence": 0.994
+        },
+        {
+          "text": "a",
+          "start": 13.6,
+          "end": 13.8,
+          "confidence": 0.999
+        },
+        {
+          "text": "category",
+          "start": 13.8,
+          "end": 14.18,
+          "confidence": 0.998
+        },
+        {
+          "text": "used",
+          "start": 14.18,
+          "end": 14.6,
+          "confidence": 0.998
+        },
+        {
+          "text": "in",
+          "start": 14.6,
+          "end": 14.82,
+          "confidence": 0.999
+        },
+        {
+          "text": "appraisal",
+          "start": 14.82,
+          "end": 15.38,
+          "confidence": 0.936
+        },
+        {
+          "text": "or",
+          "start": 15.38,
+          "end": 15.54,
+          "confidence": 0.989
+        },
+        {
+          "text": "zoning,",
+          "start": 15.54,
+          "end": 16.0,
+          "confidence": 0.994
+        },
+        {
+          "text": "referring",
+          "start": 16.32,
+          "end": 16.88,
+          "confidence": 0.984
+        },
+        {
+          "text": "to",
+          "start": 16.88,
+          "end": 17.12,
+          "confidence": 1.0
+        },
+        {
+          "text": "properties",
+          "start": 17.12,
+          "end": 17.5,
+          "confidence": 0.996
+        },
+        {
+          "text": "like",
+          "start": 17.5,
+          "end": 17.8,
+          "confidence": 0.981
+        },
+        {
+          "text": "schools,",
+          "start": 17.8,
+          "end": 18.26,
+          "confidence": 0.918
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "seek": 0,
+      "start": 18.34,
+      "end": 23.3,
+      "text": " churches, or cemeteries, rather than a primary sales specialty for licensees.",
+      "tokens": [
+        51284,
+        15381,
+        11,
+        420,
+        269,
+        443,
+        2398,
+        530,
+        11,
+        2831,
+        813,
+        257,
+        6194,
+        5763,
+        22000,
+        337,
+        10476,
+        279,
+        13,
+        51820
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.14592346778282753,
+      "compression_ratio": 1.6133333333333333,
+      "no_speech_prob": 0.005737210623919964,
+      "confidence": 0.965,
+      "words": [
+        {
+          "text": "churches,",
+          "start": 18.34,
+          "end": 18.76,
+          "confidence": 0.867
+        },
+        {
+          "text": "or",
+          "start": 19.04,
+          "end": 19.1,
+          "confidence": 0.995
+        },
+        {
+          "text": "cemeteries,",
+          "start": 19.1,
+          "end": 19.86,
+          "confidence": 0.954
+        },
+        {
+          "text": "rather",
+          "start": 20.4,
+          "end": 20.6,
+          "confidence": 0.997
+        },
+        {
+          "text": "than",
+          "start": 20.6,
+          "end": 20.84,
+          "confidence": 0.998
+        },
+        {
+          "text": "a",
+          "start": 20.84,
+          "end": 20.98,
+          "confidence": 0.998
+        },
+        {
+          "text": "primary",
+          "start": 20.98,
+          "end": 21.3,
+          "confidence": 0.999
+        },
+        {
+          "text": "sales",
+          "start": 21.3,
+          "end": 21.74,
+          "confidence": 0.97
+        },
+        {
+          "text": "specialty",
+          "start": 21.74,
+          "end": 22.3,
+          "confidence": 0.964
+        },
+        {
+          "text": "for",
+          "start": 22.3,
+          "end": 22.58,
+          "confidence": 0.999
+        },
+        {
+          "text": "licensees.",
+          "start": 22.58,
+          "end": 23.3,
+          "confidence": 0.939
+        }
+      ]
+    }
+  ],
+  "language": "en",
+  "speech_activity": [
+    {
+      "start": 0.0,
+      "end": 23.8236875
+    }
+  ]
+}

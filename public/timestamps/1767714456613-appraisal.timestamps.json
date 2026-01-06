@@ -1,0 +1,86 @@
+{
+  "text": " appraisal, warmers, your one arm, or stern.",
+  "segments": [
+    {
+      "id": 0,
+      "seek": 0,
+      "start": 0.06,
+      "end": 2.12,
+      "text": " appraisal, warmers, your one arm, or stern.",
+      "tokens": [
+        50364,
+        724,
+        20769,
+        304,
+        11,
+        4561,
+        433,
+        11,
+        428,
+        472,
+        3726,
+        11,
+        420,
+        38312,
+        13,
+        50476
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.6236579558428597,
+      "compression_ratio": 0.86,
+      "no_speech_prob": 0.0631638839840889,
+      "confidence": 0.542,
+      "words": [
+        {
+          "text": "appraisal,",
+          "start": 0.06,
+          "end": 0.58,
+          "confidence": 0.878
+        },
+        {
+          "text": "warmers,",
+          "start": 0.7,
+          "end": 1.04,
+          "confidence": 0.643
+        },
+        {
+          "text": "your",
+          "start": 1.16,
+          "end": 1.2,
+          "confidence": 0.378
+        },
+        {
+          "text": "one",
+          "start": 1.2,
+          "end": 1.38,
+          "confidence": 0.566
+        },
+        {
+          "text": "arm,",
+          "start": 1.38,
+          "end": 1.6,
+          "confidence": 0.889
+        },
+        {
+          "text": "or",
+          "start": 1.76,
+          "end": 1.88,
+          "confidence": 0.415
+        },
+        {
+          "text": "stern.",
+          "start": 1.88,
+          "end": 2.12,
+          "confidence": 0.099
+        }
+      ]
+    }
+  ],
+  "language": "en",
+  "speech_activity": [
+    {
+      "start": 0.0,
+      "end": 2.4555
+    }
+  ]
+}

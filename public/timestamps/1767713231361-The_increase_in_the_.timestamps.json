@@ -1,0 +1,368 @@
+{
+  "text": " The increase in the number of licensees specializing in property management. This increase is a result of the growing demand for property management, not the cause of it. The demand from owners must exist before licensees choose to specialize in it.",
+  "segments": [
+    {
+      "id": 0,
+      "seek": 0,
+      "start": 0.1,
+      "end": 3.64,
+      "text": " The increase in the number of licensees specializing in property management.",
+      "tokens": [
+        50364,
+        440,
+        3488,
+        294,
+        264,
+        1230,
+        295,
+        10476,
+        279,
+        2121,
+        3319,
+        294,
+        4707,
+        4592,
+        13,
+        50564
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.18441701368852095,
+      "compression_ratio": 1.6824324324324325,
+      "no_speech_prob": 0.006136333104223013,
+      "confidence": 0.912,
+      "words": [
+        {
+          "text": "The",
+          "start": 0.1,
+          "end": 0.2,
+          "confidence": 0.525
+        },
+        {
+          "text": "increase",
+          "start": 0.2,
+          "end": 0.56,
+          "confidence": 0.996
+        },
+        {
+          "text": "in",
+          "start": 0.56,
+          "end": 0.8,
+          "confidence": 0.993
+        },
+        {
+          "text": "the",
+          "start": 0.8,
+          "end": 0.92,
+          "confidence": 0.996
+        },
+        {
+          "text": "number",
+          "start": 0.92,
+          "end": 1.16,
+          "confidence": 0.998
+        },
+        {
+          "text": "of",
+          "start": 1.16,
+          "end": 1.34,
+          "confidence": 0.996
+        },
+        {
+          "text": "licensees",
+          "start": 1.34,
+          "end": 1.94,
+          "confidence": 0.892
+        },
+        {
+          "text": "specializing",
+          "start": 1.94,
+          "end": 2.66,
+          "confidence": 0.896
+        },
+        {
+          "text": "in",
+          "start": 2.66,
+          "end": 2.84,
+          "confidence": 0.967
+        },
+        {
+          "text": "property",
+          "start": 2.84,
+          "end": 3.16,
+          "confidence": 0.971
+        },
+        {
+          "text": "management.",
+          "start": 3.16,
+          "end": 3.64,
+          "confidence": 0.985
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "seek": 0,
+      "start": 5.21,
+      "end": 9.49,
+      "text": " This increase is a result of the growing demand for property management, not the cause of it.",
+      "tokens": [
+        50614,
+        639,
+        3488,
+        307,
+        257,
+        1874,
+        295,
+        264,
+        4194,
+        4733,
+        337,
+        4707,
+        4592,
+        11,
+        406,
+        264,
+        3082,
+        295,
+        309,
+        13,
+        50839
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.18441701368852095,
+      "compression_ratio": 1.6824324324324325,
+      "no_speech_prob": 0.006136333104223013,
+      "confidence": 0.985,
+      "words": [
+        {
+          "text": "This",
+          "start": 5.21,
+          "end": 5.37,
+          "confidence": 0.993
+        },
+        {
+          "text": "increase",
+          "start": 5.37,
+          "end": 5.75,
+          "confidence": 0.996
+        },
+        {
+          "text": "is",
+          "start": 5.75,
+          "end": 6.01,
+          "confidence": 0.965
+        },
+        {
+          "text": "a",
+          "start": 6.01,
+          "end": 6.13,
+          "confidence": 0.987
+        },
+        {
+          "text": "result",
+          "start": 6.13,
+          "end": 6.39,
+          "confidence": 0.999
+        },
+        {
+          "text": "of",
+          "start": 6.39,
+          "end": 6.63,
+          "confidence": 0.997
+        },
+        {
+          "text": "the",
+          "start": 6.63,
+          "end": 6.75,
+          "confidence": 0.992
+        },
+        {
+          "text": "growing",
+          "start": 6.75,
+          "end": 7.01,
+          "confidence": 0.985
+        },
+        {
+          "text": "demand",
+          "start": 7.01,
+          "end": 7.39,
+          "confidence": 0.991
+        },
+        {
+          "text": "for",
+          "start": 7.39,
+          "end": 7.61,
+          "confidence": 0.982
+        },
+        {
+          "text": "property",
+          "start": 7.61,
+          "end": 7.97,
+          "confidence": 0.964
+        },
+        {
+          "text": "management,",
+          "start": 7.97,
+          "end": 8.47,
+          "confidence": 0.988
+        },
+        {
+          "text": "not",
+          "start": 8.65,
+          "end": 8.77,
+          "confidence": 0.943
+        },
+        {
+          "text": "the",
+          "start": 8.77,
+          "end": 8.93,
+          "confidence": 0.992
+        },
+        {
+          "text": "cause",
+          "start": 8.93,
+          "end": 9.17,
+          "confidence": 0.979
+        },
+        {
+          "text": "of",
+          "start": 9.17,
+          "end": 9.35,
+          "confidence": 0.995
+        },
+        {
+          "text": "it.",
+          "start": 9.35,
+          "end": 9.49,
+          "confidence": 0.994
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "seek": 0,
+      "start": 10.97,
+      "end": 15.49,
+      "text": " The demand from owners must exist before licensees choose to specialize in it.",
+      "tokens": [
+        50884,
+        440,
+        4733,
+        490,
+        7710,
+        1633,
+        2514,
+        949,
+        10476,
+        279,
+        2826,
+        281,
+        37938,
+        294,
+        309,
+        13,
+        51114
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.18441701368852095,
+      "compression_ratio": 1.6824324324324325,
+      "no_speech_prob": 0.006136333104223013,
+      "confidence": 0.964,
+      "words": [
+        {
+          "text": "The",
+          "start": 10.97,
+          "end": 11.13,
+          "confidence": 0.991
+        },
+        {
+          "text": "demand",
+          "start": 11.13,
+          "end": 11.49,
+          "confidence": 0.996
+        },
+        {
+          "text": "from",
+          "start": 11.49,
+          "end": 11.85,
+          "confidence": 0.752
+        },
+        {
+          "text": "owners",
+          "start": 11.85,
+          "end": 12.21,
+          "confidence": 0.974
+        },
+        {
+          "text": "must",
+          "start": 12.21,
+          "end": 12.59,
+          "confidence": 0.995
+        },
+        {
+          "text": "exist",
+          "start": 12.59,
+          "end": 12.97,
+          "confidence": 0.972
+        },
+        {
+          "text": "before",
+          "start": 12.97,
+          "end": 13.43,
+          "confidence": 0.99
+        },
+        {
+          "text": "licensees",
+          "start": 13.43,
+          "end": 14.13,
+          "confidence": 0.968
+        },
+        {
+          "text": "choose",
+          "start": 14.13,
+          "end": 14.43,
+          "confidence": 0.973
+        },
+        {
+          "text": "to",
+          "start": 14.43,
+          "end": 14.65,
+          "confidence": 0.997
+        },
+        {
+          "text": "specialize",
+          "start": 14.65,
+          "end": 15.01,
+          "confidence": 0.956
+        },
+        {
+          "text": "in",
+          "start": 15.01,
+          "end": 15.35,
+          "confidence": 0.997
+        },
+        {
+          "text": "it.",
+          "start": 15.35,
+          "end": 15.49,
+          "confidence": 0.997
+        }
+      ]
+    }
+  ],
+  "language": "en",
+  "speech_activity": [
+    {
+      "start": 0.0,
+      "end": 4.53
+    },
+    {
+      "start": 4.718,
+      "end": 10.13
+    },
+    {
+      "start": 10.51,
+      "end": 15.9608125
+    }
+  ]
+}

@@ -1,0 +1,123 @@
+{
+  "text": " The field of property management has experienced growth and specialization primarily because of...",
+  "segments": [
+    {
+      "id": 0,
+      "seek": 0,
+      "start": 0.08,
+      "end": 5.04,
+      "text": " The field of property management has experienced growth and specialization primarily because of...",
+      "tokens": [
+        50364,
+        440,
+        2519,
+        295,
+        4707,
+        4592,
+        575,
+        6751,
+        4599,
+        293,
+        2121,
+        2144,
+        10029,
+        570,
+        295,
+        485,
+        50614
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.2440791924794515,
+      "compression_ratio": 1.1136363636363635,
+      "no_speech_prob": 0.00626316899433732,
+      "confidence": 0.956,
+      "words": [
+        {
+          "text": "The",
+          "start": 0.08,
+          "end": 0.18,
+          "confidence": 0.889
+        },
+        {
+          "text": "field",
+          "start": 0.18,
+          "end": 0.38,
+          "confidence": 0.886
+        },
+        {
+          "text": "of",
+          "start": 0.38,
+          "end": 0.56,
+          "confidence": 0.991
+        },
+        {
+          "text": "property",
+          "start": 0.56,
+          "end": 0.86,
+          "confidence": 0.981
+        },
+        {
+          "text": "management",
+          "start": 0.86,
+          "end": 1.36,
+          "confidence": 0.998
+        },
+        {
+          "text": "has",
+          "start": 1.36,
+          "end": 1.66,
+          "confidence": 0.959
+        },
+        {
+          "text": "experienced",
+          "start": 1.66,
+          "end": 2.16,
+          "confidence": 0.991
+        },
+        {
+          "text": "growth",
+          "start": 2.16,
+          "end": 2.54,
+          "confidence": 0.986
+        },
+        {
+          "text": "and",
+          "start": 2.54,
+          "end": 2.82,
+          "confidence": 0.933
+        },
+        {
+          "text": "specialization",
+          "start": 2.82,
+          "end": 3.58,
+          "confidence": 0.961
+        },
+        {
+          "text": "primarily",
+          "start": 3.58,
+          "end": 4.12,
+          "confidence": 0.88
+        },
+        {
+          "text": "because",
+          "start": 4.12,
+          "end": 4.54,
+          "confidence": 0.989
+        },
+        {
+          "text": "of...",
+          "start": 4.54,
+          "end": 5.04,
+          "confidence": 0.995
+        }
+      ]
+    }
+  ],
+  "language": "en",
+  "speech_activity": [
+    {
+      "start": 0.0,
+      "end": 5.093875
+    }
+  ]
+}

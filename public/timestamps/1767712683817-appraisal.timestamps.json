@@ -1,0 +1,40 @@
+{
+  "text": " appraisal.",
+  "segments": [
+    {
+      "id": 0,
+      "seek": 0,
+      "start": 0.06,
+      "end": 0.68,
+      "text": " appraisal.",
+      "tokens": [
+        50364,
+        724,
+        20769,
+        304,
+        13,
+        50464
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.789036478315081,
+      "compression_ratio": 0.5555555555555556,
+      "no_speech_prob": 0.10969862341880798,
+      "confidence": 0.781,
+      "words": [
+        {
+          "text": "appraisal.",
+          "start": 0.06,
+          "end": 0.68,
+          "confidence": 0.781
+        }
+      ]
+    }
+  ],
+  "language": "en",
+  "speech_activity": [
+    {
+      "start": 0.0,
+      "end": 1.0188125
+    }
+  ]
+}

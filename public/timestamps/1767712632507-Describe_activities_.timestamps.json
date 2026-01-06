@@ -1,0 +1,131 @@
+{
+  "text": " Describe activities that require appraiser services and distinguish among CMA, BPO, and appraisal.",
+  "segments": [
+    {
+      "id": 0,
+      "seek": 0,
+      "start": 0.06,
+      "end": 5.98,
+      "text": " Describe activities that require appraiser services and distinguish among CMA, BPO, and appraisal.",
+      "tokens": [
+        50364,
+        3885,
+        8056,
+        5354,
+        300,
+        3651,
+        724,
+        424,
+        6694,
+        3328,
+        293,
+        20206,
+        3654,
+        383,
+        9998,
+        11,
+        363,
+        34885,
+        11,
+        293,
+        724,
+        20769,
+        304,
+        13,
+        50672
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.27537973110492414,
+      "compression_ratio": 1.101123595505618,
+      "no_speech_prob": 0.007537253201007843,
+      "confidence": 0.846,
+      "words": [
+        {
+          "text": "Describe",
+          "start": 0.06,
+          "end": 0.44,
+          "confidence": 0.93
+        },
+        {
+          "text": "activities",
+          "start": 0.44,
+          "end": 0.98,
+          "confidence": 0.994
+        },
+        {
+          "text": "that",
+          "start": 0.98,
+          "end": 1.26,
+          "confidence": 0.993
+        },
+        {
+          "text": "require",
+          "start": 1.26,
+          "end": 1.58,
+          "confidence": 0.997
+        },
+        {
+          "text": "appraiser",
+          "start": 1.58,
+          "end": 2.1,
+          "confidence": 0.779
+        },
+        {
+          "text": "services",
+          "start": 2.1,
+          "end": 2.54,
+          "confidence": 0.989
+        },
+        {
+          "text": "and",
+          "start": 2.54,
+          "end": 2.82,
+          "confidence": 0.494
+        },
+        {
+          "text": "distinguish",
+          "start": 2.82,
+          "end": 3.18,
+          "confidence": 0.693
+        },
+        {
+          "text": "among",
+          "start": 3.18,
+          "end": 3.54,
+          "confidence": 0.81
+        },
+        {
+          "text": "CMA,",
+          "start": 3.54,
+          "end": 4.14,
+          "confidence": 0.9
+        },
+        {
+          "text": "BPO,",
+          "start": 4.48,
+          "end": 5.16,
+          "confidence": 0.677
+        },
+        {
+          "text": "and",
+          "start": 5.42,
+          "end": 5.46,
+          "confidence": 0.977
+        },
+        {
+          "text": "appraisal.",
+          "start": 5.46,
+          "end": 5.98,
+          "confidence": 0.957
+        }
+      ]
+    }
+  ],
+  "language": "en",
+  "speech_activity": [
+    {
+      "start": 0.0,
+      "end": 6.2955
+    }
+  ]
+}

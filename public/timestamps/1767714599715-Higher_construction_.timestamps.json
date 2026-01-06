@@ -1,0 +1,123 @@
+{
+  "text": " Higher construction costs that have caused an increase in the number of renters.",
+  "segments": [
+    {
+      "id": 0,
+      "seek": 0,
+      "start": 0.08,
+      "end": 3.46,
+      "text": " Higher construction costs that have caused an increase in the number of renters.",
+      "tokens": [
+        50364,
+        31997,
+        6435,
+        5497,
+        300,
+        362,
+        7008,
+        364,
+        3488,
+        294,
+        264,
+        1230,
+        295,
+        8124,
+        1559,
+        13,
+        50564
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.246777613957723,
+      "compression_ratio": 1.095890410958904,
+      "no_speech_prob": 0.002184265526011586,
+      "confidence": 0.954,
+      "words": [
+        {
+          "text": "Higher",
+          "start": 0.08,
+          "end": 0.28,
+          "confidence": 0.638
+        },
+        {
+          "text": "construction",
+          "start": 0.28,
+          "end": 0.76,
+          "confidence": 0.992
+        },
+        {
+          "text": "costs",
+          "start": 0.76,
+          "end": 1.16,
+          "confidence": 0.968
+        },
+        {
+          "text": "that",
+          "start": 1.16,
+          "end": 1.38,
+          "confidence": 0.978
+        },
+        {
+          "text": "have",
+          "start": 1.38,
+          "end": 1.52,
+          "confidence": 0.991
+        },
+        {
+          "text": "caused",
+          "start": 1.52,
+          "end": 1.8,
+          "confidence": 0.987
+        },
+        {
+          "text": "an",
+          "start": 1.8,
+          "end": 2.02,
+          "confidence": 0.993
+        },
+        {
+          "text": "increase",
+          "start": 2.02,
+          "end": 2.34,
+          "confidence": 0.996
+        },
+        {
+          "text": "in",
+          "start": 2.34,
+          "end": 2.56,
+          "confidence": 0.991
+        },
+        {
+          "text": "the",
+          "start": 2.56,
+          "end": 2.66,
+          "confidence": 0.995
+        },
+        {
+          "text": "number",
+          "start": 2.66,
+          "end": 2.88,
+          "confidence": 0.998
+        },
+        {
+          "text": "of",
+          "start": 2.88,
+          "end": 3.04,
+          "confidence": 0.996
+        },
+        {
+          "text": "renters.",
+          "start": 3.04,
+          "end": 3.46,
+          "confidence": 0.956
+        }
+      ]
+    }
+  ],
+  "language": "en",
+  "speech_activity": [
+    {
+      "start": 0.0,
+      "end": 3.89225
+    }
+  ]
+}

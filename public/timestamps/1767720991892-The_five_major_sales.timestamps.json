@@ -1,0 +1,87 @@
+{
+  "text": " The five major sale specialties do not include",
+  "segments": [
+    {
+      "id": 0,
+      "seek": 0,
+      "start": 0.1,
+      "end": 2.56,
+      "text": " The five major sale specialties do not include",
+      "tokens": [
+        50364,
+        440,
+        1732,
+        2563,
+        8680,
+        2121,
+        6097,
+        360,
+        406,
+        4090,
+        50508
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.3623608350753784,
+      "compression_ratio": 0.8846153846153846,
+      "no_speech_prob": 0.011539478786289692,
+      "confidence": 0.883,
+      "words": [
+        {
+          "text": "The",
+          "start": 0.1,
+          "end": 0.2,
+          "confidence": 0.93
+        },
+        {
+          "text": "five",
+          "start": 0.2,
+          "end": 0.44,
+          "confidence": 0.769
+        },
+        {
+          "text": "major",
+          "start": 0.44,
+          "end": 0.8,
+          "confidence": 0.984
+        },
+        {
+          "text": "sale",
+          "start": 0.8,
+          "end": 1.1,
+          "confidence": 0.494
+        },
+        {
+          "text": "specialties",
+          "start": 1.1,
+          "end": 1.76,
+          "confidence": 0.978
+        },
+        {
+          "text": "do",
+          "start": 1.76,
+          "end": 1.98,
+          "confidence": 0.995
+        },
+        {
+          "text": "not",
+          "start": 1.98,
+          "end": 2.14,
+          "confidence": 0.991
+        },
+        {
+          "text": "include",
+          "start": 2.14,
+          "end": 2.56,
+          "confidence": 0.993
+        }
+      ]
+    }
+  ],
+  "language": "en",
+  "speech_activity": [
+    {
+      "start": 0.0,
+      "end": 3.0040625
+    }
+  ]
+}

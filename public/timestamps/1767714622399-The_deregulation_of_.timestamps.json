@@ -1,0 +1,317 @@
+{
+  "text": " The deregulation of the real estate industry. The real estate industry has not been deregulated, it remains heavily regulated by state laws like chapter 475FS and federal laws to protect the public.",
+  "segments": [
+    {
+      "id": 0,
+      "seek": 0,
+      "start": 0.1,
+      "end": 2.18,
+      "text": " The deregulation of the real estate industry.",
+      "tokens": [
+        50364,
+        440,
+        15969,
+        70,
+        2776,
+        295,
+        264,
+        957,
+        9749,
+        3518,
+        13,
+        50516
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.28133378982543944,
+      "compression_ratio": 1.4887218045112782,
+      "no_speech_prob": 0.030216263607144356,
+      "confidence": 0.94,
+      "words": [
+        {
+          "text": "The",
+          "start": 0.1,
+          "end": 0.24,
+          "confidence": 0.646
+        },
+        {
+          "text": "deregulation",
+          "start": 0.24,
+          "end": 0.94,
+          "confidence": 0.994
+        },
+        {
+          "text": "of",
+          "start": 0.94,
+          "end": 1.08,
+          "confidence": 0.996
+        },
+        {
+          "text": "the",
+          "start": 1.08,
+          "end": 1.18,
+          "confidence": 0.991
+        },
+        {
+          "text": "real",
+          "start": 1.18,
+          "end": 1.36,
+          "confidence": 0.956
+        },
+        {
+          "text": "estate",
+          "start": 1.36,
+          "end": 1.6,
+          "confidence": 0.958
+        },
+        {
+          "text": "industry.",
+          "start": 1.6,
+          "end": 2.18,
+          "confidence": 0.996
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "seek": 0,
+      "start": 3.1,
+      "end": 5.48,
+      "text": " The real estate industry has not been deregulated,",
+      "tokens": [
+        50516,
+        440,
+        957,
+        9749,
+        3518,
+        575,
+        406,
+        668,
+        15969,
+        70,
+        6987,
+        11,
+        50644
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.28133378982543944,
+      "compression_ratio": 1.4887218045112782,
+      "no_speech_prob": 0.030216263607144356,
+      "confidence": 0.99,
+      "words": [
+        {
+          "text": "The",
+          "start": 3.1,
+          "end": 3.28,
+          "confidence": 0.996
+        },
+        {
+          "text": "real",
+          "start": 3.28,
+          "end": 3.44,
+          "confidence": 0.998
+        },
+        {
+          "text": "estate",
+          "start": 3.44,
+          "end": 3.7,
+          "confidence": 0.998
+        },
+        {
+          "text": "industry",
+          "start": 3.7,
+          "end": 4.16,
+          "confidence": 0.998
+        },
+        {
+          "text": "has",
+          "start": 4.16,
+          "end": 4.38,
+          "confidence": 0.995
+        },
+        {
+          "text": "not",
+          "start": 4.38,
+          "end": 4.58,
+          "confidence": 0.996
+        },
+        {
+          "text": "been",
+          "start": 4.58,
+          "end": 4.78,
+          "confidence": 0.994
+        },
+        {
+          "text": "deregulated,",
+          "start": 4.78,
+          "end": 5.48,
+          "confidence": 0.975
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "seek": 0,
+      "start": 5.62,
+      "end": 9.92,
+      "text": " it remains heavily regulated by state laws like chapter 475FS",
+      "tokens": [
+        50644,
+        309,
+        7023,
+        10950,
+        26243,
+        538,
+        1785,
+        6064,
+        411,
+        7187,
+        1017,
+        11901,
+        29318,
+        50892
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.28133378982543944,
+      "compression_ratio": 1.4887218045112782,
+      "no_speech_prob": 0.030216263607144356,
+      "confidence": 0.823,
+      "words": [
+        {
+          "text": "it",
+          "start": 5.62,
+          "end": 5.78,
+          "confidence": 0.983
+        },
+        {
+          "text": "remains",
+          "start": 5.78,
+          "end": 6.06,
+          "confidence": 0.999
+        },
+        {
+          "text": "heavily",
+          "start": 6.06,
+          "end": 6.46,
+          "confidence": 0.999
+        },
+        {
+          "text": "regulated",
+          "start": 6.46,
+          "end": 7.0,
+          "confidence": 0.992
+        },
+        {
+          "text": "by",
+          "start": 7.0,
+          "end": 7.26,
+          "confidence": 0.991
+        },
+        {
+          "text": "state",
+          "start": 7.26,
+          "end": 7.56,
+          "confidence": 0.985
+        },
+        {
+          "text": "laws",
+          "start": 7.56,
+          "end": 7.9,
+          "confidence": 0.992
+        },
+        {
+          "text": "like",
+          "start": 7.9,
+          "end": 8.3,
+          "confidence": 0.51
+        },
+        {
+          "text": "chapter",
+          "start": 8.3,
+          "end": 8.66,
+          "confidence": 0.549
+        },
+        {
+          "text": "475FS",
+          "start": 8.66,
+          "end": 9.92,
+          "confidence": 0.716
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "seek": 0,
+      "start": 10.68,
+      "end": 12.42,
+      "text": " and federal laws to protect the public.",
+      "tokens": [
+        50892,
+        293,
+        6019,
+        6064,
+        281,
+        2371,
+        264,
+        1908,
+        13,
+        51004
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.28133378982543944,
+      "compression_ratio": 1.4887218045112782,
+      "no_speech_prob": 0.030216263607144356,
+      "confidence": 0.978,
+      "words": [
+        {
+          "text": "and",
+          "start": 10.68,
+          "end": 10.84,
+          "confidence": 0.984
+        },
+        {
+          "text": "federal",
+          "start": 10.84,
+          "end": 11.14,
+          "confidence": 0.881
+        },
+        {
+          "text": "laws",
+          "start": 11.14,
+          "end": 11.44,
+          "confidence": 0.998
+        },
+        {
+          "text": "to",
+          "start": 11.44,
+          "end": 11.64,
+          "confidence": 0.995
+        },
+        {
+          "text": "protect",
+          "start": 11.64,
+          "end": 11.92,
+          "confidence": 0.998
+        },
+        {
+          "text": "the",
+          "start": 11.92,
+          "end": 12.1,
+          "confidence": 0.999
+        },
+        {
+          "text": "public.",
+          "start": 12.1,
+          "end": 12.42,
+          "confidence": 0.999
+        }
+      ]
+    }
+  ],
+  "language": "en",
+  "speech_activity": [
+    {
+      "start": 0.0,
+      "end": 12.95675
+    }
+  ]
+}

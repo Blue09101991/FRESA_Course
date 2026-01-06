@@ -1,0 +1,74 @@
+{
+  "text": " Identify the role of property managers.",
+  "segments": [
+    {
+      "id": 0,
+      "seek": 0,
+      "start": 0.08,
+      "end": 1.86,
+      "text": " Identify the role of property managers.",
+      "tokens": [
+        50364,
+        25905,
+        2505,
+        264,
+        3090,
+        295,
+        4707,
+        14084,
+        13,
+        50464
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.3224574869329279,
+      "compression_ratio": 0.8297872340425532,
+      "no_speech_prob": 0.053365450352430344,
+      "confidence": 0.955,
+      "words": [
+        {
+          "text": "Identify",
+          "start": 0.08,
+          "end": 0.58,
+          "confidence": 0.94
+        },
+        {
+          "text": "the",
+          "start": 0.58,
+          "end": 0.74,
+          "confidence": 0.997
+        },
+        {
+          "text": "role",
+          "start": 0.74,
+          "end": 0.92,
+          "confidence": 0.92
+        },
+        {
+          "text": "of",
+          "start": 0.92,
+          "end": 1.06,
+          "confidence": 0.99
+        },
+        {
+          "text": "property",
+          "start": 1.06,
+          "end": 1.4,
+          "confidence": 0.921
+        },
+        {
+          "text": "managers.",
+          "start": 1.4,
+          "end": 1.86,
+          "confidence": 0.983
+        }
+      ]
+    }
+  ],
+  "language": "en",
+  "speech_activity": [
+    {
+      "start": 0.0,
+      "end": 2.351
+    }
+  ]
+}

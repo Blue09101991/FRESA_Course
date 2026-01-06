@@ -1,0 +1,59 @@
+{
+  "text": " Farm Area Target Market.",
+  "segments": [
+    {
+      "id": 0,
+      "seek": 0,
+      "start": 0.04,
+      "end": 1.14,
+      "text": " Farm Area Target Market.",
+      "tokens": [
+        50364,
+        19991,
+        19405,
+        24586,
+        15596,
+        13,
+        50428
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.5880836248397827,
+      "compression_ratio": 0.75,
+      "no_speech_prob": 0.041626930236816406,
+      "confidence": 0.674,
+      "words": [
+        {
+          "text": "Farm",
+          "start": 0.04,
+          "end": 0.24,
+          "confidence": 0.746
+        },
+        {
+          "text": "Area",
+          "start": 0.24,
+          "end": 0.54,
+          "confidence": 0.681
+        },
+        {
+          "text": "Target",
+          "start": 0.54,
+          "end": 0.82,
+          "confidence": 0.582
+        },
+        {
+          "text": "Market.",
+          "start": 0.82,
+          "end": 1.14,
+          "confidence": 0.698
+        }
+      ]
+    }
+  ],
+  "language": "en",
+  "speech_activity": [
+    {
+      "start": 0.0,
+      "end": 1.619625
+    }
+  ]
+}

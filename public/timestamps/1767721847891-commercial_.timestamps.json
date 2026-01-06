@@ -1,0 +1,38 @@
+{
+  "text": " Commercial.",
+  "segments": [
+    {
+      "id": 0,
+      "seek": 0,
+      "start": 0.12,
+      "end": 0.58,
+      "text": " Commercial.",
+      "tokens": [
+        50364,
+        47171,
+        13,
+        50464
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.7905139446258544,
+      "compression_ratio": 0.5789473684210527,
+      "no_speech_prob": 0.11019666492938995,
+      "confidence": 0.694,
+      "words": [
+        {
+          "text": "Commercial.",
+          "start": 0.12,
+          "end": 0.58,
+          "confidence": 0.694
+        }
+      ]
+    }
+  ],
+  "language": "en",
+  "speech_activity": [
+    {
+      "start": 0.0,
+      "end": 1.071
+    }
+  ]
+}

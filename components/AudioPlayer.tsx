@@ -572,7 +572,7 @@ export default function AudioPlayer({
       setIsPlaying(false);
       setHasCompleted(true); // Mark as completed to prevent replay
       setCurrentTime(audio.duration); // Keep at end, don't reset
-      setHighlightedIndex(wordsRefForHighlight.current.length - 1); // Keep last word highlighted
+      setHighlightedIndex(-1); // Clear highlight when audio ends
       if (onPlayingChange) {
         onPlayingChange(false);
       }

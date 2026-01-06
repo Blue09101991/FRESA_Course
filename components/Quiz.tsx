@@ -16,6 +16,10 @@ export interface QuizQuestion {
   };
   audioUrl?: string | null;
   timestampsUrl?: string | null;
+  questionAudioUrl?: string | null;
+  questionTimestampsUrl?: string | null;
+  optionAudioUrls?: string[] | null;
+  optionTimestampsUrls?: string[] | null;
   explanationAudioUrl?: string | null;
   explanationTimestampsUrl?: string | null;
   correctExplanationAudioUrl?: string | null;
@@ -42,6 +46,8 @@ export default function Quiz({ questions, onComplete, showCharacter = true, sear
   const [highlightedWord, setHighlightedWord] = useState<string | null>(null);
   const [hasAutoPlayedQuestion, setHasAutoPlayedQuestion] = useState(false);
   const [hasAutoPlayedExplanation, setHasAutoPlayedExplanation] = useState(false);
+  const [currentOptionIndex, setCurrentOptionIndex] = useState<number>(-1); // -1 means playing question, >= 0 means playing option
+  const [allQuestionAudioCompleted, setAllQuestionAudioCompleted] = useState(false); // Track if all question + option audio has finished
   const questionRef = useRef<HTMLDivElement>(null);
   const optionsRefs = useRef<(HTMLElement | null)[]>([]);
   const explanationRef = useRef<HTMLDivElement>(null);
@@ -49,14 +55,63 @@ export default function Quiz({ questions, onComplete, showCharacter = true, sear
   const currentQuestion = questions[currentQuestionIndex];
   const isLastQuestion = currentQuestionIndex === questions.length - 1;
 
-  // Build question text with options for AudioPlayer (without "Option 1:", "Option 2:", etc.)
-  const questionText = currentQuestion 
-    ? `${currentQuestion.question}. ${currentQuestion.options.join(". ")}`
-    : "";
+  // Build question text (just the question, no options)
+  const questionText = currentQuestion?.question || "";
 
-  // Normalize word for matching (remove punctuation, lowercase)
-  const normalizeWord = (word: string) => {
-    return word.toLowerCase().replace(/[^\w]/g, '');
+  // Normalize word for matching (same as AudioPlayer)
+  const normalizeWord = (word: string): string => {
+    return word.replace(/[.,!?;:'"()\[\]{}]/g, '').toLowerCase().trim();
+  };
+  
+  // Words match function (same as AudioPlayer for consistency)
+  const wordsMatch = (textWord: string, timestampWord: string): boolean => {
+    // Trim both words first
+    const textTrimmed = textWord.trim();
+    const timestampTrimmed = timestampWord.trim();
+    
+    // Exact match (case-insensitive)
+    if (textTrimmed.toLowerCase() === timestampTrimmed.toLowerCase()) {
+      return true;
+    }
+    
+    // Normalize both words (remove punctuation, lowercase)
+    const textNorm = normalizeWord(textTrimmed);
+    const timestampNorm = normalizeWord(timestampTrimmed);
+    
+    // Exact match after normalization
+    if (textNorm === timestampNorm && textNorm.length > 0) {
+      return true;
+    }
+    
+    // Remove all non-alphanumeric characters and compare
+    const textClean = textNorm.replace(/[^a-z0-9]/g, '');
+    const timestampClean = timestampNorm.replace(/[^a-z0-9]/g, '');
+    
+    // Exact match after removing all non-alphanumeric
+    if (textClean === timestampClean && textClean.length > 0) {
+      return true;
+    }
+    
+    // Handle cases where punctuation differs (e.g., "word." vs "word")
+    // But be more strict - only match if the core word is the same
+    if (textClean.length > 0 && timestampClean.length > 0) {
+      // Check if one is a prefix of the other (handles "word." vs "word")
+      // But only if the shorter one is at least 3 characters (to avoid false matches)
+      const minLength = Math.min(textClean.length, timestampClean.length);
+      if (minLength >= 3) {
+        const textPrefix = textClean.substring(0, minLength);
+        const timestampPrefix = timestampClean.substring(0, minLength);
+        if (textPrefix === timestampPrefix) {
+          // Core words match, only difference is length (likely punctuation)
+          // Be strict: only allow 1-2 character difference
+          if (Math.abs(textClean.length - timestampClean.length) <= 2) {
+            return true;
+          }
+        }
+      }
+    }
+    
+    return false;
   };
 
   // Handle word highlighting from AudioPlayer - highlight only the current word at the correct position
@@ -69,47 +124,79 @@ export default function Quiz({ questions, onComplete, showCharacter = true, sear
       }
     });
 
-    // Get the full audio text and split into words (same way AudioPlayer does)
-    const audioWords = questionText.split(/\s+/).filter(w => w.length > 0);
-    
-    // Calculate which part (question or option) this word belongs to
-    const questionWords = currentQuestion.question.split(/\s+/).filter(w => w.length > 0);
-    const questionWordCount = questionWords.length;
-    
-    if (wordIndex < questionWordCount) {
-      // Word is in the question
-      highlightWordAtPosition(questionRef.current, wordIndex);
-    } else {
-      // Word is in one of the options
-      let cumulativeWordCount = questionWordCount + 1; // +1 for the period/separator
-      for (let i = 0; i < currentQuestion.options.length; i++) {
-        const optionText = currentQuestion.options[i];
-        const optionWords = optionText.split(/\s+/).filter(w => w.length > 0);
-        const optionWordCount = optionWords.length;
-        
-        if (wordIndex >= cumulativeWordCount && wordIndex < cumulativeWordCount + optionWordCount) {
-          const positionInOption = wordIndex - cumulativeWordCount;
-          highlightWordAtPosition(optionsRefs.current[i], positionInOption);
-          break;
-        }
-        
-        cumulativeWordCount += optionWordCount + 1; // +1 for separator
+    // If playing question audio
+    if (currentOptionIndex === -1) {
+      if (questionRef.current) {
+        highlightWordAtPosition(questionRef.current, wordIndex, word);
+      }
+    } 
+    // If playing option audio
+    else if (currentOptionIndex >= 0 && currentOptionIndex < currentQuestion.options.length) {
+      const optionRef = optionsRefs.current[currentOptionIndex];
+      if (optionRef) {
+        highlightWordAtPosition(optionRef, wordIndex, word);
       }
     }
   };
 
   // Highlight a specific word at a specific position in an element
-  const highlightWordAtPosition = (element: HTMLElement | null, targetPosition: number) => {
+  const highlightWordAtPosition = (element: HTMLElement | null, targetPosition: number, targetWord?: string) => {
     if (!element || targetPosition < 0) return;
 
     // Remove previous highlights
     removeHighlights(element);
 
-    // Get the full text and split it the same way we count words
-    const fullText = element.textContent || '';
+    // Get the full text - use textContent to get plain text without HTML tags
+    // This ensures we get the actual text even if there are search highlights or other HTML
+    let fullText = element.textContent || '';
+    
+    // If textContent is empty, try innerText as fallback
+    if (!fullText && (element as any).innerText) {
+      fullText = (element as any).innerText;
+    }
+    
+    // Split text the same way AudioPlayer does
     const words = fullText.split(/\s+/).filter(w => w.length > 0);
     
-    if (targetPosition >= words.length) return;
+    // If position is out of range, try to find word by content using wordsMatch (same as AudioPlayer)
+    if (targetPosition >= words.length && targetWord) {
+      // Search for the word near the expected position (within 5 words)
+      const searchStart = Math.max(0, targetPosition - 5);
+      const searchEnd = Math.min(words.length, targetPosition + 5);
+      
+      for (let i = searchStart; i < searchEnd; i++) {
+        if (wordsMatch(words[i], targetWord)) {
+          // Found the word by content, highlight it
+          targetPosition = i;
+          break;
+        }
+      }
+      
+      // If still not found, try searching the entire text
+      if (targetPosition >= words.length) {
+        for (let i = 0; i < words.length; i++) {
+          if (wordsMatch(words[i], targetWord)) {
+            targetPosition = i;
+            break;
+          }
+        }
+      }
+      
+      // If still not found, return
+      if (targetPosition >= words.length) {
+        if (process.env.NODE_ENV === 'development') {
+          console.warn('Could not find word to highlight:', {
+            targetPosition,
+            targetWord,
+            wordsLength: words.length,
+            words: words.slice(0, 10),
+          });
+        }
+        return;
+      }
+    } else if (targetPosition >= words.length) {
+      return;
+    }
 
     // Now highlight the word at the specific position
     const walker = document.createTreeWalker(
@@ -180,12 +267,26 @@ export default function Quiz({ questions, onComplete, showCharacter = true, sear
     setHighlightedWord(null);
     setHasAutoPlayedQuestion(false);
     setHasAutoPlayedExplanation(false);
+    setCurrentOptionIndex(-1); // Reset to question audio
+    setAllQuestionAudioCompleted(false); // Reset completion flag for new question
     // Clear options refs array - will be repopulated when options render
     optionsRefs.current = new Array(currentQuestion?.options.length || 0).fill(null);
     // Remove highlights from previous question
     removeHighlights(questionRef.current);
     const explanationEl = document.querySelector('[data-explanation-text]') as HTMLElement;
     removeHighlights(explanationEl);
+    
+    // Debug: Log question audio data
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Quiz question loaded:', {
+        questionIndex: currentQuestionIndex,
+        hasQuestionAudio: !!currentQuestion?.questionAudioUrl,
+        questionAudioUrl: currentQuestion?.questionAudioUrl,
+        hasOptionAudios: !!currentQuestion?.optionAudioUrls,
+        optionAudioUrls: currentQuestion?.optionAudioUrls,
+        optionAudioUrlsLength: Array.isArray(currentQuestion?.optionAudioUrls) ? currentQuestion.optionAudioUrls.length : 0,
+      });
+    }
   }, [currentQuestionIndex, currentQuestion]);
 
   const handleAnswerSelect = (index: number) => {
@@ -226,8 +327,18 @@ export default function Quiz({ questions, onComplete, showCharacter = true, sear
       setIsCorrect(false);
       setCurrentQuestionScore(0);
       setCharacterAnimation("idle");
+      setCurrentOptionIndex(-1); // Reset to question
+      setHasAutoPlayedQuestion(false); // Reset for next question
     }
   };
+  
+  // Reset audio state when question changes
+  useEffect(() => {
+    setCurrentOptionIndex(-1);
+    setHasAutoPlayedQuestion(false);
+    setHasAutoPlayedExplanation(false);
+    setAllQuestionAudioCompleted(false); // Reset completion flag
+  }, [currentQuestionIndex]);
 
   // Get explanation audio URL and text
   const getExplanationAudioUrl = () => {
@@ -373,23 +484,96 @@ export default function Quiz({ questions, onComplete, showCharacter = true, sear
           })}
         </div>
 
-        {/* Question Audio Player - Controls Only at Bottom */}
-        {currentQuestion?.audioUrl && !showExplanation && (
+        {/* Sequential Audio Players - Question and Options */}
+        {!showExplanation && (
           <div className="mb-6 pt-4 border-t border-blue-500/20">
-            <AudioPlayer
-              key={`question-audio-${currentQuestionIndex}`}
-              text={questionText}
-              audioUrl={currentQuestion.audioUrl}
-              timestampsUrl={currentQuestion.timestampsUrl || undefined}
-              autoPlay={!hasAutoPlayedQuestion}
-              hideText={true}
-              onHighlightedWord={handleHighlightedWord}
-              onPlayingChange={(isPlaying) => {
-                if (isPlaying) {
-                  setHasAutoPlayedQuestion(true);
-                }
-              }}
-            />
+            {/* Question Audio */}
+            {currentQuestion?.questionAudioUrl && currentOptionIndex === -1 && !allQuestionAudioCompleted && (
+              <AudioPlayer
+                key={`question-audio-${currentQuestionIndex}`}
+                text={questionText}
+                audioUrl={currentQuestion.questionAudioUrl}
+                timestampsUrl={currentQuestion.questionTimestampsUrl || undefined}
+                autoPlay={true} // Always auto-play question audio when it loads
+                hideText={true}
+                onHighlightedWord={handleHighlightedWord}
+                onComplete={() => {
+                  // Clear highlights from question when audio completes
+                  removeHighlights(questionRef.current);
+                  
+                  // After question finishes, start playing first option if available
+                  const optionAudios = Array.isArray(currentQuestion.optionAudioUrls) 
+                    ? currentQuestion.optionAudioUrls 
+                    : [];
+                  if (optionAudios.length > 0 && optionAudios[0]) {
+                    setCurrentOptionIndex(0);
+                    setHasAutoPlayedQuestion(false); // Allow option to auto-play
+                  } else {
+                    // No options to play, mark all audio as completed
+                    setHasAutoPlayedQuestion(true);
+                    setAllQuestionAudioCompleted(true);
+                  }
+                }}
+                onPlayingChange={(isPlaying) => {
+                  if (isPlaying) {
+                    setHasAutoPlayedQuestion(true);
+                  }
+                }}
+              />
+            )}
+            
+            {/* Option Audio - Play sequentially */}
+            {(() => {
+              // Ensure optionAudioUrls is an array
+              const optionAudios = Array.isArray(currentQuestion?.optionAudioUrls) 
+                ? currentQuestion.optionAudioUrls 
+                : [];
+              const optionTimestamps = Array.isArray(currentQuestion?.optionTimestampsUrls) 
+                ? currentQuestion.optionTimestampsUrls 
+                : [];
+              
+              return optionAudios.length > 0 && 
+                     currentOptionIndex >= 0 && 
+                     currentOptionIndex < optionAudios.length &&
+                     optionAudios[currentOptionIndex] && (
+                <AudioPlayer
+                  key={`option-audio-${currentQuestionIndex}-${currentOptionIndex}`}
+                  text={currentQuestion.options[currentOptionIndex]}
+                  audioUrl={optionAudios[currentOptionIndex]}
+                  timestampsUrl={optionTimestamps[currentOptionIndex] || undefined}
+                  autoPlay={true} // Always auto-play option audio when it loads
+                  hideText={true}
+                  onHighlightedWord={handleHighlightedWord}
+                  onComplete={() => {
+                    // Clear highlights from current option when audio completes
+                    const currentOptionRef = optionsRefs.current[currentOptionIndex];
+                    if (currentOptionRef) {
+                      removeHighlights(currentOptionRef);
+                    }
+                    
+                    // Move to next option
+                    if (currentOptionIndex < optionAudios.length - 1) {
+                      setCurrentOptionIndex(currentOptionIndex + 1);
+                      setHasAutoPlayedQuestion(false); // Allow next option to auto-play
+                    } else {
+                      // All options played, clear all highlights and stop
+                      optionsRefs.current.forEach(removeHighlights);
+                      setCurrentOptionIndex(-1);
+                      setHasAutoPlayedQuestion(true);
+                      setAllQuestionAudioCompleted(true); // Mark all question/option audio as completed
+                      // Audio is done, don't restart - wait for user to click an answer
+                    }
+                  }}
+                  onPlayingChange={(isPlaying) => {
+                    if (isPlaying) {
+                      setHasAutoPlayedQuestion(true);
+                    }
+                  }}
+                />
+              );
+            })()}
+            
+            {/* No fallback - only use separate audio files */}
           </div>
         )}
 
@@ -432,9 +616,21 @@ export default function Quiz({ questions, onComplete, showCharacter = true, sear
                   hideText={true}
                   onHighlightedWord={(word, wordIndex) => {
                     // Highlight only the current word at the correct position in explanation text
+                    // Use the same approach as section pages - clear all highlights first, then highlight current word
                     if (explanationRef.current) {
-                      highlightWordAtPosition(explanationRef.current, wordIndex);
+                      // Remove all existing highlights first
+                      removeHighlights(explanationRef.current);
+                      // Then highlight the word at the correct position
+                      highlightWordAtPosition(explanationRef.current, wordIndex, word);
                     }
+                  }}
+                  onComplete={() => {
+                    // Clear highlights when explanation audio completes
+                    if (explanationRef.current) {
+                      removeHighlights(explanationRef.current);
+                    }
+                    // Mark as completed to prevent replay
+                    setHasAutoPlayedExplanation(true);
                   }}
                   onPlayingChange={(isPlaying) => {
                     if (isPlaying) {

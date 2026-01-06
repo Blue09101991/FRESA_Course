@@ -1,0 +1,491 @@
+{
+  "text": " Higher construction costs that have caused an increase in the number of renters. While an increase in renters creates a market for rental properties, the specific need for professional management arises from the owner's inability or unwillingness to manage the property themselves, often due to being absentee, rather than just the cost of construction.",
+  "segments": [
+    {
+      "id": 0,
+      "seek": 0,
+      "start": 0.08,
+      "end": 3.42,
+      "text": " Higher construction costs that have caused an increase in the number of renters.",
+      "tokens": [
+        50364,
+        31997,
+        6435,
+        5497,
+        300,
+        362,
+        7008,
+        364,
+        3488,
+        294,
+        264,
+        1230,
+        295,
+        8124,
+        1559,
+        13,
+        50594
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.18902493778027987,
+      "compression_ratio": 1.680952380952381,
+      "no_speech_prob": 0.0026340908370912075,
+      "confidence": 0.947,
+      "words": [
+        {
+          "text": "Higher",
+          "start": 0.08,
+          "end": 0.28,
+          "confidence": 0.594
+        },
+        {
+          "text": "construction",
+          "start": 0.28,
+          "end": 0.78,
+          "confidence": 0.992
+        },
+        {
+          "text": "costs",
+          "start": 0.78,
+          "end": 1.16,
+          "confidence": 0.984
+        },
+        {
+          "text": "that",
+          "start": 1.16,
+          "end": 1.38,
+          "confidence": 0.964
+        },
+        {
+          "text": "have",
+          "start": 1.38,
+          "end": 1.52,
+          "confidence": 0.992
+        },
+        {
+          "text": "caused",
+          "start": 1.52,
+          "end": 1.78,
+          "confidence": 0.984
+        },
+        {
+          "text": "an",
+          "start": 1.78,
+          "end": 1.98,
+          "confidence": 0.984
+        },
+        {
+          "text": "increase",
+          "start": 1.98,
+          "end": 2.32,
+          "confidence": 0.993
+        },
+        {
+          "text": "in",
+          "start": 2.32,
+          "end": 2.52,
+          "confidence": 0.965
+        },
+        {
+          "text": "the",
+          "start": 2.52,
+          "end": 2.62,
+          "confidence": 0.989
+        },
+        {
+          "text": "number",
+          "start": 2.62,
+          "end": 2.86,
+          "confidence": 0.996
+        },
+        {
+          "text": "of",
+          "start": 2.86,
+          "end": 3.02,
+          "confidence": 0.986
+        },
+        {
+          "text": "renters.",
+          "start": 3.02,
+          "end": 3.42,
+          "confidence": 0.966
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "seek": 0,
+      "start": 4.68,
+      "end": 7.66,
+      "text": " While an increase in renters creates a market for rental properties,",
+      "tokens": [
+        50594,
+        3987,
+        364,
+        3488,
+        294,
+        8124,
+        1559,
+        7829,
+        257,
+        2142,
+        337,
+        21468,
+        7221,
+        11,
+        50756
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.18902493778027987,
+      "compression_ratio": 1.680952380952381,
+      "no_speech_prob": 0.0026340908370912075,
+      "confidence": 0.993,
+      "words": [
+        {
+          "text": "While",
+          "start": 4.68,
+          "end": 4.86,
+          "confidence": 0.985
+        },
+        {
+          "text": "an",
+          "start": 4.86,
+          "end": 5.0,
+          "confidence": 0.982
+        },
+        {
+          "text": "increase",
+          "start": 5.0,
+          "end": 5.34,
+          "confidence": 0.998
+        },
+        {
+          "text": "in",
+          "start": 5.34,
+          "end": 5.58,
+          "confidence": 0.999
+        },
+        {
+          "text": "renters",
+          "start": 5.58,
+          "end": 5.92,
+          "confidence": 0.997
+        },
+        {
+          "text": "creates",
+          "start": 5.92,
+          "end": 6.24,
+          "confidence": 0.991
+        },
+        {
+          "text": "a",
+          "start": 6.24,
+          "end": 6.44,
+          "confidence": 0.99
+        },
+        {
+          "text": "market",
+          "start": 6.44,
+          "end": 6.7,
+          "confidence": 0.994
+        },
+        {
+          "text": "for",
+          "start": 6.7,
+          "end": 6.92,
+          "confidence": 0.998
+        },
+        {
+          "text": "rental",
+          "start": 6.92,
+          "end": 7.16,
+          "confidence": 0.988
+        },
+        {
+          "text": "properties,",
+          "start": 7.16,
+          "end": 7.66,
+          "confidence": 0.99
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "seek": 0,
+      "start": 7.84,
+      "end": 12.8,
+      "text": " the specific need for professional management arises from the owner's inability or unwillingness",
+      "tokens": [
+        50756,
+        264,
+        2685,
+        643,
+        337,
+        4843,
+        4592,
+        27388,
+        490,
+        264,
+        7289,
+        311,
+        33162,
+        420,
+        38246,
+        1287,
+        51024
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.18902493778027987,
+      "compression_ratio": 1.680952380952381,
+      "no_speech_prob": 0.0026340908370912075,
+      "confidence": 0.962,
+      "words": [
+        {
+          "text": "the",
+          "start": 7.84,
+          "end": 8.04,
+          "confidence": 0.97
+        },
+        {
+          "text": "specific",
+          "start": 8.04,
+          "end": 8.42,
+          "confidence": 0.999
+        },
+        {
+          "text": "need",
+          "start": 8.42,
+          "end": 8.72,
+          "confidence": 0.997
+        },
+        {
+          "text": "for",
+          "start": 8.72,
+          "end": 8.92,
+          "confidence": 0.999
+        },
+        {
+          "text": "professional",
+          "start": 8.92,
+          "end": 9.36,
+          "confidence": 0.997
+        },
+        {
+          "text": "management",
+          "start": 9.36,
+          "end": 9.94,
+          "confidence": 0.996
+        },
+        {
+          "text": "arises",
+          "start": 9.94,
+          "end": 10.4,
+          "confidence": 0.951
+        },
+        {
+          "text": "from",
+          "start": 10.4,
+          "end": 10.76,
+          "confidence": 0.909
+        },
+        {
+          "text": "the",
+          "start": 10.76,
+          "end": 10.9,
+          "confidence": 0.966
+        },
+        {
+          "text": "owner's",
+          "start": 10.9,
+          "end": 11.26,
+          "confidence": 0.953
+        },
+        {
+          "text": "inability",
+          "start": 11.26,
+          "end": 11.7,
+          "confidence": 0.941
+        },
+        {
+          "text": "or",
+          "start": 11.7,
+          "end": 12.06,
+          "confidence": 0.851
+        },
+        {
+          "text": "unwillingness",
+          "start": 12.06,
+          "end": 12.8,
+          "confidence": 0.981
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "seek": 0,
+      "start": 13.28,
+      "end": 16.62,
+      "text": " to manage the property themselves, often due to being absentee,",
+      "tokens": [
+        51024,
+        281,
+        3067,
+        264,
+        4707,
+        2969,
+        11,
+        2049,
+        3462,
+        281,
+        885,
+        1950,
+        1576,
+        68,
+        11,
+        51220
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.18902493778027987,
+      "compression_ratio": 1.680952380952381,
+      "no_speech_prob": 0.0026340908370912075,
+      "confidence": 0.936,
+      "words": [
+        {
+          "text": "to",
+          "start": 13.28,
+          "end": 13.38,
+          "confidence": 0.973
+        },
+        {
+          "text": "manage",
+          "start": 13.38,
+          "end": 13.6,
+          "confidence": 0.999
+        },
+        {
+          "text": "the",
+          "start": 13.6,
+          "end": 13.8,
+          "confidence": 0.995
+        },
+        {
+          "text": "property",
+          "start": 13.8,
+          "end": 14.14,
+          "confidence": 0.998
+        },
+        {
+          "text": "themselves,",
+          "start": 14.14,
+          "end": 14.66,
+          "confidence": 0.993
+        },
+        {
+          "text": "often",
+          "start": 15.04,
+          "end": 15.3,
+          "confidence": 0.887
+        },
+        {
+          "text": "due",
+          "start": 15.3,
+          "end": 15.52,
+          "confidence": 0.999
+        },
+        {
+          "text": "to",
+          "start": 15.52,
+          "end": 15.66,
+          "confidence": 0.999
+        },
+        {
+          "text": "being",
+          "start": 15.66,
+          "end": 15.82,
+          "confidence": 0.994
+        },
+        {
+          "text": "absentee,",
+          "start": 15.82,
+          "end": 16.62,
+          "confidence": 0.812
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "seek": 0,
+      "start": 17.16,
+      "end": 18.82,
+      "text": " rather than just the cost of construction.",
+      "tokens": [
+        51220,
+        2831,
+        813,
+        445,
+        264,
+        2063,
+        295,
+        6435,
+        13,
+        51330
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.18902493778027987,
+      "compression_ratio": 1.680952380952381,
+      "no_speech_prob": 0.0026340908370912075,
+      "confidence": 0.985,
+      "words": [
+        {
+          "text": "rather",
+          "start": 17.16,
+          "end": 17.4,
+          "confidence": 0.921
+        },
+        {
+          "text": "than",
+          "start": 17.4,
+          "end": 17.6,
+          "confidence": 0.996
+        },
+        {
+          "text": "just",
+          "start": 17.6,
+          "end": 17.78,
+          "confidence": 0.992
+        },
+        {
+          "text": "the",
+          "start": 17.78,
+          "end": 17.94,
+          "confidence": 0.995
+        },
+        {
+          "text": "cost",
+          "start": 17.94,
+          "end": 18.16,
+          "confidence": 0.997
+        },
+        {
+          "text": "of",
+          "start": 18.16,
+          "end": 18.34,
+          "confidence": 0.999
+        },
+        {
+          "text": "construction.",
+          "start": 18.34,
+          "end": 18.82,
+          "confidence": 0.997
+        }
+      ]
+    }
+  ],
+  "language": "en",
+  "speech_activity": [
+    {
+      "start": 0.0,
+      "end": 19.409
+    }
+  ]
+}

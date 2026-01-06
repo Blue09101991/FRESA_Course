@@ -1,0 +1,89 @@
+{
+  "text": " Distinguish among the three categories of residential construction.",
+  "segments": [
+    {
+      "id": 0,
+      "seek": 0,
+      "start": 0.08,
+      "end": 3.32,
+      "text": " Distinguish among the three categories of residential construction.",
+      "tokens": [
+        50364,
+        9840,
+        7050,
+        742,
+        3654,
+        264,
+        1045,
+        10479,
+        295,
+        17389,
+        6435,
+        13,
+        50552
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.2959387642996652,
+      "compression_ratio": 1.0307692307692307,
+      "no_speech_prob": 0.04284669831395149,
+      "confidence": 0.964,
+      "words": [
+        {
+          "text": "Distinguish",
+          "start": 0.08,
+          "end": 0.72,
+          "confidence": 0.929
+        },
+        {
+          "text": "among",
+          "start": 0.72,
+          "end": 0.98,
+          "confidence": 0.982
+        },
+        {
+          "text": "the",
+          "start": 0.98,
+          "end": 1.16,
+          "confidence": 0.996
+        },
+        {
+          "text": "three",
+          "start": 1.16,
+          "end": 1.36,
+          "confidence": 0.968
+        },
+        {
+          "text": "categories",
+          "start": 1.36,
+          "end": 1.98,
+          "confidence": 0.996
+        },
+        {
+          "text": "of",
+          "start": 1.98,
+          "end": 2.26,
+          "confidence": 0.968
+        },
+        {
+          "text": "residential",
+          "start": 2.26,
+          "end": 2.68,
+          "confidence": 0.982
+        },
+        {
+          "text": "construction.",
+          "start": 2.68,
+          "end": 3.32,
+          "confidence": 0.964
+        }
+      ]
+    }
+  ],
+  "language": "en",
+  "speech_activity": [
+    {
+      "start": 0.0,
+      "end": 3.84
+    }
+  ]
+}

@@ -1,0 +1,160 @@
+{
+  "text": " The increase in the number of absentee owners, this has created a demand for professional property management services.",
+  "segments": [
+    {
+      "id": 0,
+      "seek": 0,
+      "start": 0.08,
+      "end": 6.32,
+      "text": " The increase in the number of absentee owners, this has created a demand for professional property management services.",
+      "tokens": [
+        50364,
+        440,
+        3488,
+        294,
+        264,
+        1230,
+        295,
+        1950,
+        1576,
+        68,
+        7710,
+        11,
+        341,
+        575,
+        2942,
+        257,
+        4733,
+        337,
+        4843,
+        4707,
+        4592,
+        3328,
+        13,
+        50714
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.23281732559204102,
+      "compression_ratio": 1.2268041237113403,
+      "no_speech_prob": 0.002588486298918724,
+      "confidence": 0.898,
+      "words": [
+        {
+          "text": "The",
+          "start": 0.08,
+          "end": 0.2,
+          "confidence": 0.64
+        },
+        {
+          "text": "increase",
+          "start": 0.2,
+          "end": 0.56,
+          "confidence": 0.986
+        },
+        {
+          "text": "in",
+          "start": 0.56,
+          "end": 0.82,
+          "confidence": 0.991
+        },
+        {
+          "text": "the",
+          "start": 0.82,
+          "end": 0.92,
+          "confidence": 0.992
+        },
+        {
+          "text": "number",
+          "start": 0.92,
+          "end": 1.16,
+          "confidence": 0.998
+        },
+        {
+          "text": "of",
+          "start": 1.16,
+          "end": 1.34,
+          "confidence": 0.997
+        },
+        {
+          "text": "absentee",
+          "start": 1.34,
+          "end": 1.88,
+          "confidence": 0.986
+        },
+        {
+          "text": "owners,",
+          "start": 1.88,
+          "end": 2.24,
+          "confidence": 0.97
+        },
+        {
+          "text": "this",
+          "start": 2.7,
+          "end": 3.12,
+          "confidence": 0.643
+        },
+        {
+          "text": "has",
+          "start": 3.12,
+          "end": 3.26,
+          "confidence": 0.945
+        },
+        {
+          "text": "created",
+          "start": 3.26,
+          "end": 3.62,
+          "confidence": 0.955
+        },
+        {
+          "text": "a",
+          "start": 3.62,
+          "end": 3.84,
+          "confidence": 0.988
+        },
+        {
+          "text": "demand",
+          "start": 3.84,
+          "end": 4.12,
+          "confidence": 0.941
+        },
+        {
+          "text": "for",
+          "start": 4.12,
+          "end": 4.38,
+          "confidence": 0.922
+        },
+        {
+          "text": "professional",
+          "start": 4.38,
+          "end": 4.86,
+          "confidence": 0.709
+        },
+        {
+          "text": "property",
+          "start": 4.86,
+          "end": 5.28,
+          "confidence": 0.613
+        },
+        {
+          "text": "management",
+          "start": 5.28,
+          "end": 5.7,
+          "confidence": 0.969
+        },
+        {
+          "text": "services.",
+          "start": 5.7,
+          "end": 6.32,
+          "confidence": 0.98
+        }
+      ]
+    }
+  ],
+  "language": "en",
+  "speech_activity": [
+    {
+      "start": 0.0,
+      "end": 6.8701875
+    }
+  ]
+}

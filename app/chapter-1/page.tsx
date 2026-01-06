@@ -45,6 +45,8 @@ export default function Chapter1Page() {
   const [quizScore, setQuizScore] = useState<{ score: number; total: number } | null>(null);
   const [activePlayingSectionId, setActivePlayingSectionId] = useState<string | null>(null);
   const [hasAutoPlayedFirst, setHasAutoPlayedFirst] = useState(false);
+  const [currentObjectiveIndex, setCurrentObjectiveIndex] = useState<number>(0);
+  const [currentKeyTermIndex, setCurrentKeyTermIndex] = useState<number>(0);
   const objectivesRefs = useRef<(HTMLElement | null)[]>([]);
   const keyTermsRefs = useRef<(HTMLElement | null)[]>([]);
 
@@ -224,10 +226,14 @@ export default function Chapter1Page() {
             options: q.options,
             correctAnswer: q.correctAnswer,
             explanation: q.explanation,
-            audioUrl: q.audioUrl,
-            timestampsUrl: q.timestampsUrl,
-            explanationAudioUrl: q.explanationAudioUrl,
-            explanationTimestampsUrl: q.explanationTimestampsUrl,
+            audioUrl: q.audioUrl, // Legacy combined audio (deprecated)
+            timestampsUrl: q.timestampsUrl, // Legacy combined timestamps (deprecated)
+            questionAudioUrl: q.questionAudioUrl, // New: separate question audio
+            questionTimestampsUrl: q.questionTimestampsUrl, // New: separate question timestamps
+            optionAudioUrls: q.optionAudioUrls, // New: array of option audio URLs
+            optionTimestampsUrls: q.optionTimestampsUrls, // New: array of option timestamps URLs
+            explanationAudioUrl: q.explanationAudioUrl, // Legacy (deprecated)
+            explanationTimestampsUrl: q.explanationTimestampsUrl, // Legacy (deprecated)
             correctExplanationAudioUrl: q.correctExplanationAudioUrl,
             correctExplanationTimestampsUrl: q.correctExplanationTimestampsUrl,
             incorrectExplanationAudioUrls: q.incorrectExplanationAudioUrls,
@@ -837,6 +843,10 @@ export default function Chapter1Page() {
     setCanAutoPlayKeyTerms(false);
     pendingHighlightsRef.current = [];
     
+    // Reset audio indices when section changes
+    setCurrentObjectiveIndex(0);
+    setCurrentKeyTermIndex(0);
+    
     // Initialize refs arrays with correct length based on current section
     if (currentSection === 'objectives' && learningObjectives.length > 0) {
       objectivesRefs.current = new Array(learningObjectives.length).fill(null);
@@ -1116,27 +1126,49 @@ export default function Chapter1Page() {
                       );
                     })}
                   </div>
-                  {currentSectionData?.audioUrl && (
+                  {/* Play each objective audio sequentially */}
+                  {learningObjectives.length > 0 && learningObjectives[currentObjectiveIndex]?.audioUrl && (
                     <div className="pt-4 border-t border-blue-500/20">
                       <AudioPlayer
-                        text={currentSectionData.text || learningObjectives.map(obj => obj.text).join(". ")}
-                        audioUrl={currentSectionData.audioUrl || undefined}
-                        timestampsUrl={currentSectionData.timestampsUrl || undefined}
-                        autoPlay={!hasAutoPlayedFirst}
-                        onComplete={handleAudioComplete}
+                        key={`objective-${currentObjectiveIndex}`}
+                        text={learningObjectives[currentObjectiveIndex].text}
+                        audioUrl={learningObjectives[currentObjectiveIndex].audioUrl || undefined}
+                        timestampsUrl={learningObjectives[currentObjectiveIndex].timestampsUrl || undefined}
+                        autoPlay={!hasAutoPlayedFirst && (currentObjectiveIndex === 0 || currentObjectiveIndex > 0)}
+                        onComplete={() => {
+                          // Clear highlights from current objective
+                          const currentRef = objectivesRefs.current[currentObjectiveIndex];
+                          if (currentRef) {
+                            removeHighlights(currentRef);
+                          }
+                          
+                          // Move to next objective
+                          if (currentObjectiveIndex < learningObjectives.length - 1) {
+                            setCurrentObjectiveIndex(currentObjectiveIndex + 1);
+                            setHasAutoPlayedFirst(false); // Allow next to auto-play
+                          } else {
+                            // All objectives played, clear all highlights and move to next section
+                            objectivesRefs.current.forEach(removeHighlights);
+                            handleAudioComplete();
+                          }
+                        }}
                         onPlayingChange={(isPlaying) => {
                           if (isPlaying) {
                             setActivePlayingSectionId(currentSection);
-                            // Mark as played to prevent auto-play from triggering again for this section
                             setHasAutoPlayedFirst(true);
                           } else {
-                            // Clear active section when paused
-                            // Note: Audio completion is handled by onComplete callback
                             setActivePlayingSectionId(null);
                           }
                         }}
                         hideText={true}
-                        onHighlightedWord={handleObjectivesHighlightedWord}
+                        onHighlightedWord={(word, wordIndex) => {
+                          // Highlight only in the current objective
+                          const targetRef = objectivesRefs.current[currentObjectiveIndex];
+                          if (targetRef) {
+                            removeHighlights(targetRef);
+                            highlightWordAtPosition(targetRef, wordIndex, word);
+                          }
+                        }}
                         highlightQuery={searchHighlight}
                       />
                     </div>
@@ -1196,19 +1228,40 @@ export default function Chapter1Page() {
                       );
                     })}
                   </div>
-                  {currentSectionData?.audioUrl && (
+                  {/* Play each key term audio sequentially */}
+                  {keyTerms.length > 0 && keyTerms[currentKeyTermIndex]?.audioUrl && (
                     <div className="pt-4 border-t border-blue-500/20">
                       <AudioPlayer
-                        text={currentSectionData.text || keyTerms.map(term => term.term).join(". ")}
-                        audioUrl={currentSectionData.audioUrl || undefined}
-                        timestampsUrl={currentSectionData.timestampsUrl || undefined}
+                        key={`keyterm-${currentKeyTermIndex}`}
+                        text={keyTerms[currentKeyTermIndex].term}
+                        audioUrl={keyTerms[currentKeyTermIndex].audioUrl || undefined}
+                        timestampsUrl={keyTerms[currentKeyTermIndex].timestampsUrl || undefined}
                         // Only auto-play if refs are ready (for key-terms) or if it's not key-terms
-                        autoPlay={!hasAutoPlayedFirst && (currentSection !== 'key-terms' || canAutoPlayKeyTerms)}
-                        onComplete={handleAudioComplete}
+                        // Auto-play for first key term if refs ready, or for subsequent key terms
+                        autoPlay={!hasAutoPlayedFirst && (
+                          (currentKeyTermIndex === 0 && (currentSection !== 'key-terms' || canAutoPlayKeyTerms)) ||
+                          (currentKeyTermIndex > 0)
+                        )}
+                        onComplete={() => {
+                          // Clear highlights from current key term
+                          const currentRef = keyTermsRefs.current[currentKeyTermIndex];
+                          if (currentRef) {
+                            removeHighlights(currentRef);
+                          }
+                          
+                          // Move to next key term
+                          if (currentKeyTermIndex < keyTerms.length - 1) {
+                            setCurrentKeyTermIndex(currentKeyTermIndex + 1);
+                            setHasAutoPlayedFirst(false); // Allow next to auto-play
+                          } else {
+                            // All key terms played, clear all highlights and move to next section
+                            keyTermsRefs.current.forEach(removeHighlights);
+                            handleAudioComplete();
+                          }
+                        }}
                         onPlayingChange={(isPlaying) => {
                           if (isPlaying) {
                             setActivePlayingSectionId(currentSection);
-                            // Mark as played to prevent auto-play from triggering again for this section
                             setHasAutoPlayedFirst(true);
                             
                             // Process any pending highlights immediately
@@ -1228,15 +1281,17 @@ export default function Chapter1Page() {
                               }
                             }
                           } else {
-                            // Clear active section when paused
-                            // Note: Audio completion is handled by onComplete callback
                             setActivePlayingSectionId(null);
                           }
                         }}
                         hideText={true}
                         onHighlightedWord={(word, wordIndex) => {
-                          console.log('🎯 AudioPlayer calling onHighlightedWord:', { word, wordIndex });
-                          handleKeyTermsHighlightedWord(word, wordIndex);
+                          // Highlight only in the current key term
+                          const targetRef = keyTermsRefs.current[currentKeyTermIndex];
+                          if (targetRef) {
+                            removeHighlights(targetRef);
+                            highlightWordAtPosition(targetRef, wordIndex, word);
+                          }
                         }}
                         highlightQuery={searchHighlight}
                       />

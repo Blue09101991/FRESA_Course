@@ -1,0 +1,89 @@
+{
+  "text": " the increase in the number of absentee owners.",
+  "segments": [
+    {
+      "id": 0,
+      "seek": 0,
+      "start": 0.08,
+      "end": 2.18,
+      "text": " the increase in the number of absentee owners.",
+      "tokens": [
+        50364,
+        264,
+        3488,
+        294,
+        264,
+        1230,
+        295,
+        1950,
+        1576,
+        68,
+        7710,
+        13,
+        50496
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.3511076995304653,
+      "compression_ratio": 0.92,
+      "no_speech_prob": 0.011075149290263653,
+      "confidence": 0.928,
+      "words": [
+        {
+          "text": "the",
+          "start": 0.08,
+          "end": 0.18,
+          "confidence": 0.509
+        },
+        {
+          "text": "increase",
+          "start": 0.18,
+          "end": 0.56,
+          "confidence": 0.997
+        },
+        {
+          "text": "in",
+          "start": 0.56,
+          "end": 0.78,
+          "confidence": 0.99
+        },
+        {
+          "text": "the",
+          "start": 0.78,
+          "end": 0.9,
+          "confidence": 0.995
+        },
+        {
+          "text": "number",
+          "start": 0.9,
+          "end": 1.14,
+          "confidence": 0.999
+        },
+        {
+          "text": "of",
+          "start": 1.14,
+          "end": 1.3,
+          "confidence": 0.997
+        },
+        {
+          "text": "absentee",
+          "start": 1.3,
+          "end": 1.86,
+          "confidence": 0.991
+        },
+        {
+          "text": "owners.",
+          "start": 1.86,
+          "end": 2.18,
+          "confidence": 0.979
+        }
+      ]
+    }
+  ],
+  "language": "en",
+  "speech_activity": [
+    {
+      "start": 0.0,
+      "end": 2.742875
+    }
+  ]
+}

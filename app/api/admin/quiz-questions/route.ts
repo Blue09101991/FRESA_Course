@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { question, options, correctAnswer, explanation, chapterId, quizType, order, audioUrl, timestampsUrl, explanationAudioUrl, explanationTimestampsUrl, correctExplanationAudioUrl, correctExplanationTimestampsUrl, incorrectExplanationAudioUrls, incorrectExplanationTimestampsUrls } = body
+    const { question, options, correctAnswer, explanation, chapterId, quizType, order, audioUrl, timestampsUrl, questionAudioUrl, questionTimestampsUrl, optionAudioUrls, optionTimestampsUrls, explanationAudioUrl, explanationTimestampsUrl, correctExplanationAudioUrl, correctExplanationTimestampsUrl, incorrectExplanationAudioUrls, incorrectExplanationTimestampsUrls } = body
 
     if (!question || !options || correctAnswer === undefined) {
       return NextResponse.json(
@@ -83,6 +83,10 @@ export async function POST(request: NextRequest) {
         order: order || 0,
         audioUrl: audioUrl || null,
         timestampsUrl: timestampsUrl || null,
+        questionAudioUrl: questionAudioUrl || null,
+        questionTimestampsUrl: questionTimestampsUrl || null,
+        optionAudioUrls: optionAudioUrls || null,
+        optionTimestampsUrls: optionTimestampsUrls || null,
         explanationAudioUrl: explanationAudioUrl || null,
         explanationTimestampsUrl: explanationTimestampsUrl || null,
         correctExplanationAudioUrl: correctExplanationAudioUrl || null,

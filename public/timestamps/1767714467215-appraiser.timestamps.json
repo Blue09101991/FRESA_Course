@@ -1,0 +1,64 @@
+{
+  "text": " appraisal, erywoodiarinum, wasaarum.",
+  "segments": [
+    {
+      "id": 0,
+      "seek": 0,
+      "start": 0.06,
+      "end": 3.12,
+      "text": " appraisal, erywoodiarinum, wasaarum.",
+      "tokens": [
+        50364,
+        724,
+        20769,
+        304,
+        11,
+        1189,
+        88,
+        6092,
+        9448,
+        259,
+        449,
+        11,
+        390,
+        64,
+        289,
+        449,
+        13,
+        50526
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -1.062503413150185,
+      "compression_ratio": 0.8181818181818182,
+      "no_speech_prob": 0.12108767032623291,
+      "confidence": 0.291,
+      "words": [
+        {
+          "text": "appraisal,",
+          "start": 0.06,
+          "end": 0.7,
+          "confidence": 0.337
+        },
+        {
+          "text": "erywoodiarinum,",
+          "start": 0.98,
+          "end": 2.32,
+          "confidence": 0.361
+        },
+        {
+          "text": "wasaarum.",
+          "start": 2.56,
+          "end": 3.12,
+          "confidence": 0.19
+        }
+      ]
+    }
+  ],
+  "language": "en",
+  "speech_activity": [
+    {
+      "start": 0.0,
+      "end": 3.4220625
+    }
+  ]
+}

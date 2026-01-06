@@ -1,0 +1,195 @@
+{
+  "text": " Businesses. Business brokerage selling business opportunities, often including assets and good will, is one of the five recognized sales specialties.",
+  "segments": [
+    {
+      "id": 0,
+      "seek": 0,
+      "start": 0.0,
+      "end": 6.16,
+      "text": " Businesses. Business brokerage selling business opportunities, often including assets and good will,",
+      "tokens": [
+        50364,
+        10715,
+        279,
+        13,
+        10715,
+        26502,
+        609,
+        6511,
+        1606,
+        4786,
+        11,
+        2049,
+        3009,
+        9769,
+        293,
+        665,
+        486,
+        11,
+        50700
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.3128582239151001,
+      "compression_ratio": 1.3185840707964602,
+      "no_speech_prob": 0.026515884324908257,
+      "confidence": 0.834,
+      "words": [
+        {
+          "text": "Businesses.",
+          "start": 0.0,
+          "end": 0.7,
+          "confidence": 0.816
+        },
+        {
+          "text": "Business",
+          "start": 0.96,
+          "end": 1.94,
+          "confidence": 0.76
+        },
+        {
+          "text": "brokerage",
+          "start": 1.94,
+          "end": 2.6,
+          "confidence": 0.978
+        },
+        {
+          "text": "selling",
+          "start": 2.6,
+          "end": 2.96,
+          "confidence": 0.764
+        },
+        {
+          "text": "business",
+          "start": 2.96,
+          "end": 3.36,
+          "confidence": 0.986
+        },
+        {
+          "text": "opportunities,",
+          "start": 3.36,
+          "end": 4.04,
+          "confidence": 0.974
+        },
+        {
+          "text": "often",
+          "start": 4.38,
+          "end": 4.56,
+          "confidence": 0.512
+        },
+        {
+          "text": "including",
+          "start": 4.56,
+          "end": 4.96,
+          "confidence": 0.825
+        },
+        {
+          "text": "assets",
+          "start": 4.96,
+          "end": 5.42,
+          "confidence": 0.968
+        },
+        {
+          "text": "and",
+          "start": 5.42,
+          "end": 5.72,
+          "confidence": 0.796
+        },
+        {
+          "text": "good",
+          "start": 5.72,
+          "end": 5.92,
+          "confidence": 0.946
+        },
+        {
+          "text": "will,",
+          "start": 5.92,
+          "end": 6.16,
+          "confidence": 0.723
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "seek": 0,
+      "start": 6.78,
+      "end": 9.22,
+      "text": " is one of the five recognized sales specialties.",
+      "tokens": [
+        50700,
+        307,
+        472,
+        295,
+        264,
+        1732,
+        9823,
+        5763,
+        2121,
+        6097,
+        13,
+        51160
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.3128582239151001,
+      "compression_ratio": 1.3185840707964602,
+      "no_speech_prob": 0.026515884324908257,
+      "confidence": 0.968,
+      "words": [
+        {
+          "text": "is",
+          "start": 6.78,
+          "end": 6.94,
+          "confidence": 0.926
+        },
+        {
+          "text": "one",
+          "start": 6.94,
+          "end": 7.1,
+          "confidence": 0.997
+        },
+        {
+          "text": "of",
+          "start": 7.1,
+          "end": 7.18,
+          "confidence": 0.998
+        },
+        {
+          "text": "the",
+          "start": 7.18,
+          "end": 7.3,
+          "confidence": 0.985
+        },
+        {
+          "text": "five",
+          "start": 7.3,
+          "end": 7.6,
+          "confidence": 0.965
+        },
+        {
+          "text": "recognized",
+          "start": 7.6,
+          "end": 8.12,
+          "confidence": 0.957
+        },
+        {
+          "text": "sales",
+          "start": 8.12,
+          "end": 8.52,
+          "confidence": 0.926
+        },
+        {
+          "text": "specialties.",
+          "start": 8.52,
+          "end": 9.22,
+          "confidence": 0.978
+        }
+      ]
+    }
+  ],
+  "language": "en",
+  "speech_activity": [
+    {
+      "start": 0.0,
+      "end": 9.6914375
+    }
+  ]
+}

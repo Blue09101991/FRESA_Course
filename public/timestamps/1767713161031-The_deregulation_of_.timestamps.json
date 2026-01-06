@@ -1,0 +1,82 @@
+{
+  "text": " the deregulation of the real estate industry.",
+  "segments": [
+    {
+      "id": 0,
+      "seek": 0,
+      "start": 0.08,
+      "end": 2.04,
+      "text": " the deregulation of the real estate industry.",
+      "tokens": [
+        50364,
+        264,
+        15969,
+        70,
+        2776,
+        295,
+        264,
+        957,
+        9749,
+        3518,
+        13,
+        50464
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.3331788136408879,
+      "compression_ratio": 0.8653846153846154,
+      "no_speech_prob": 0.005520220845937729,
+      "confidence": 0.935,
+      "words": [
+        {
+          "text": "the",
+          "start": 0.08,
+          "end": 0.2,
+          "confidence": 0.584
+        },
+        {
+          "text": "deregulation",
+          "start": 0.2,
+          "end": 0.88,
+          "confidence": 0.993
+        },
+        {
+          "text": "of",
+          "start": 0.88,
+          "end": 1.02,
+          "confidence": 0.996
+        },
+        {
+          "text": "the",
+          "start": 1.02,
+          "end": 1.12,
+          "confidence": 0.99
+        },
+        {
+          "text": "real",
+          "start": 1.12,
+          "end": 1.28,
+          "confidence": 0.994
+        },
+        {
+          "text": "estate",
+          "start": 1.28,
+          "end": 1.54,
+          "confidence": 0.982
+        },
+        {
+          "text": "industry.",
+          "start": 1.54,
+          "end": 2.04,
+          "confidence": 0.995
+        }
+      ]
+    }
+  ],
+  "language": "en",
+  "speech_activity": [
+    {
+      "start": 0.0,
+      "end": 2.4555
+    }
+  ]
+}

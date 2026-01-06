@@ -1,0 +1,63 @@
+{
+  "text": " Comparative market analysis, CMA.",
+  "segments": [
+    {
+      "id": 0,
+      "seek": 0,
+      "start": 0.08,
+      "end": 1.98,
+      "text": " Comparative market analysis, CMA.",
+      "tokens": [
+        50364,
+        2432,
+        2181,
+        1166,
+        2142,
+        5215,
+        11,
+        383,
+        9998,
+        13,
+        50464
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.4214114348093669,
+      "compression_ratio": 0.8048780487804879,
+      "no_speech_prob": 0.11686170846223831,
+      "confidence": 0.826,
+      "words": [
+        {
+          "text": "Comparative",
+          "start": 0.08,
+          "end": 0.46,
+          "confidence": 0.737
+        },
+        {
+          "text": "market",
+          "start": 0.46,
+          "end": 0.74,
+          "confidence": 0.789
+        },
+        {
+          "text": "analysis,",
+          "start": 0.74,
+          "end": 1.26,
+          "confidence": 0.995
+        },
+        {
+          "text": "CMA.",
+          "start": 1.54,
+          "end": 1.98,
+          "confidence": 0.912
+        }
+      ]
+    }
+  ],
+  "language": "en",
+  "speech_activity": [
+    {
+      "start": 0.0,
+      "end": 2.40325
+    }
+  ]
+}

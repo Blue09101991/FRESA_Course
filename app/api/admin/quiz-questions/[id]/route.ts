@@ -66,7 +66,7 @@ export async function PUT(
 
     const { id } = await params
     const body = await request.json()
-    const { question, options, correctAnswer, explanation, chapterId, quizType, order, audioUrl, timestampsUrl, explanationAudioUrl, explanationTimestampsUrl, correctExplanationAudioUrl, correctExplanationTimestampsUrl, incorrectExplanationAudioUrls, incorrectExplanationTimestampsUrls } = body
+    const { question, options, correctAnswer, explanation, chapterId, quizType, order, audioUrl, timestampsUrl, questionAudioUrl, questionTimestampsUrl, optionAudioUrls, optionTimestampsUrls, explanationAudioUrl, explanationTimestampsUrl, correctExplanationAudioUrl, correctExplanationTimestampsUrl, incorrectExplanationAudioUrls, incorrectExplanationTimestampsUrls } = body
 
     const updatedQuestion = await prisma.quizQuestion.update({
       where: { id },
@@ -80,6 +80,10 @@ export async function PUT(
         order,
         audioUrl: audioUrl !== undefined ? audioUrl : undefined,
         timestampsUrl: timestampsUrl !== undefined ? timestampsUrl : undefined,
+        questionAudioUrl: questionAudioUrl !== undefined ? questionAudioUrl : undefined,
+        questionTimestampsUrl: questionTimestampsUrl !== undefined ? questionTimestampsUrl : undefined,
+        optionAudioUrls: optionAudioUrls !== undefined ? optionAudioUrls : undefined,
+        optionTimestampsUrls: optionTimestampsUrls !== undefined ? optionTimestampsUrls : undefined,
         explanationAudioUrl: explanationAudioUrl !== undefined ? explanationAudioUrl : undefined,
         explanationTimestampsUrl: explanationTimestampsUrl !== undefined ? explanationTimestampsUrl : undefined,
         correctExplanationAudioUrl: correctExplanationAudioUrl !== undefined ? correctExplanationAudioUrl : undefined,

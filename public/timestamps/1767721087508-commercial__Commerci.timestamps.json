@@ -1,0 +1,162 @@
+{
+  "text": " Commercial. Commercial property income-producing property like retail centers and offices is one of the five recognized sales specialties.",
+  "segments": [
+    {
+      "id": 0,
+      "seek": 0,
+      "start": 0.08,
+      "end": 8.06,
+      "text": " Commercial. Commercial property income-producing property like retail centers and offices is one of the five recognized sales specialties.",
+      "tokens": [
+        50364,
+        47171,
+        13,
+        47171,
+        4707,
+        5742,
+        12,
+        14314,
+        2175,
+        4707,
+        411,
+        10800,
+        10898,
+        293,
+        14434,
+        307,
+        472,
+        295,
+        264,
+        1732,
+        9823,
+        5763,
+        2121,
+        6097,
+        13,
+        50764
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.3507843724003545,
+      "compression_ratio": 1.3142857142857143,
+      "no_speech_prob": 0.008422224782407284,
+      "confidence": 0.784,
+      "words": [
+        {
+          "text": "Commercial.",
+          "start": 0.08,
+          "end": 0.5,
+          "confidence": 0.955
+        },
+        {
+          "text": "Commercial",
+          "start": 1.0,
+          "end": 1.78,
+          "confidence": 0.514
+        },
+        {
+          "text": "property",
+          "start": 1.78,
+          "end": 2.34,
+          "confidence": 0.903
+        },
+        {
+          "text": "income-producing",
+          "start": 2.34,
+          "end": 3.36,
+          "confidence": 0.702
+        },
+        {
+          "text": "property",
+          "start": 3.36,
+          "end": 3.76,
+          "confidence": 0.982
+        },
+        {
+          "text": "like",
+          "start": 3.76,
+          "end": 4.02,
+          "confidence": 0.863
+        },
+        {
+          "text": "retail",
+          "start": 4.02,
+          "end": 4.4,
+          "confidence": 0.939
+        },
+        {
+          "text": "centers",
+          "start": 4.4,
+          "end": 4.8,
+          "confidence": 0.823
+        },
+        {
+          "text": "and",
+          "start": 4.8,
+          "end": 5.02,
+          "confidence": 0.85
+        },
+        {
+          "text": "offices",
+          "start": 5.02,
+          "end": 5.42,
+          "confidence": 0.966
+        },
+        {
+          "text": "is",
+          "start": 5.42,
+          "end": 5.78,
+          "confidence": 0.556
+        },
+        {
+          "text": "one",
+          "start": 5.78,
+          "end": 5.94,
+          "confidence": 0.692
+        },
+        {
+          "text": "of",
+          "start": 5.94,
+          "end": 6.04,
+          "confidence": 0.721
+        },
+        {
+          "text": "the",
+          "start": 6.04,
+          "end": 6.16,
+          "confidence": 0.623
+        },
+        {
+          "text": "five",
+          "start": 6.16,
+          "end": 6.44,
+          "confidence": 0.902
+        },
+        {
+          "text": "recognized",
+          "start": 6.44,
+          "end": 6.98,
+          "confidence": 0.772
+        },
+        {
+          "text": "sales",
+          "start": 6.98,
+          "end": 7.36,
+          "confidence": 0.842
+        },
+        {
+          "text": "specialties.",
+          "start": 7.36,
+          "end": 8.06,
+          "confidence": 0.903
+        }
+      ]
+    }
+  ],
+  "language": "en",
+  "speech_activity": [
+    {
+      "start": 0.0,
+      "end": 8.5943125
+    }
+  ]
+}

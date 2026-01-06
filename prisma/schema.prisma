@@ -85,8 +85,12 @@ model QuizQuestion {
   options       String[] // Array of answer options
   correctAnswer Int      // Index of correct answer (0-based)
   explanation   Json     // { correct: string, incorrect: string[] }
-  audioUrl      String?  // Audio URL for question + options
-  timestampsUrl String?  // Timestamps URL for question + options
+  audioUrl      String?  // Audio URL for question + options (deprecated - use questionAudioUrl and optionAudioUrls)
+  timestampsUrl String?  // Timestamps URL for question + options (deprecated - use questionTimestampsUrl and optionTimestampsUrls)
+  questionAudioUrl String? // Audio URL for question text only
+  questionTimestampsUrl String? // Timestamps URL for question text only
+  optionAudioUrls Json? // Array of audio URLs for each option [string, string, ...]
+  optionTimestampsUrls Json? // Array of timestamps URLs for each option [string, string, ...]
   explanationAudioUrl String? // Audio URL for explanation (deprecated - use correctExplanationAudioUrl)
   explanationTimestampsUrl String? // Timestamps URL for explanation (deprecated - use correctExplanationTimestampsUrl)
   correctExplanationAudioUrl String? // Audio URL for correct explanation

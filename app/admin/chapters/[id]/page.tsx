@@ -28,6 +28,10 @@ interface QuizQuestion {
   chapterId?: string | null;
   audioUrl?: string | null;
   timestampsUrl?: string | null;
+  questionAudioUrl?: string | null;
+  questionTimestampsUrl?: string | null;
+  optionAudioUrls?: string[] | null;
+  optionTimestampsUrls?: string[] | null;
   explanationAudioUrl?: string | null;
   explanationTimestampsUrl?: string | null;
   correctExplanationAudioUrl?: string | null;
@@ -339,7 +343,31 @@ export default function ChapterEditPage() {
     }
   };
 
+  const [generatingQuestionAudio, setGeneratingQuestionAudio] = useState(false);
   const [generatingQuizAudio, setGeneratingQuizAudio] = useState(false);
+  const [quizGenerationProgress, setQuizGenerationProgress] = useState<{
+    generatingQuestion: boolean;
+    generatingOptions: number[]; // Array of option indices being generated
+    generatingCorrectExplanation: boolean;
+    generatingIncorrectExplanations: number[]; // Array of incorrect explanation indices being generated
+    completed: {
+      question: boolean;
+      options: boolean[];
+      correctExplanation: boolean;
+      incorrectExplanations: boolean[];
+    };
+  }>({
+    generatingQuestion: false,
+    generatingOptions: [],
+    generatingCorrectExplanation: false,
+    generatingIncorrectExplanations: [],
+    completed: {
+      question: false,
+      options: [],
+      correctExplanation: false,
+      incorrectExplanations: [],
+    },
+  });
   const [generatingCorrectExplanationAudio, setGeneratingCorrectExplanationAudio] = useState(false);
   const [generatingIncorrectExplanationAudio, setGeneratingIncorrectExplanationAudio] = useState<number | null>(null);
   const [generatingAllAudio, setGeneratingAllAudio] = useState(false);
@@ -354,6 +382,69 @@ export default function ChapterEditPage() {
     order: 0,
   });
 
+  const handleGenerateQuestionAudio = async () => {
+    if (!questionForm.question || questionForm.question.trim().length === 0) {
+      alert("Please enter a question first");
+      return;
+    }
+
+    try {
+      setGeneratingQuestionAudio(true);
+      setQuizGenerationProgress(prev => ({
+        ...prev,
+        generatingQuestion: true,
+      }));
+      
+      const token = getToken();
+      
+      // Generate audio for question only
+      const questionText = questionForm.question.trim();
+      const response = await fetch('/api/admin/generate-audio', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ 
+          text: questionText, 
+          type: 'both',
+          context: 'quiz' // Use woman's voice for quiz
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setQuestionForm({
+          ...questionForm,
+          questionAudioUrl: data.audioUrl,
+          questionTimestampsUrl: data.timestampsUrl,
+        });
+        setQuizGenerationProgress(prev => ({
+          ...prev,
+          generatingQuestion: false,
+          completed: { ...prev.completed, question: true },
+        }));
+        alert(`✅ Question audio and timestamps generated successfully!\n\nAudio: ${data.audioUrl}\nTimestamps: ${data.timestampsUrl}`);
+      } else {
+        const error = await response.json();
+        setQuizGenerationProgress(prev => ({
+          ...prev,
+          generatingQuestion: false,
+        }));
+        alert(`❌ Generation failed: ${error.error || 'Unknown error'}`);
+      }
+    } catch (err) {
+      console.error('Error generating question audio:', err);
+      setQuizGenerationProgress(prev => ({
+        ...prev,
+        generatingQuestion: false,
+      }));
+      alert('Failed to generate question audio');
+    } finally {
+      setGeneratingQuestionAudio(false);
+    }
+  };
+
   const handleGenerateQuizAudio = async () => {
     if (!questionForm.question || questionForm.question.trim().length === 0) {
       alert("Please enter a question first");
@@ -366,45 +457,159 @@ export default function ChapterEditPage() {
 
     try {
       setGeneratingQuizAudio(true);
+      setQuizGenerationProgress({
+        generatingQuestion: true,
+        generatingOptions: [],
+        generatingCorrectExplanation: false,
+        generatingIncorrectExplanations: [],
+        completed: {
+          question: false,
+          options: new Array(questionForm.options.length).fill(false),
+          correctExplanation: false,
+          incorrectExplanations: [],
+        },
+      });
+      
       const token = getToken();
+      const results: string[] = [];
+      let successCount = 0;
+      let failCount = 0;
       
-      // Combine question and all options (without "Option 1:", "Option 2:", etc.)
+      // Generate audio for question only
       const questionText = questionForm.question.trim();
-      const optionsText = questionForm.options
-        .map((opt) => opt.trim())
-        .join(". ");
-      const fullText = `${questionText}. ${optionsText}`;
-      
-      const response = await fetch('/api/admin/generate-audio', {
+      const questionResponse = await fetch('/api/admin/generate-audio', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ 
-          text: fullText, 
+          text: questionText, 
           type: 'both',
           context: 'quiz' // Use woman's voice for quiz
         }),
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        setQuestionForm({
-          ...questionForm,
-          audioUrl: data.audioUrl,
-          timestampsUrl: data.timestampsUrl,
-        });
-        alert(`✅ Question audio and timestamps generated successfully!\n\nAudio: ${data.audioUrl}\nTimestamps: ${data.timestampsUrl}`);
+      let questionAudioUrl: string | null = null;
+      let questionTimestampsUrl: string | null = null;
+
+      if (questionResponse.ok) {
+        const questionData = await questionResponse.json();
+        questionAudioUrl = questionData.audioUrl;
+        questionTimestampsUrl = questionData.timestampsUrl;
+        results.push(`✅ Question: ${questionData.audioUrl}`);
+        successCount++;
+        setQuizGenerationProgress(prev => ({
+          ...prev,
+          generatingQuestion: false,
+          completed: { ...prev.completed, question: true },
+        }));
       } else {
-        const error = await response.json();
-        alert(`❌ Generation failed: ${error.error || 'Unknown error'}`);
+        const error = await questionResponse.json();
+        results.push(`❌ Question: ${error.error || 'Unknown error'}`);
+        failCount++;
+        setQuizGenerationProgress(prev => ({
+          ...prev,
+          generatingQuestion: false,
+        }));
       }
+
+      // Generate audio for each option separately
+      const optionAudioUrls: string[] = [];
+      const optionTimestampsUrls: string[] = [];
+      
+      for (let optIdx = 0; optIdx < questionForm.options.length; optIdx++) {
+        const optionText = questionForm.options[optIdx]?.trim();
+        if (!optionText) {
+          optionAudioUrls.push("");
+          optionTimestampsUrls.push("");
+          setQuizGenerationProgress(prev => ({
+            ...prev,
+            completed: {
+              ...prev.completed,
+              options: prev.completed.options.map((done, idx) => idx === optIdx ? true : done),
+            },
+          }));
+          continue;
+        }
+
+        // Update progress to show this option is being generated
+        setQuizGenerationProgress(prev => ({
+          ...prev,
+          generatingOptions: [...prev.generatingOptions, optIdx],
+        }));
+
+        try {
+          const optionResponse = await fetch('/api/admin/generate-audio', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ 
+              text: optionText, 
+              type: 'both',
+              context: 'quiz' // Use woman's voice for quiz
+            }),
+          });
+
+          if (optionResponse.ok) {
+            const optionData = await optionResponse.json();
+            optionAudioUrls.push(optionData.audioUrl);
+            optionTimestampsUrls.push(optionData.timestampsUrl);
+            results.push(`✅ Option ${optIdx + 1}: ${optionData.audioUrl}`);
+            successCount++;
+          } else {
+            const error = await optionResponse.json();
+            optionAudioUrls.push("");
+            optionTimestampsUrls.push("");
+            results.push(`❌ Option ${optIdx + 1}: ${error.error || 'Unknown error'}`);
+            failCount++;
+          }
+        } catch (err: any) {
+          optionAudioUrls.push("");
+          optionTimestampsUrls.push("");
+          results.push(`❌ Option ${optIdx + 1}: ${err.message || err}`);
+          failCount++;
+        } finally {
+          // Update progress to show this option is completed
+          setQuizGenerationProgress(prev => ({
+            ...prev,
+            generatingOptions: prev.generatingOptions.filter(idx => idx !== optIdx),
+            completed: {
+              ...prev.completed,
+              options: prev.completed.options.map((done, idx) => idx === optIdx ? true : done),
+            },
+          }));
+        }
+      }
+
+      setQuestionForm({
+        ...questionForm,
+        questionAudioUrl: questionAudioUrl || undefined,
+        questionTimestampsUrl: questionTimestampsUrl || undefined,
+        optionAudioUrls: optionAudioUrls,
+        optionTimestampsUrls: optionTimestampsUrls,
+      });
+      
+      alert(`✅ Quiz audio generation complete!\n\n✅ Success: ${successCount}\n❌ Failed: ${failCount}\n\n${results.join('\n')}`);
     } catch (err) {
       console.error('Error generating quiz audio:', err);
       alert('Failed to generate quiz audio');
     } finally {
       setGeneratingQuizAudio(false);
+      setQuizGenerationProgress({
+        generatingQuestion: false,
+        generatingOptions: [],
+        generatingCorrectExplanation: false,
+        generatingIncorrectExplanations: [],
+        completed: {
+          question: false,
+          options: [],
+          correctExplanation: false,
+          incorrectExplanations: [],
+        },
+      });
     }
   };
 
@@ -416,6 +621,11 @@ export default function ChapterEditPage() {
 
     try {
       setGeneratingCorrectExplanationAudio(true);
+      setQuizGenerationProgress(prev => ({
+        ...prev,
+        generatingCorrectExplanation: true,
+      }));
+      
       const token = getToken();
       
       // Use only the explanation text, no title
@@ -441,13 +651,26 @@ export default function ChapterEditPage() {
           correctExplanationAudioUrl: data.audioUrl,
           correctExplanationTimestampsUrl: data.timestampsUrl,
         });
+        setQuizGenerationProgress(prev => ({
+          ...prev,
+          generatingCorrectExplanation: false,
+          completed: { ...prev.completed, correctExplanation: true },
+        }));
         alert(`✅ Correct explanation audio and timestamps generated successfully!\n\nAudio: ${data.audioUrl}\nTimestamps: ${data.timestampsUrl}`);
       } else {
         const error = await response.json();
+        setQuizGenerationProgress(prev => ({
+          ...prev,
+          generatingCorrectExplanation: false,
+        }));
         alert(`❌ Generation failed: ${error.error || 'Unknown error'}`);
       }
     } catch (err) {
       console.error('Error generating correct explanation audio:', err);
+      setQuizGenerationProgress(prev => ({
+        ...prev,
+        generatingCorrectExplanation: false,
+      }));
       alert('Failed to generate correct explanation audio');
     } finally {
       setGeneratingCorrectExplanationAudio(false);
@@ -462,6 +685,11 @@ export default function ChapterEditPage() {
 
     try {
       setGeneratingIncorrectExplanationAudio(index);
+      setQuizGenerationProgress(prev => ({
+        ...prev,
+        generatingIncorrectExplanations: [...prev.generatingIncorrectExplanations, index],
+      }));
+      
       const token = getToken();
       
       // Use only the explanation text, no title
@@ -501,13 +729,29 @@ export default function ChapterEditPage() {
           incorrectExplanationAudioUrls: currentIncorrectAudioUrls,
           incorrectExplanationTimestampsUrls: currentIncorrectTimestampsUrls,
         });
+        setQuizGenerationProgress(prev => ({
+          ...prev,
+          generatingIncorrectExplanations: prev.generatingIncorrectExplanations.filter(idx => idx !== index),
+          completed: {
+            ...prev.completed,
+            incorrectExplanations: prev.completed.incorrectExplanations.map((done, idx) => idx === index ? true : done),
+          },
+        }));
         alert(`✅ Incorrect explanation audio and timestamps generated successfully for option ${index + 1}!\n\nAudio: ${data.audioUrl}\nTimestamps: ${data.timestampsUrl}`);
       } else {
         const error = await response.json();
+        setQuizGenerationProgress(prev => ({
+          ...prev,
+          generatingIncorrectExplanations: prev.generatingIncorrectExplanations.filter(idx => idx !== index),
+        }));
         alert(`❌ Generation failed: ${error.error || 'Unknown error'}`);
       }
     } catch (err) {
       console.error('Error generating incorrect explanation audio:', err);
+      setQuizGenerationProgress(prev => ({
+        ...prev,
+        generatingIncorrectExplanations: prev.generatingIncorrectExplanations.filter(idx => idx !== index),
+      }));
       alert('Failed to generate incorrect explanation audio');
     } finally {
       setGeneratingIncorrectExplanationAudio(null);
@@ -534,16 +778,26 @@ export default function ChapterEditPage() {
 
     try {
       setGeneratingAllAudio(true);
+      setQuizGenerationProgress({
+        generatingQuestion: true,
+        generatingOptions: [],
+        generatingCorrectExplanation: false,
+        generatingIncorrectExplanations: [],
+        completed: {
+          question: false,
+          options: new Array(questionForm.options.length).fill(false),
+          correctExplanation: false,
+          incorrectExplanations: new Array(questionForm.explanation?.incorrect?.length || 0).fill(false),
+        },
+      });
+      
       const token = getToken();
       const results: string[] = [];
 
-      // 1. Generate question + options audio (without "Option 1:", "Option 2:", etc.)
+      // 1. Generate separate audio for question and each option
       const questionText = questionForm.question.trim();
-      const optionsText = questionForm.options
-        .map((opt) => opt.trim())
-        .join(". ");
-      const fullQuestionText = `${questionText}. ${optionsText}`;
       
+      // Generate audio for question only
       try {
         const questionResponse = await fetch('/api/admin/generate-audio', {
           method: 'POST',
@@ -552,7 +806,7 @@ export default function ChapterEditPage() {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ 
-            text: fullQuestionText, 
+            text: questionText, 
             type: 'both',
             context: 'quiz' // Use woman's voice for quiz
           }),
@@ -560,22 +814,114 @@ export default function ChapterEditPage() {
 
         if (questionResponse.ok) {
           const questionData = await questionResponse.json();
-          results.push(`✅ Question audio: ${questionData.audioUrl}`);
+          results.push(`✅ Question: ${questionData.audioUrl}`);
           setQuestionForm(prev => ({
             ...prev,
-            audioUrl: questionData.audioUrl,
-            timestampsUrl: questionData.timestampsUrl,
+            questionAudioUrl: questionData.audioUrl,
+            questionTimestampsUrl: questionData.timestampsUrl,
+          }));
+          setQuizGenerationProgress(prev => ({
+            ...prev,
+            generatingQuestion: false,
+            completed: { ...prev.completed, question: true },
           }));
         } else {
           const error = await questionResponse.json();
-          results.push(`❌ Question audio failed: ${error.error || 'Unknown error'}`);
+          results.push(`❌ Question failed: ${error.error || 'Unknown error'}`);
+          setQuizGenerationProgress(prev => ({
+            ...prev,
+            generatingQuestion: false,
+          }));
         }
       } catch (err) {
-        results.push(`❌ Question audio error: ${err}`);
+        results.push(`❌ Question error: ${err}`);
+        setQuizGenerationProgress(prev => ({
+          ...prev,
+          generatingQuestion: false,
+        }));
       }
+
+      // Generate audio for each option separately
+      const optionAudioUrls: string[] = [];
+      const optionTimestampsUrls: string[] = [];
+      
+      for (let optIdx = 0; optIdx < questionForm.options.length; optIdx++) {
+        const optionText = questionForm.options[optIdx]?.trim();
+        if (!optionText) {
+          optionAudioUrls.push("");
+          optionTimestampsUrls.push("");
+          setQuizGenerationProgress(prev => ({
+            ...prev,
+            completed: {
+              ...prev.completed,
+              options: prev.completed.options.map((done, idx) => idx === optIdx ? true : done),
+            },
+          }));
+          continue;
+        }
+
+        // Update progress to show this option is being generated
+        setQuizGenerationProgress(prev => ({
+          ...prev,
+          generatingOptions: [...prev.generatingOptions, optIdx],
+        }));
+
+        try {
+          const optionResponse = await fetch('/api/admin/generate-audio', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ 
+              text: optionText, 
+              type: 'both',
+              context: 'quiz' // Use woman's voice for quiz
+            }),
+          });
+
+          if (optionResponse.ok) {
+            const optionData = await optionResponse.json();
+            optionAudioUrls.push(optionData.audioUrl);
+            optionTimestampsUrls.push(optionData.timestampsUrl);
+            results.push(`✅ Option ${optIdx + 1}: ${optionData.audioUrl}`);
+          } else {
+            const error = await optionResponse.json();
+            optionAudioUrls.push("");
+            optionTimestampsUrls.push("");
+            results.push(`❌ Option ${optIdx + 1} failed: ${error.error || 'Unknown error'}`);
+          }
+        } catch (err) {
+          optionAudioUrls.push("");
+          optionTimestampsUrls.push("");
+          results.push(`❌ Option ${optIdx + 1} error: ${err}`);
+        } finally {
+          // Update progress to show this option is completed
+          setQuizGenerationProgress(prev => ({
+            ...prev,
+            generatingOptions: prev.generatingOptions.filter(idx => idx !== optIdx),
+            completed: {
+              ...prev.completed,
+              options: prev.completed.options.map((done, idx) => idx === optIdx ? true : done),
+            },
+          }));
+        }
+      }
+
+      // Update form with option audio URLs
+      setQuestionForm(prev => ({
+        ...prev,
+        optionAudioUrls: optionAudioUrls,
+        optionTimestampsUrls: optionTimestampsUrls,
+      }));
 
       // 2. Generate correct explanation audio
       const correctText = questionForm.explanation.correct.trim();
+      setQuizGenerationProgress(prev => ({
+        ...prev,
+        generatingCorrectExplanation: true,
+      }));
+      
       try {
         const correctResponse = await fetch('/api/admin/generate-audio', {
           method: 'POST',
@@ -598,12 +944,25 @@ export default function ChapterEditPage() {
             correctExplanationAudioUrl: correctData.audioUrl,
             correctExplanationTimestampsUrl: correctData.timestampsUrl,
           }));
+          setQuizGenerationProgress(prev => ({
+            ...prev,
+            generatingCorrectExplanation: false,
+            completed: { ...prev.completed, correctExplanation: true },
+          }));
         } else {
           const error = await correctResponse.json();
           results.push(`❌ Correct explanation audio failed: ${error.error || 'Unknown error'}`);
+          setQuizGenerationProgress(prev => ({
+            ...prev,
+            generatingCorrectExplanation: false,
+          }));
         }
       } catch (err) {
         results.push(`❌ Correct explanation audio error: ${err}`);
+        setQuizGenerationProgress(prev => ({
+          ...prev,
+          generatingCorrectExplanation: false,
+        }));
       }
 
       // 3. Generate incorrect explanation audio for each option
@@ -616,8 +975,21 @@ export default function ChapterEditPage() {
         if (!incorrectText) {
           incorrectAudioUrls.push("");
           incorrectTimestampsUrls.push("");
+          setQuizGenerationProgress(prev => ({
+            ...prev,
+            completed: {
+              ...prev.completed,
+              incorrectExplanations: prev.completed.incorrectExplanations.map((done, i) => i === idx ? true : done),
+            },
+          }));
           continue;
         }
+
+        // Update progress to show this incorrect explanation is being generated
+        setQuizGenerationProgress(prev => ({
+          ...prev,
+          generatingIncorrectExplanations: [...prev.generatingIncorrectExplanations, idx],
+        }));
 
         try {
           const incorrectResponse = await fetch('/api/admin/generate-audio', {
@@ -648,6 +1020,16 @@ export default function ChapterEditPage() {
           incorrectAudioUrls.push("");
           incorrectTimestampsUrls.push("");
           results.push(`❌ Option ${idx + 1} incorrect explanation audio error: ${err}`);
+        } finally {
+          // Update progress to show this incorrect explanation is completed
+          setQuizGenerationProgress(prev => ({
+            ...prev,
+            generatingIncorrectExplanations: prev.generatingIncorrectExplanations.filter(i => i !== idx),
+            completed: {
+              ...prev.completed,
+              incorrectExplanations: prev.completed.incorrectExplanations.map((done, i) => i === idx ? true : done),
+            },
+          }));
         }
       }
 
@@ -667,6 +1049,18 @@ export default function ChapterEditPage() {
       alert('Failed to generate all audio');
     } finally {
       setGeneratingAllAudio(false);
+      setQuizGenerationProgress({
+        generatingQuestion: false,
+        generatingOptions: [],
+        generatingCorrectExplanation: false,
+        generatingIncorrectExplanations: [],
+        completed: {
+          question: false,
+          options: [],
+          correctExplanation: false,
+          incorrectExplanations: [],
+        },
+      });
     }
   };
 
@@ -732,6 +1126,19 @@ export default function ChapterEditPage() {
     setEditingQuestion(question.id);
     setQuestionForm(question);
     setShowQuestionForm(true);
+    // Initialize progress state when editing a question
+    setQuizGenerationProgress({
+      generatingQuestion: false,
+      generatingOptions: [],
+      generatingCorrectExplanation: false,
+      generatingIncorrectExplanations: [],
+      completed: {
+        question: !!question.questionAudioUrl,
+        options: (question.optionAudioUrls as string[] || []).map(url => !!url),
+        correctExplanation: !!question.correctExplanationAudioUrl,
+        incorrectExplanations: ((question.incorrectExplanationAudioUrls as string[] || [])).map(url => !!url),
+      },
+    });
   };
 
   const [objectiveForm, setObjectiveForm] = useState<Partial<LearningObjective>>({
@@ -859,7 +1266,7 @@ export default function ChapterEditPage() {
     }
   };
 
-  // Generate audio for all Learning Objectives combined
+  // Generate audio for each Learning Objective separately
   const handleGenerateObjectivesAudio = async () => {
     if (learningObjectives.length === 0) {
       alert("Please add learning objectives first");
@@ -869,52 +1276,67 @@ export default function ChapterEditPage() {
     try {
       setGeneratingObjectivesAudio(true);
       const token = getToken();
+      const results: string[] = [];
+      let successCount = 0;
+      let failCount = 0;
       
-      // Combine all objectives into one text (without numbers)
-      const combinedText = learningObjectives.map((obj) => obj.text).join(". ");
-      
-      const response = await fetch('/api/admin/generate-audio', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ 
-          text: combinedText, 
-          type: 'both',
-          context: 'section' // Use man's voice for objectives
-        }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
+      // Generate audio for each objective separately
+      for (let i = 0; i < learningObjectives.length; i++) {
+        const objective = learningObjectives[i];
         
-        // Update the first objective with the combined audio (as per chapter-1 page logic)
-        if (learningObjectives.length > 0) {
-          const firstObjective = learningObjectives[0];
-          const token = getToken();
-          
-          await fetch(`/api/admin/objectives/${firstObjective.id}`, {
-            method: 'PUT',
+        try {
+          const response = await fetch('/api/admin/generate-audio', {
+            method: 'POST',
             headers: {
               'Content-Type': 'application/json',
               Authorization: `Bearer ${token}`,
             },
-            body: JSON.stringify({
-              text: firstObjective.text,
-              order: firstObjective.order,
-              audioUrl: data.audioUrl,
-              timestampsUrl: data.timestampsUrl,
+            body: JSON.stringify({ 
+              text: objective.text, 
+              type: 'both',
+              context: 'section' // Use man's voice for objectives
             }),
           });
+
+          if (response.ok) {
+            const data = await response.json();
+            
+            // Update this objective with its own audio
+            const updateResponse = await fetch(`/api/admin/objectives/${objective.id}`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                text: objective.text,
+                order: objective.order,
+                audioUrl: data.audioUrl,
+                timestampsUrl: data.timestampsUrl,
+              }),
+            });
+
+            if (updateResponse.ok) {
+              results.push(`✅ Objective ${i + 1}: ${data.audioUrl}`);
+              successCount++;
+            } else {
+              const updateError = await updateResponse.json();
+              results.push(`❌ Objective ${i + 1}: Generated but failed to update - ${updateError.error || 'Unknown error'}`);
+              failCount++;
+            }
+          } else {
+            const error = await response.json();
+            results.push(`❌ Objective ${i + 1}: ${error.error || 'Unknown error'}`);
+            failCount++;
+          }
+        } catch (err: any) {
+          results.push(`❌ Objective ${i + 1}: ${err.message || err}`);
+          failCount++;
         }
-        
-        await fetchChapter();
-        alert(`✅ Learning Objectives audio and timestamps generated successfully!\n\nAudio: ${data.audioUrl}\nTimestamps: ${data.timestampsUrl}\n\nThis audio will play for all objectives combined.`);
-      } else {
-        const error = await response.json();
-        alert(`❌ Generation failed: ${error.error || 'Unknown error'}`);
       }
+      
+      await fetchChapter();
+      alert(`✅ Learning Objectives audio generation complete!\n\n✅ Success: ${successCount}\n❌ Failed: ${failCount}\n\n${results.join('\n')}`);
     } catch (err) {
       console.error('Error generating objectives audio:', err);
       alert('Failed to generate objectives audio');
@@ -923,7 +1345,7 @@ export default function ChapterEditPage() {
     }
   };
 
-  // Generate audio for all Key Terms combined
+  // Generate audio for each Key Term separately
   const handleGenerateKeyTermsAudio = async () => {
     if (keyTerms.length === 0) {
       alert("Please add key terms first");
@@ -933,52 +1355,67 @@ export default function ChapterEditPage() {
     try {
       setGeneratingKeyTermsAudio(true);
       const token = getToken();
+      const results: string[] = [];
+      let successCount = 0;
+      let failCount = 0;
       
-      // Combine all key terms into one text
-      const combinedText = keyTerms.map((term) => term.term).join(". ");
-      
-      const response = await fetch('/api/admin/generate-audio', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ 
-          text: combinedText, 
-          type: 'both',
-          context: 'section' // Use man's voice for key terms
-        }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
+      // Generate audio for each key term separately
+      for (let i = 0; i < keyTerms.length; i++) {
+        const keyTerm = keyTerms[i];
         
-        // Update the first key term with the combined audio (as per chapter-1 page logic)
-        if (keyTerms.length > 0) {
-          const firstKeyTerm = keyTerms[0];
-          const token = getToken();
-          
-          await fetch(`/api/admin/key-terms/${firstKeyTerm.id}`, {
-            method: 'PUT',
+        try {
+          const response = await fetch('/api/admin/generate-audio', {
+            method: 'POST',
             headers: {
               'Content-Type': 'application/json',
               Authorization: `Bearer ${token}`,
             },
-            body: JSON.stringify({
-              term: firstKeyTerm.term,
-              order: firstKeyTerm.order,
-              audioUrl: data.audioUrl,
-              timestampsUrl: data.timestampsUrl,
+            body: JSON.stringify({ 
+              text: keyTerm.term, 
+              type: 'both',
+              context: 'section' // Use man's voice for key terms
             }),
           });
+
+          if (response.ok) {
+            const data = await response.json();
+            
+            // Update this key term with its own audio
+            const updateResponse = await fetch(`/api/admin/key-terms/${keyTerm.id}`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                term: keyTerm.term,
+                order: keyTerm.order,
+                audioUrl: data.audioUrl,
+                timestampsUrl: data.timestampsUrl,
+              }),
+            });
+
+            if (updateResponse.ok) {
+              results.push(`✅ Key Term ${i + 1}: ${data.audioUrl}`);
+              successCount++;
+            } else {
+              const updateError = await updateResponse.json();
+              results.push(`❌ Key Term ${i + 1}: Generated but failed to update - ${updateError.error || 'Unknown error'}`);
+              failCount++;
+            }
+          } else {
+            const error = await response.json();
+            results.push(`❌ Key Term ${i + 1}: ${error.error || 'Unknown error'}`);
+            failCount++;
+          }
+        } catch (err: any) {
+          results.push(`❌ Key Term ${i + 1}: ${err.message || err}`);
+          failCount++;
         }
-        
-        await fetchChapter();
-        alert(`✅ Key Terms audio and timestamps generated successfully!\n\nAudio: ${data.audioUrl}\nTimestamps: ${data.timestampsUrl}\n\nThis audio will play for all key terms combined.`);
-      } else {
-        const error = await response.json();
-        alert(`❌ Generation failed: ${error.error || 'Unknown error'}`);
       }
+      
+      await fetchChapter();
+      alert(`✅ Key Terms audio generation complete!\n\n✅ Success: ${successCount}\n❌ Failed: ${failCount}\n\n${results.join('\n')}`);
     } catch (err) {
       console.error('Error generating key terms audio:', err);
       alert('Failed to generate key terms audio');
@@ -1061,114 +1498,111 @@ export default function ChapterEditPage() {
         }
       }
 
-      // 2. Generate audio for all learning objectives (combined)
+      // 2. Generate audio for each learning objective separately
       if (learningObjectives.length > 0) {
-        try {
-          // Combine all objectives into one text (without numbers)
-          const combinedText = learningObjectives.map((obj) => obj.text).join(". ");
-          const response = await fetch('/api/admin/generate-audio', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-              text: combinedText,
-              type: 'both',
-              context: 'section' // Use man's voice for objectives
-            }),
-          });
+        for (let i = 0; i < learningObjectives.length; i++) {
+          const objective = learningObjectives[i];
+          try {
+            const response = await fetch('/api/admin/generate-audio', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                text: objective.text,
+                type: 'both',
+                context: 'section' // Use man's voice for objectives
+              }),
+            });
 
-          if (response.ok) {
-            const data = await response.json();
-            // Update first objective with combined audio
-            if (learningObjectives.length > 0) {
-              const updateResponse = await fetch(`/api/admin/objectives/${learningObjectives[0].id}`, {
+            if (response.ok) {
+              const data = await response.json();
+              const updateResponse = await fetch(`/api/admin/objectives/${objective.id}`, {
                 method: 'PUT',
                 headers: {
                   'Content-Type': 'application/json',
                   Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify({
-                  text: learningObjectives[0].text,
-                  order: learningObjectives[0].order,
+                  text: objective.text,
+                  order: objective.order,
                   audioUrl: data.audioUrl,
                   timestampsUrl: data.timestampsUrl,
                 }),
               });
 
               if (updateResponse.ok) {
-                results.push(`✅ Learning Objectives (${learningObjectives.length}): ${data.audioUrl}`);
+                results.push(`✅ Objective ${i + 1}: ${data.audioUrl}`);
                 successCount++;
               } else {
                 const updateError = await updateResponse.json();
-                results.push(`❌ Learning Objectives: Generated but failed to update - ${updateError.error || 'Unknown error'}`);
+                results.push(`❌ Objective ${i + 1}: Generated but failed to update - ${updateError.error || 'Unknown error'}`);
                 failCount++;
               }
+            } else {
+              const error = await response.json();
+              results.push(`❌ Objective ${i + 1}: ${error.error || 'Unknown error'}`);
+              failCount++;
             }
-          } else {
-            const error = await response.json();
-            results.push(`❌ Learning Objectives: ${error.error || 'Unknown error'}`);
+          } catch (err: any) {
+            results.push(`❌ Objective ${i + 1}: ${err.message || err}`);
             failCount++;
           }
-        } catch (err: any) {
-          results.push(`❌ Learning Objectives: ${err.message || err}`);
-          failCount++;
         }
       }
 
-      // 3. Generate audio for all key terms (combined)
+      // 3. Generate audio for each key term separately
       if (keyTerms.length > 0) {
-        try {
-          const combinedText = keyTerms.map((term) => term.term).join(". ");
-          const response = await fetch('/api/admin/generate-audio', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-              text: combinedText,
-              type: 'both',
-              context: 'section' // Use man's voice for key terms
-            }),
-          });
+        for (let i = 0; i < keyTerms.length; i++) {
+          const keyTerm = keyTerms[i];
+          try {
+            const response = await fetch('/api/admin/generate-audio', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                text: keyTerm.term,
+                type: 'both',
+                context: 'section' // Use man's voice for key terms
+              }),
+            });
 
-          if (response.ok) {
-            const data = await response.json();
-            // Update first key term with combined audio
-            if (keyTerms.length > 0) {
-              const updateResponse = await fetch(`/api/admin/key-terms/${keyTerms[0].id}`, {
+            if (response.ok) {
+              const data = await response.json();
+              const updateResponse = await fetch(`/api/admin/key-terms/${keyTerm.id}`, {
                 method: 'PUT',
                 headers: {
                   'Content-Type': 'application/json',
                   Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify({
-                  term: keyTerms[0].term,
-                  order: keyTerms[0].order,
+                  term: keyTerm.term,
+                  order: keyTerm.order,
                   audioUrl: data.audioUrl,
                   timestampsUrl: data.timestampsUrl,
                 }),
               });
 
               if (updateResponse.ok) {
-                results.push(`✅ Key Terms (${keyTerms.length}): ${data.audioUrl}`);
+                results.push(`✅ Key Term ${i + 1}: ${data.audioUrl}`);
                 successCount++;
               } else {
                 const updateError = await updateResponse.json();
-                results.push(`❌ Key Terms: Generated but failed to update - ${updateError.error || 'Unknown error'}`);
+                results.push(`❌ Key Term ${i + 1}: Generated but failed to update - ${updateError.error || 'Unknown error'}`);
                 failCount++;
               }
+            } else {
+              const error = await response.json();
+              results.push(`❌ Key Term ${i + 1}: ${error.error || 'Unknown error'}`);
+              failCount++;
             }
-          } else {
-            const error = await response.json();
-            results.push(`❌ Key Terms: ${error.error || 'Unknown error'}`);
+          } catch (err: any) {
+            results.push(`❌ Key Term ${i + 1}: ${err.message || err}`);
             failCount++;
           }
-        } catch (err: any) {
-          results.push(`❌ Key Terms: ${err.message || err}`);
-          failCount++;
         }
       }
 
@@ -1195,12 +1629,11 @@ export default function ChapterEditPage() {
           console.warn(`Failed to fetch latest question data for ${question.id}, using cached data`);
         }
 
-        // Generate question + options audio
+        // Generate separate audio for question and each option
         try {
           const questionText = currentQuestion.question.trim();
-          const optionsText = currentQuestion.options.map((opt: string) => opt.trim()).join(". ");
-          const fullQuestionText = `${questionText}. ${optionsText}`;
-
+          
+          // Generate audio for question only
           const questionResponse = await fetch('/api/admin/generate-audio', {
             method: 'POST',
             headers: {
@@ -1208,48 +1641,108 @@ export default function ChapterEditPage() {
               Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify({
-              text: fullQuestionText,
+              text: questionText,
               type: 'both',
               context: 'quiz' // Use woman's voice for quiz
             }),
           });
 
+          let questionAudioUrl: string | null = null;
+          let questionTimestampsUrl: string | null = null;
+
           if (questionResponse.ok) {
             const questionData = await questionResponse.json();
-            
-            // Update question with audio - only update audio fields
-            const updateResponse = await fetch(`/api/admin/quiz-questions/${currentQuestion.id}`, {
-              method: 'PUT',
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`,
-              },
-              body: JSON.stringify({
-                question: currentQuestion.question,
-                options: currentQuestion.options,
-                correctAnswer: currentQuestion.correctAnswer,
-                explanation: currentQuestion.explanation,
-                chapterId: currentQuestion.chapterId,
-                quizType: currentQuestion.quizType,
-                order: currentQuestion.order,
-                audioUrl: questionData.audioUrl,
-                timestampsUrl: questionData.timestampsUrl,
-              }),
-            });
-
-            if (updateResponse.ok) {
-              results.push(`✅ Question "${currentQuestion.question.substring(0, 30)}...": ${questionData.audioUrl}`);
-              successCount++;
-              // Update currentQuestion with new audio URLs
-              currentQuestion = { ...currentQuestion, audioUrl: questionData.audioUrl, timestampsUrl: questionData.timestampsUrl };
-            } else {
-              const updateError = await updateResponse.json();
-              results.push(`❌ Question "${currentQuestion.question.substring(0, 30)}...": Failed to update - ${updateError.error || 'Unknown error'}`);
-              failCount++;
-            }
+            questionAudioUrl = questionData.audioUrl;
+            questionTimestampsUrl = questionData.timestampsUrl;
+            results.push(`✅ Question Text: ${questionData.audioUrl}`);
+            successCount++;
           } else {
             const error = await questionResponse.json();
-            results.push(`❌ Question "${currentQuestion.question.substring(0, 30)}...": ${error.error || 'Unknown error'}`);
+            results.push(`❌ Question Text: ${error.error || 'Unknown error'}`);
+            failCount++;
+          }
+
+          // Generate audio for each option separately
+          const optionAudioUrls: string[] = [];
+          const optionTimestampsUrls: string[] = [];
+          
+          for (let optIdx = 0; optIdx < currentQuestion.options.length; optIdx++) {
+            const optionText = currentQuestion.options[optIdx]?.trim();
+            if (!optionText) {
+              optionAudioUrls.push("");
+              optionTimestampsUrls.push("");
+              continue;
+            }
+
+            try {
+              const optionResponse = await fetch('/api/admin/generate-audio', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                  text: optionText,
+                  type: 'both',
+                  context: 'quiz' // Use woman's voice for quiz
+                }),
+              });
+
+              if (optionResponse.ok) {
+                const optionData = await optionResponse.json();
+                optionAudioUrls.push(optionData.audioUrl);
+                optionTimestampsUrls.push(optionData.timestampsUrl);
+                results.push(`  ✅ Option ${optIdx + 1}: ${optionData.audioUrl}`);
+                successCount++;
+              } else {
+                const error = await optionResponse.json();
+                optionAudioUrls.push("");
+                optionTimestampsUrls.push("");
+                results.push(`  ❌ Option ${optIdx + 1}: ${error.error || 'Unknown error'}`);
+                failCount++;
+              }
+            } catch (err: any) {
+              optionAudioUrls.push("");
+              optionTimestampsUrls.push("");
+              results.push(`  ❌ Option ${optIdx + 1}: ${err.message || err}`);
+              failCount++;
+            }
+          }
+
+          // Update question with all audio URLs
+          const updateResponse = await fetch(`/api/admin/quiz-questions/${currentQuestion.id}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              question: currentQuestion.question,
+              options: currentQuestion.options,
+              correctAnswer: currentQuestion.correctAnswer,
+              explanation: currentQuestion.explanation,
+              chapterId: currentQuestion.chapterId,
+              quizType: currentQuestion.quizType,
+              order: currentQuestion.order,
+              questionAudioUrl: questionAudioUrl,
+              questionTimestampsUrl: questionTimestampsUrl,
+              optionAudioUrls: optionAudioUrls,
+              optionTimestampsUrls: optionTimestampsUrls,
+            }),
+          });
+
+          if (updateResponse.ok) {
+            // Update currentQuestion with new audio URLs
+            currentQuestion = { 
+              ...currentQuestion, 
+              questionAudioUrl: questionAudioUrl || undefined,
+              questionTimestampsUrl: questionTimestampsUrl || undefined,
+              optionAudioUrls: optionAudioUrls,
+              optionTimestampsUrls: optionTimestampsUrls,
+            };
+          } else {
+            const updateError = await updateResponse.json();
+            results.push(`❌ Question Update Failed: ${updateError.error || 'Unknown error'}`);
             failCount++;
           }
         } catch (err: any) {
@@ -2210,9 +2703,19 @@ export default function ChapterEditPage() {
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Question
-                  </label>
+                  <div className="flex justify-between items-center mb-2">
+                    <label className="block text-sm font-medium text-gray-300">
+                      Question
+                    </label>
+                    <button
+                      type="button"
+                      onClick={handleGenerateQuestionAudio}
+                      disabled={generatingQuestionAudio || !questionForm.question || questionForm.question.trim().length === 0}
+                      className="px-3 py-1 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white text-sm font-semibold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {generatingQuestionAudio ? "🔄 Generating..." : "🎙️ Generate Audio"}
+                    </button>
+                  </div>
                   <textarea
                     value={questionForm.question || ""}
                     onChange={(e) =>
@@ -2222,6 +2725,29 @@ export default function ChapterEditPage() {
                     className="w-full px-4 py-2 bg-[#0a0e27]/50 border border-purple-500/30 rounded-lg text-white"
                     placeholder="Enter the question text..."
                   />
+                  {/* Progress indicator for question */}
+                  {generatingQuestionAudio && (
+                    <div className="mt-2 text-xs">
+                      <p className="text-yellow-400 animate-pulse">
+                        🔄 Generating question audio...
+                      </p>
+                    </div>
+                  )}
+                  {quizGenerationProgress.completed.question && !generatingQuestionAudio && (
+                    <p className="text-xs text-green-400 mt-2">
+                      ✅ Question audio generated
+                    </p>
+                  )}
+                  {questionForm.questionAudioUrl && questionForm.questionTimestampsUrl && !generatingQuestionAudio && (
+                    <p className="text-xs text-green-400 mt-2">
+                      ✅ Question: Audio & Timestamps ready
+                    </p>
+                  )}
+                  {questionForm.audioUrl && (
+                    <p className="text-xs text-yellow-400 mt-2">
+                      ⚠️ Legacy combined audio: {questionForm.audioUrl} (use separate question/option audio instead)
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -2240,57 +2766,93 @@ export default function ChapterEditPage() {
                       + Add Option
                     </button>
                   </div>
-                  {(questionForm.options || []).map((option, idx) => (
-                    <div key={idx} className="mb-2 flex items-center gap-2">
-                      <input
-                        type="radio"
-                        name="correctAnswer"
-                        checked={questionForm.correctAnswer === idx}
-                        onChange={() =>
-                          setQuestionForm({ ...questionForm, correctAnswer: idx })
-                        }
-                        className="w-4 h-4 text-purple-500"
-                      />
-                      <input
-                        type="text"
-                        value={option}
-                        onChange={(e) => {
-                          const newOptions = [...(questionForm.options || [])];
-                          newOptions[idx] = e.target.value;
-                          setQuestionForm({ ...questionForm, options: newOptions });
-                        }}
-                        className="flex-1 px-4 py-2 bg-[#0a0e27]/50 border border-purple-500/30 rounded-lg text-white"
-                        placeholder={`Option ${idx + 1}`}
-                      />
-                      {(questionForm.options || []).length > 2 && (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const newOptions = [...(questionForm.options || [])];
-                            newOptions.splice(idx, 1);
-                            // Adjust correctAnswer if needed
-                            let newCorrectAnswer = questionForm.correctAnswer || 0;
-                            if (newCorrectAnswer === idx) {
-                              // If removing the correct answer, set to first option
-                              newCorrectAnswer = 0;
-                            } else if (newCorrectAnswer > idx) {
-                              // If correct answer is after removed option, decrement
-                              newCorrectAnswer = newCorrectAnswer - 1;
+                  {(questionForm.options || []).map((option, idx) => {
+                    const isGenerating = quizGenerationProgress.generatingOptions.includes(idx);
+                    const isCompleted = quizGenerationProgress.completed.options[idx];
+                    const optionAudioUrls = (questionForm.optionAudioUrls || []) as string[];
+                    const optionTimestampsUrls = (questionForm.optionTimestampsUrls || []) as string[];
+                    const hasAudio = optionAudioUrls[idx] && optionTimestampsUrls[idx];
+                    
+                    return (
+                      <div key={idx} className="mb-2">
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="radio"
+                            name="correctAnswer"
+                            checked={questionForm.correctAnswer === idx}
+                            onChange={() =>
+                              setQuestionForm({ ...questionForm, correctAnswer: idx })
                             }
-                            setQuestionForm({ 
-                              ...questionForm, 
-                              options: newOptions,
-                              correctAnswer: newCorrectAnswer
-                            });
-                          }}
-                          className="px-3 py-2 bg-red-500/20 border border-red-500/30 rounded-lg text-red-400 hover:bg-red-500/30 transition-all text-sm"
-                          title="Remove this option"
-                        >
-                          ✕
-                        </button>
-                      )}
-                    </div>
-                  ))}
+                            className="w-4 h-4 text-purple-500"
+                          />
+                          <input
+                            type="text"
+                            value={option}
+                            onChange={(e) => {
+                              const newOptions = [...(questionForm.options || [])];
+                              newOptions[idx] = e.target.value;
+                              setQuestionForm({ ...questionForm, options: newOptions });
+                            }}
+                            className="flex-1 px-4 py-2 bg-[#0a0e27]/50 border border-purple-500/30 rounded-lg text-white"
+                            placeholder={`Option ${idx + 1}`}
+                          />
+                          {(questionForm.options || []).length > 2 && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const newOptions = [...(questionForm.options || [])];
+                                newOptions.splice(idx, 1);
+                                // Adjust correctAnswer if needed
+                                let newCorrectAnswer = questionForm.correctAnswer || 0;
+                                if (newCorrectAnswer === idx) {
+                                  // If removing the correct answer, set to first option
+                                  newCorrectAnswer = 0;
+                                } else if (newCorrectAnswer > idx) {
+                                  // If correct answer is after removed option, decrement
+                                  newCorrectAnswer = newCorrectAnswer - 1;
+                                }
+                                setQuestionForm({ 
+                                  ...questionForm, 
+                                  options: newOptions,
+                                  correctAnswer: newCorrectAnswer
+                                });
+                              }}
+                              className="px-3 py-2 bg-red-500/20 border border-red-500/30 rounded-lg text-red-400 hover:bg-red-500/30 transition-all text-sm"
+                              title="Remove this option"
+                            >
+                              ✕
+                            </button>
+                          )}
+                        </div>
+                        {/* Progress indicator for this option */}
+                        {(generatingQuizAudio || generatingAllAudio) && (
+                          <div className="ml-6 mt-1 text-xs">
+                            {isGenerating && (
+                              <span className="text-yellow-400 animate-pulse">
+                                🔄 Generating audio for Option {idx + 1}...
+                              </span>
+                            )}
+                            {isCompleted && !isGenerating && (
+                              <span className="text-green-400">
+                                ✅ Option {idx + 1} audio generated
+                              </span>
+                            )}
+                            {!isGenerating && !isCompleted && quizGenerationProgress.completed.question && (
+                              <span className="text-gray-400">
+                                ⏳ Waiting to generate Option {idx + 1}...
+                              </span>
+                            )}
+                          </div>
+                        )}
+                        {/* Show audio status if available */}
+                        {hasAudio && !generatingQuizAudio && !generatingAllAudio && (
+                          <div className="ml-6 mt-1 text-xs text-green-400">
+                            ✅ Option {idx + 1}: Audio & Timestamps ready
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                   {(questionForm.options || []).length < 2 && (
                     <p className="text-xs text-yellow-400 mt-1">
                       ⚠️ At least 2 options are required
@@ -2311,12 +2873,36 @@ export default function ChapterEditPage() {
                       disabled={generatingQuizAudio || generatingAllAudio || !questionForm.question || (questionForm.options || []).length < 2}
                       className="px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white text-sm font-semibold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {generatingQuizAudio ? "🔄 Generating..." : "🎙️ Question Only"}
+                      {generatingQuizAudio ? (
+                        quizGenerationProgress.generatingQuestion 
+                          ? "🔄 Generating Question..." 
+                          : `🔄 Generating Options (${quizGenerationProgress.completed.options.filter(Boolean).length}/${(questionForm.options || []).length})...`
+                      ) : "🎙️ Question & Options"}
                     </button>
                   </div>
-                  {questionForm.audioUrl && (
+                  {/* Progress indicator for question */}
+                  {generatingQuizAudio && (
+                    <div className="mt-2 text-xs">
+                      {quizGenerationProgress.generatingQuestion && (
+                        <p className="text-yellow-400 animate-pulse">
+                          🔄 Generating question audio...
+                        </p>
+                      )}
+                      {quizGenerationProgress.completed.question && !quizGenerationProgress.generatingQuestion && (
+                        <p className="text-green-400">
+                          ✅ Question audio generated
+                        </p>
+                      )}
+                    </div>
+                  )}
+                  {questionForm.questionAudioUrl && questionForm.questionTimestampsUrl && !generatingQuizAudio && (
                     <p className="text-xs text-green-400 mt-2">
-                      ✅ Audio: {questionForm.audioUrl}
+                      ✅ Question: Audio & Timestamps ready
+                    </p>
+                  )}
+                  {questionForm.audioUrl && (
+                    <p className="text-xs text-yellow-400 mt-2">
+                      ⚠️ Legacy combined audio: {questionForm.audioUrl} (use separate question/option audio instead)
                     </p>
                   )}
                 </div>
@@ -2351,7 +2937,20 @@ export default function ChapterEditPage() {
                     className="w-full px-4 py-2 bg-[#0a0e27]/50 border border-purple-500/30 rounded-lg text-white"
                     placeholder="Explanation for correct answer..."
                   />
-                  {questionForm.correctExplanationAudioUrl && (
+                  {/* Progress indicator for correct explanation */}
+                  {generatingCorrectExplanationAudio && (
+                    <div className="mt-2 text-xs">
+                      <p className="text-yellow-400 animate-pulse">
+                        🔄 Generating correct explanation audio...
+                      </p>
+                    </div>
+                  )}
+                  {quizGenerationProgress.completed.correctExplanation && !generatingCorrectExplanationAudio && (
+                    <p className="text-xs text-green-400 mt-2">
+                      ✅ Correct explanation audio generated
+                    </p>
+                  )}
+                  {questionForm.correctExplanationAudioUrl && !generatingCorrectExplanationAudio && !quizGenerationProgress.generatingCorrectExplanation && (
                     <p className="text-xs text-green-400 mt-2">
                       ✅ Correct Audio: {questionForm.correctExplanationAudioUrl}
                     </p>
@@ -2363,44 +2962,66 @@ export default function ChapterEditPage() {
                     Incorrect Answer Explanations (one per line)
                   </label>
                   <div className="space-y-2">
-                    {(questionForm.explanation?.incorrect || []).map((incorrectText, idx) => (
-                      <div key={idx} className="flex gap-2 items-start">
-                        <textarea
-                          value={incorrectText}
-                          onChange={(e) => {
-                            const newIncorrect = [...(questionForm.explanation?.incorrect || [])];
-                            newIncorrect[idx] = e.target.value;
-                            setQuestionForm({
-                              ...questionForm,
-                              explanation: {
-                                ...questionForm.explanation,
-                                correct: questionForm.explanation?.correct || "",
-                                incorrect: newIncorrect,
-                              },
-                            });
-                          }}
-                          rows={2}
-                          className="flex-1 px-4 py-2 bg-[#0a0e27]/50 border border-purple-500/30 rounded-lg text-white"
-                          placeholder={`Explanation for incorrect option ${idx + 1}...`}
-                        />
-                        <button
-                          type="button"
-                          onClick={() => handleGenerateIncorrectExplanationAudio(idx)}
-                          disabled={generatingIncorrectExplanationAudio === idx || generatingAllAudio || !incorrectText?.trim()}
-                          className="px-3 py-2 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white text-sm font-semibold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
-                        >
-                          {generatingIncorrectExplanationAudio === idx ? "🔄..." : "🎙️ Generate"}
-                        </button>
-                      </div>
-                    ))}
                     {(questionForm.explanation?.incorrect || []).map((incorrectText, idx) => {
+                      const isGenerating = quizGenerationProgress.generatingIncorrectExplanations.includes(idx);
+                      const isCompleted = quizGenerationProgress.completed.incorrectExplanations[idx];
                       const incorrectAudioUrls = (questionForm.incorrectExplanationAudioUrls || []) as string[];
-                      const audioUrl = incorrectAudioUrls[idx];
-                      return audioUrl ? (
-                        <p key={`audio-${idx}`} className="text-xs text-green-400 ml-2">
-                          ✅ Option {idx + 1} Audio: {audioUrl}
-                        </p>
-                      ) : null;
+                      const incorrectTimestampsUrls = (questionForm.incorrectExplanationTimestampsUrls || []) as string[];
+                      const hasAudio = incorrectAudioUrls[idx] && incorrectTimestampsUrls[idx];
+                      
+                      return (
+                        <div key={idx}>
+                          <div className="flex gap-2 items-start">
+                            <textarea
+                              value={incorrectText}
+                              onChange={(e) => {
+                                const newIncorrect = [...(questionForm.explanation?.incorrect || [])];
+                                newIncorrect[idx] = e.target.value;
+                                setQuestionForm({
+                                  ...questionForm,
+                                  explanation: {
+                                    ...questionForm.explanation,
+                                    correct: questionForm.explanation?.correct || "",
+                                    incorrect: newIncorrect,
+                                  },
+                                });
+                              }}
+                              rows={2}
+                              className="flex-1 px-4 py-2 bg-[#0a0e27]/50 border border-purple-500/30 rounded-lg text-white"
+                              placeholder={`Explanation for incorrect option ${idx + 1}...`}
+                            />
+                            <button
+                              type="button"
+                              onClick={() => handleGenerateIncorrectExplanationAudio(idx)}
+                              disabled={generatingIncorrectExplanationAudio === idx || generatingAllAudio || !incorrectText?.trim()}
+                              className="px-3 py-2 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white text-sm font-semibold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                            >
+                              {generatingIncorrectExplanationAudio === idx || isGenerating ? "🔄..." : "🎙️ Generate"}
+                            </button>
+                          </div>
+                          {/* Progress indicator for this incorrect explanation */}
+                          {(generatingIncorrectExplanationAudio === idx || generatingAllAudio || isGenerating) && (
+                            <div className="ml-2 mt-1 text-xs">
+                              {isGenerating && (
+                                <span className="text-yellow-400 animate-pulse">
+                                  🔄 Generating audio for incorrect explanation {idx + 1}...
+                                </span>
+                              )}
+                              {isCompleted && !isGenerating && (
+                                <span className="text-green-400">
+                                  ✅ Incorrect explanation {idx + 1} audio generated
+                                </span>
+                              )}
+                            </div>
+                          )}
+                          {/* Show audio status if available */}
+                          {hasAudio && !isGenerating && generatingIncorrectExplanationAudio !== idx && !generatingAllAudio && (
+                            <div className="ml-2 mt-1 text-xs text-green-400">
+                              ✅ Option {idx + 1} Audio: {incorrectAudioUrls[idx]}
+                            </div>
+                          )}
+                        </div>
+                      );
                     })}
                   </div>
                   <textarea

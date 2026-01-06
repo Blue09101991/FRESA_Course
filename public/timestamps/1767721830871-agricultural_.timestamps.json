@@ -1,0 +1,45 @@
+{
+  "text": " Agriculture row.",
+  "segments": [
+    {
+      "id": 0,
+      "seek": 0,
+      "start": 0.08,
+      "end": 0.86,
+      "text": " Agriculture row.",
+      "tokens": [
+        50364,
+        35966,
+        5386,
+        13,
+        50414
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.885521650314331,
+      "compression_ratio": 0.6666666666666666,
+      "no_speech_prob": 0.03170974925160408,
+      "confidence": 0.278,
+      "words": [
+        {
+          "text": "Agriculture",
+          "start": 0.08,
+          "end": 0.5,
+          "confidence": 0.274
+        },
+        {
+          "text": "row.",
+          "start": 0.5,
+          "end": 0.86,
+          "confidence": 0.282
+        }
+      ]
+    }
+  ],
+  "language": "en",
+  "speech_activity": [
+    {
+      "start": 0.0,
+      "end": 1.253875
+    }
+  ]
+}

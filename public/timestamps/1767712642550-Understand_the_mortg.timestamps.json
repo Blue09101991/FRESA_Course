@@ -1,0 +1,109 @@
+{
+  "text": " Understand the mortgage process and the role of mortgage loan originator.",
+  "segments": [
+    {
+      "id": 0,
+      "seek": 0,
+      "start": 0.06,
+      "end": 3.48,
+      "text": " Understand the mortgage process and the role of mortgage loan originator.",
+      "tokens": [
+        50364,
+        26093,
+        264,
+        20236,
+        1399,
+        293,
+        264,
+        3090,
+        295,
+        20236,
+        10529,
+        4957,
+        1639,
+        13,
+        50544
+      ],
+      "temperature": 0.0,
+      "avg_logprob": -0.2933022677898407,
+      "compression_ratio": 1.123076923076923,
+      "no_speech_prob": 0.011140784248709679,
+      "confidence": 0.933,
+      "words": [
+        {
+          "text": "Understand",
+          "start": 0.06,
+          "end": 0.48,
+          "confidence": 0.885
+        },
+        {
+          "text": "the",
+          "start": 0.48,
+          "end": 0.66,
+          "confidence": 0.996
+        },
+        {
+          "text": "mortgage",
+          "start": 0.66,
+          "end": 0.98,
+          "confidence": 0.99
+        },
+        {
+          "text": "process",
+          "start": 0.98,
+          "end": 1.5,
+          "confidence": 0.995
+        },
+        {
+          "text": "and",
+          "start": 1.5,
+          "end": 1.94,
+          "confidence": 0.842
+        },
+        {
+          "text": "the",
+          "start": 1.94,
+          "end": 2.06,
+          "confidence": 0.983
+        },
+        {
+          "text": "role",
+          "start": 2.06,
+          "end": 2.24,
+          "confidence": 0.959
+        },
+        {
+          "text": "of",
+          "start": 2.24,
+          "end": 2.4,
+          "confidence": 0.971
+        },
+        {
+          "text": "mortgage",
+          "start": 2.4,
+          "end": 2.68,
+          "confidence": 0.934
+        },
+        {
+          "text": "loan",
+          "start": 2.68,
+          "end": 2.92,
+          "confidence": 0.916
+        },
+        {
+          "text": "originator.",
+          "start": 2.92,
+          "end": 3.48,
+          "confidence": 0.873
+        }
+      ]
+    }
+  ],
+  "language": "en",
+  "speech_activity": [
+    {
+      "start": 0.0,
+      "end": 3.89225
+    }
+  ]
+}
