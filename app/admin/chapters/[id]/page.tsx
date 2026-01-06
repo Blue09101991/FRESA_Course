@@ -870,8 +870,8 @@ export default function ChapterEditPage() {
       setGeneratingObjectivesAudio(true);
       const token = getToken();
       
-      // Combine all objectives into one text
-      const combinedText = learningObjectives.map((obj, idx) => `${idx + 1}. ${obj.text}`).join(". ");
+      // Combine all objectives into one text (without numbers)
+      const combinedText = learningObjectives.map((obj) => obj.text).join(". ");
       
       const response = await fetch('/api/admin/generate-audio', {
         method: 'POST',
@@ -1064,7 +1064,8 @@ export default function ChapterEditPage() {
       // 2. Generate audio for all learning objectives (combined)
       if (learningObjectives.length > 0) {
         try {
-          const combinedText = learningObjectives.map((obj, idx) => `${idx + 1}. ${obj.text}`).join(". ");
+          // Combine all objectives into one text (without numbers)
+          const combinedText = learningObjectives.map((obj) => obj.text).join(". ");
           const response = await fetch('/api/admin/generate-audio', {
             method: 'POST',
             headers: {
