@@ -46,6 +46,7 @@ Use this checklist when deploying to Ubuntu server.
 - [ ] `npx prisma migrate deploy` completed
 - [ ] `npm run db:seed` (optional)
 - [ ] Admin user created: `npm run create-super-admin`
+- [ ] Audio files mapped: `npm run db:map-audio` (if using existing files)
 
 ### 6. Build
 - [ ] `npm run build` completed successfully

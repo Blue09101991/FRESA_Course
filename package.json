@@ -17,6 +17,7 @@
     "db:create-admin": "tsx scripts/create-admin.ts",
     "create-super-admin": "tsx scripts/create-admin.ts",
     "db:fix-audio": "tsx scripts/fix-audio-urls.ts",
+    "db:map-audio": "tsx scripts/map-existing-audio.ts",
     "test:elevenlabs": "node scripts/test-elevenlabs.js"
   },
   "keywords": [],
