@@ -405,7 +405,7 @@ export default function AudioPlayer({
 
   // Throttle updates to prevent excessive re-renders
   const lastUpdateTime = useRef<number>(0);
-  const updateInterval = 5; // Update every 5ms for very fast and responsive highlighting (reduced from 15ms)
+  const updateInterval = 3; // Update every 3ms for very fast and responsive highlighting (reduced from 5ms for even faster response)
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -447,8 +447,8 @@ export default function AudioPlayer({
           
           // Use EXACT start and end times - highlight when current time is within range
           // Note: We use >= for start and < for end to match exactly when word is spoken
-          // Anticipate slightly (0.03s before) so highlighting appears slightly ahead of speech for better visual sync
-          if (current >= wordTimestamp.start - 0.03 && current < wordTimestamp.end) {
+          // Anticipate more (0.12s before) so highlighting appears much faster/ahead of speech for better visual sync
+          if (current >= wordTimestamp.start - 0.12 && current < wordTimestamp.end + 0.08) {
             activeTimestampIndex = tsIdx;
             break; // Found the active timestamp word - use it immediately
           }
@@ -462,10 +462,10 @@ export default function AudioPlayer({
         }
         
         // Use active timestamp if found, otherwise use closest one if very close
-        // Reduced threshold to 0.05s to allow anticipation for better visual sync
+        // Increased threshold to 0.1s to allow more anticipation for faster highlighting
         const targetTimestampIndex = activeTimestampIndex >= 0 
           ? activeTimestampIndex 
-          : (closestTimestampIndex >= 0 && closestTimestampDistance < 0.05 ? closestTimestampIndex : -1);
+          : (closestTimestampIndex >= 0 && closestTimestampDistance < 0.1 ? closestTimestampIndex : -1);
         
         if (targetTimestampIndex >= 0) {
           // Find the TEXT word that maps to this timestamp word
