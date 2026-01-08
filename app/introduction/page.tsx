@@ -34,7 +34,8 @@ export default function IntroductionPage() {
 
   const fetchIntroduction = async () => {
     try {
-      const response = await fetch("/api/admin/introduction");
+      // Use public API route that doesn't require authentication
+      const response = await fetch("/api/introduction");
       if (response.ok) {
         const data = await response.json();
         if (data.introduction) {
