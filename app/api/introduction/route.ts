@@ -16,24 +16,15 @@ export async function GET(request: NextRequest) {
       },
     })
 
-    // Helper function to validate file exists
-    const validateFileUrl = (url: string | null): string | null => {
-      if (!url) return null
-      const filePath = url.startsWith('/') ? url.slice(1) : url
-      const fullPath = join(process.cwd(), 'public', filePath)
-      return existsSync(fullPath) ? url : null
-    }
-
     if (introduction) {
-      const validatedAudioUrl = validateFileUrl(introduction.audioUrl) || '/audio/intro.mp3'
-      const validatedTimestampsUrl = validateFileUrl(introduction.timestampsUrl) || '/timestamps/intro.timestamps.json'
-      
+      // Return URLs from database - don't validate strictly
+      // Let browser handle 404s, files might be generated dynamically
       return NextResponse.json({
         introduction: {
           id: introduction.id,
           text: introduction.text,
-          audioUrl: validatedAudioUrl,
-          timestampsUrl: validatedTimestampsUrl,
+          audioUrl: introduction.audioUrl || '/audio/intro.mp3',
+          timestampsUrl: introduction.timestampsUrl || '/timestamps/intro.timestamps.json',
         },
       })
     }

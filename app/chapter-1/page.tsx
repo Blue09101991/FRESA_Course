@@ -525,7 +525,7 @@ export default function Chapter1Page() {
                     text={currentSectionData.text}
                     audioUrl={currentSectionData.audioUrl || undefined}
                     timestampsUrl={currentSectionData.timestampsUrl || undefined}
-                    autoPlay={!hasAutoPlayedFirst}
+                    autoPlay={!hasAutoPlayedFirst && !!currentSectionData.audioUrl}
                     onComplete={handleAudioComplete}
                     onPlayingChange={(isPlaying) => {
                       // Track when audio starts/stops playing
@@ -537,6 +537,11 @@ export default function Chapter1Page() {
                     }}
                     highlightQuery={searchHighlight}
                   />
+                )}
+                {currentSectionData && !currentSectionData.audioUrl && (
+                  <div className="text-yellow-400 text-sm mt-4">
+                    ⚠️ Audio not available for this section yet. Please generate audio in the admin panel.
+                  </div>
                 )}
               </>
             </div>

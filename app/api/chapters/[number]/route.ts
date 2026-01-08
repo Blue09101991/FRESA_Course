@@ -54,13 +54,16 @@ export async function GET(
       return NextResponse.json({ error: 'Chapter not found. Please run the seed script to initialize data.' }, { status: 404 })
     }
 
-    // Validate that audio and timestamps files exist for all sections
+    // Return sections with their audio URLs (don't validate strictly - let browser handle 404s)
+    // This allows audio to work even if files are generated dynamically or paths differ slightly
     const validatedChapter = {
       ...chapter,
       sections: chapter.sections.map((section: any) => ({
         ...section,
-        audioUrl: validateFileUrl(section.audioUrl) || section.audioUrl, // Keep original URL if file doesn't exist (might be generated)
-        timestampsUrl: validateFileUrl(section.timestampsUrl) || section.timestampsUrl,
+        // Always return the URL from database, even if file doesn't exist yet
+        // The browser will handle 404s gracefully, and files might be generated dynamically
+        audioUrl: section.audioUrl || null,
+        timestampsUrl: section.timestampsUrl || null,
       })),
     }
 
