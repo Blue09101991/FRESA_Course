@@ -202,7 +202,7 @@ export default function IntroductionEditPage() {
                 placeholder="Enter introduction text..."
               />
               <p className="text-xs text-gray-400 mt-1">
-                Enter your text and click "Generate Audio & Timestamps" to automatically create audio and timestamp files using ElevenLabs AI
+                Enter your text and click "Generate Audio & Timestamps" to automatically create audio and timestamp files using Inworld AI
               </p>
             </div>
 

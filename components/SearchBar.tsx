@@ -22,8 +22,6 @@ interface SearchResponse {
   query: string;
   chapters: SearchResult[];
   sections: SearchResult[];
-  learningObjectives: SearchResult[];
-  keyTerms: SearchResult[];
   quizQuestions: SearchResult[];
   introduction: SearchResult | null;
   totalResults: number;
@@ -153,14 +151,6 @@ export default function SearchBar() {
         sessionStorage.setItem('targetSection', result.sectionId);
         // Use window.location for full page navigation to ensure state is reset
         window.location.href = result.path;
-      } else if (result.type === 'learningObjective' && result.path) {
-        // Navigate to chapter and show learning objectives section
-        sessionStorage.setItem('targetSection', 'objectives');
-        window.location.href = result.path;
-      } else if (result.type === 'keyTerm' && result.path) {
-        // Navigate to chapter and show key terms section
-        sessionStorage.setItem('targetSection', 'key-terms');
-        window.location.href = result.path;
       } else if (result.type === 'quizQuestion' && result.path) {
         // Navigate to chapter and show quiz
         sessionStorage.setItem('targetSection', 'quiz');
@@ -187,8 +177,6 @@ export default function SearchBar() {
     if (results.introduction) all.push(results.introduction);
     all.push(...results.chapters);
     all.push(...results.sections);
-    all.push(...results.learningObjectives);
-    all.push(...results.keyTerms);
     all.push(...results.quizQuestions);
     
     return all;
@@ -343,16 +331,6 @@ export default function SearchBar() {
                                 <span className="text-xs text-cyan-300 font-bold">Sec</span>
                               </div>
                             )}
-                            {result.type === 'learningObjective' && (
-                              <div className="w-8 h-8 rounded bg-green-500/20 flex items-center justify-center">
-                                <span className="text-xs text-green-300 font-bold">LO</span>
-                              </div>
-                            )}
-                            {result.type === 'keyTerm' && (
-                              <div className="w-8 h-8 rounded bg-yellow-500/20 flex items-center justify-center">
-                                <span className="text-xs text-yellow-300 font-bold">KT</span>
-                              </div>
-                            )}
                             {result.type === 'quizQuestion' && (
                               <div className="w-8 h-8 rounded bg-purple-500/20 flex items-center justify-center">
                                 <span className="text-xs text-purple-300 font-bold">Q</span>
@@ -398,7 +376,7 @@ export default function SearchBar() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                     <p className="text-lg font-medium text-gray-300 mb-2">Start typing to search...</p>
-                    <p className="text-sm text-gray-500">Search across chapters, sections, learning objectives, key terms, and quiz questions</p>
+                    <p className="text-sm text-gray-500">Search across chapters, sections, and quiz questions</p>
                   </div>
                 ) : null}
               </div>

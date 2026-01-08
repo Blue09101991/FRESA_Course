@@ -41,12 +41,6 @@ export async function GET(
           // Get ALL sections for the chapter (introduction sections are in chapter 0, not regular chapters)
           orderBy: { order: 'asc' },
         },
-        learningObjectives: {
-          orderBy: { order: 'asc' },
-        },
-        keyTerms: {
-          orderBy: { order: 'asc' },
-        },
         quizQuestions: {
           where: {
             quizType: 'chapter',

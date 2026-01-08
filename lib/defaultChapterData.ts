@@ -16,8 +16,6 @@ export interface DefaultChapterData {
   number: number;
   title: string;
   description: string | null;
-  learningObjectives: string[];
-  keyTerms: string[];
   sections: DefaultSection[];
 }
 
@@ -26,27 +24,6 @@ export const defaultChapter1Data: DefaultChapterData = {
   number: 1,
   title: 'The Real Estate Business',
   description: 'Introduction to real estate industry and business practices',
-  learningObjectives: [
-    'Describe the various activities of real estate brokerage',
-    'Distinguish among the five major sales specialties',
-    'Identify the role of property managers',
-    'Describe activities that require appraiser services and distinguish among CMA, BPO, and appraisal',
-    'Understand the mortgage process and the role of mortgage loan originator',
-    'Explain the three phases of development and construction',
-    'Distinguish among the three categories of residential construction',
-  ],
-  keyTerms: [
-    'absentee owner',
-    'appraisal',
-    'appraiser',
-    'broker price opinion (BPO)',
-    'business broker',
-    'business opportunity',
-    'community association manager (CAM)',
-    'comparative market analysis (CMA)',
-    'dedication',
-    'farm area (target market)',
-  ],
   sections: [
     {
       sectionNumber: 1,
@@ -174,26 +151,6 @@ export function mergeWithDefaults(
     description: dbData.description || defaultData.description,
   };
 
-  // Merge learning objectives
-  const mergedObjectives = dbData.learningObjectives && dbData.learningObjectives.length > 0
-    ? dbData.learningObjectives
-    : defaultData.learningObjectives.map((text, index) => ({
-        id: `default-obj-${index}`,
-        text,
-        order: index,
-        chapterId: dbData.id,
-      }));
-
-  // Merge key terms
-  const mergedKeyTerms = dbData.keyTerms && dbData.keyTerms.length > 0
-    ? dbData.keyTerms
-    : defaultData.keyTerms.map((term, index) => ({
-        id: `default-term-${index}`,
-        term,
-        order: index,
-        chapterId: dbData.id,
-      }));
-
   // Merge sections
   const dbSections = dbData.sections || [];
   const defaultSections = defaultData.sections || [];
@@ -238,8 +195,6 @@ export function mergeWithDefaults(
 
   return {
     ...mergedChapter,
-    learningObjectives: mergedObjectives,
-    keyTerms: mergedKeyTerms,
     sections: mergedSections,
   };
 }

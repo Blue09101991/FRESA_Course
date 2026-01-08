@@ -164,6 +164,9 @@ ELEVENLABS_API_KEY="your-elevenlabs-api-key-here"
 ELEVENLABS_MAN_VOICE_ID="nPczCjzI2devNBz1zQrb"
 ELEVENLABS_WOMAN_VOICE_ID="GP1bgf0sjoFuuHkyrg8E"
 
+# AssemblyAI API Configuration (for accurate timestamp generation)
+ASSEMBLYAI_API_KEY="your-assemblyai-api-key-here"
+
 # Node Environment
 NODE_ENV="production"
 ```

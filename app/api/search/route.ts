@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { verifyToken } from '@/lib/auth'
 
 // Search function for students and admin
-// Searches through chapters, sections, learning objectives, key terms, and quiz questions
+// Searches through chapters, sections, and quiz questions
 export async function GET(request: NextRequest) {
   try {
     const token = request.headers.get('authorization')?.replace('Bearer ', '') ||
@@ -65,38 +65,6 @@ export async function GET(request: NextRequest) {
       },
     })
 
-    // Search in learning objectives
-    const learningObjectives = await prisma.learningObjective.findMany({
-      where: {
-        text: { contains: query, mode: 'insensitive' },
-      },
-      include: {
-        chapter: {
-          select: {
-            id: true,
-            number: true,
-            title: true,
-          },
-        },
-      },
-    })
-
-    // Search in key terms
-    const keyTerms = await prisma.keyTerm.findMany({
-      where: {
-        term: { contains: query, mode: 'insensitive' },
-      },
-      include: {
-        chapter: {
-          select: {
-            id: true,
-            number: true,
-            title: true,
-          },
-        },
-      },
-    })
-
     // Search in quiz questions
     const quizQuestions = await prisma.quizQuestion.findMany({
       where: {
@@ -151,24 +119,6 @@ export async function GET(request: NextRequest) {
         path: sec.chapter?.number === 0 ? '/introduction' : `/chapter-${sec.chapter?.number}`,
         sectionId: sec.id,
       })),
-      learningObjectives: learningObjectives.map(obj => ({
-        type: 'learningObjective',
-        id: obj.id,
-        chapterId: obj.chapterId,
-        chapterNumber: obj.chapter?.number,
-        chapterTitle: obj.chapter?.title,
-        text: obj.text,
-        path: obj.chapter?.number === 0 ? '/introduction' : `/chapter-${obj.chapter?.number}`,
-      })),
-      keyTerms: keyTerms.map(term => ({
-        type: 'keyTerm',
-        id: term.id,
-        chapterId: term.chapterId,
-        chapterNumber: term.chapter?.number,
-        chapterTitle: term.chapter?.title,
-        term: term.term,
-        path: term.chapter?.number === 0 ? '/introduction' : `/chapter-${term.chapter?.number}`,
-      })),
       quizQuestions: quizQuestions.map(q => ({
         type: 'quizQuestion',
         id: q.id,
@@ -191,8 +141,6 @@ export async function GET(request: NextRequest) {
     const totalResults = 
       results.chapters.length +
       results.sections.length +
-      results.learningObjectives.length +
-      results.keyTerms.length +
       results.quizQuestions.length +
       (results.introduction ? 1 : 0)
 

@@ -27,12 +27,6 @@ export async function GET(
           // Get ALL sections, don't filter any out
           orderBy: { order: 'asc' },
         },
-        learningObjectives: {
-          orderBy: { order: 'asc' },
-        },
-        keyTerms: {
-          orderBy: { order: 'asc' },
-        },
       },
     })
 
