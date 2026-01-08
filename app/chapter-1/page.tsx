@@ -415,14 +415,16 @@ export default function Chapter1Page() {
   // Auto-advance to next section when audio completes
   const handleAudioComplete = () => {
     setActivePlayingSectionId(null);
+    setHasAutoPlayedFirst(false); // Reset immediately to allow next section to auto-play
     
     // Auto-advance to next section
+    const currentIndex = sections.findIndex(s => s.id === currentSection);
     if (currentIndex < sections.length - 1) {
       // Small delay before advancing to next section
       setTimeout(() => {
         const nextSection = sections[currentIndex + 1];
         setCurrentSection(nextSection.id);
-        // Reset flag so next section can auto-play
+        // Ensure auto-play is enabled for next section
         setHasAutoPlayedFirst(false);
       }, 500);
     } else {
@@ -436,8 +438,8 @@ export default function Chapter1Page() {
   // Track section changes to enable auto-play
   useEffect(() => {
     if (!loading && sections.length > 0 && currentSection) {
-      // Reset flag when section changes to allow auto-play
-      // This works for both first section and auto-advanced sections
+      // Always reset flag when section changes to allow auto-play
+      // This ensures every section auto-plays when navigated to
       setHasAutoPlayedFirst(false);
     }
   }, [currentSection, sections, loading]);
@@ -522,6 +524,7 @@ export default function Chapter1Page() {
                 </h2>
                 {currentSectionData?.text && (
                   <AudioPlayer
+                    key={currentSection} // Force re-render when section changes
                     text={currentSectionData.text}
                     audioUrl={currentSectionData.audioUrl || undefined}
                     timestampsUrl={currentSectionData.timestampsUrl || undefined}
@@ -531,6 +534,7 @@ export default function Chapter1Page() {
                       // Track when audio starts/stops playing
                       if (isPlaying) {
                         setActivePlayingSectionId(currentSection);
+                        setHasAutoPlayedFirst(true); // Mark as played to prevent re-triggering
                       } else {
                         setActivePlayingSectionId(null);
                       }
