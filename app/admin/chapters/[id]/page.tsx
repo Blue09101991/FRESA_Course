@@ -1528,13 +1528,22 @@ export default function ChapterEditPage() {
               >
                 🔄 Refresh Content
               </button>
-              <button
-                onClick={handleGenerateAllChapterAudio}
-                disabled={generatingAllChapterAudio}
-                className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 disabled:from-gray-500 disabled:to-gray-600 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-all text-sm"
-              >
-                {generatingAllChapterAudio ? "🔄 Generating All Audio..." : "🎙️ Generate All Audio & Timestamps"}
-              </button>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setShowTTSSettings(true)}
+                  className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold rounded-lg transition-all text-sm"
+                  title="TTS Settings"
+                >
+                  ⚙️ Settings
+                </button>
+                <button
+                  onClick={handleGenerateAllChapterAudio}
+                  disabled={generatingAllChapterAudio}
+                  className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 disabled:from-gray-500 disabled:to-gray-600 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-all text-sm"
+                >
+                  {generatingAllChapterAudio ? "🔄 Generating All Audio..." : "🎙️ Generate All Audio & Timestamps"}
+                </button>
+              </div>
               <button
                 onClick={() => setEditingChapterInfo(!editingChapterInfo)}
                 className="px-4 py-2 bg-cyan-500/20 border border-cyan-500/30 rounded-lg text-cyan-400 hover:bg-cyan-500/30 transition-all text-sm"
