@@ -35,7 +35,21 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const { text, type, voiceId, context, temperature } = await request.json() // type: 'audio' or 'timestamps' or 'both', voiceId: optional voice ID override, context: 'quiz' or 'section' or 'introduction', temperature: optional temperature override (0.0 to 2.0)
+    const { 
+      text, 
+      type, 
+      voiceId, 
+      context, 
+      // Inworld TTS API parameters
+      modelId,
+      audioEncoding,
+      speakingRate,
+      sampleRateHertz,
+      bitRate,
+      temperature,
+      timestampType,
+      applyTextNormalization,
+    } = await request.json()
 
     if (!text || text.trim().length === 0) {
       return NextResponse.json({ error: 'Text is required' }, { status: 400 })
@@ -55,17 +69,25 @@ export async function POST(request: NextRequest) {
       selectedVoiceId = INWORLD_MAN_VOICE_ID
     }
 
-    // Use temperature from request or fallback to environment variable or default
-    const selectedTemperature = temperature !== undefined && temperature !== null 
-      ? parseFloat(temperature.toString()) 
-      : INWORLD_TEMPERATURE
+    // Build options object with defaults from env or request overrides
+    const ttsOptions = {
+      modelId: modelId || INWORLD_MODEL_ID,
+      audioEncoding: audioEncoding || 'MP3',
+      speakingRate: speakingRate !== undefined ? parseFloat(speakingRate.toString()) : 1.0,
+      sampleRateHertz: sampleRateHertz !== undefined ? parseInt(sampleRateHertz.toString()) : 48000,
+      bitRate: bitRate !== undefined ? parseInt(bitRate.toString()) : undefined,
+      temperature: temperature !== undefined && temperature !== null 
+        ? parseFloat(temperature.toString()) 
+        : INWORLD_TEMPERATURE,
+      timestampType: timestampType || 'WORD',
+      applyTextNormalization: applyTextNormalization || 'APPLY_TEXT_NORMALIZATION_UNSPECIFIED',
+    }
 
     // Generate audio and timestamps using Inworld AI TTS API
     // Inworld provides both audio and word-level timestamps in a single API call
     console.log('🔄 Generating audio and timestamps using Inworld AI...')
     console.log('   Voice ID:', selectedVoiceId)
-    console.log('   Model ID:', INWORLD_MODEL_ID)
-    console.log('   Temperature:', selectedTemperature)
+    console.log('   Options:', JSON.stringify(ttsOptions, null, 2))
     
     let audioBytes: Buffer
     let timestampsData: any
@@ -74,12 +96,8 @@ export async function POST(request: NextRequest) {
       const result = await generateAudioWithInworld(
         text,
         selectedVoiceId,
-        INWORLD_MODEL_ID,
         INWORLD_API_KEY,
-        'MP3', // Audio encoding: MP3, OGG_OPUS, LINEAR16, etc.
-        1.0, // Speaking rate (0.5 to 1.5)
-        48000, // Sample rate in Hz
-        selectedTemperature // Temperature (0.0 to 2.0)
+        ttsOptions
       )
       
       audioBytes = result.audioBuffer

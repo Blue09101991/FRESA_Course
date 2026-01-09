@@ -55,47 +55,73 @@ export function convertInworldToOurFormat(
 }
 
 /**
+ * Options for Inworld TTS API
+ */
+export interface InworldTTSOptions {
+  modelId?: string; // Model ID (inworld-tts-1 or inworld-tts-1-max)
+  audioEncoding?: string; // Audio encoding format (MP3, OGG_OPUS, LINEAR16, etc.)
+  speakingRate?: number; // Speaking rate (0.5 to 1.5, default 1.0)
+  sampleRateHertz?: number; // Sample rate in Hz (default 48000)
+  bitRate?: number; // Bit rate for compressed formats (default 128000)
+  temperature?: number; // Temperature (0.0 to 2.0, default 1.1)
+  timestampType?: 'WORD' | 'CHARACTER' | 'TIMESTAMP_TYPE_UNSPECIFIED'; // Timestamp type
+  applyTextNormalization?: 'ON' | 'OFF' | 'APPLY_TEXT_NORMALIZATION_UNSPECIFIED'; // Text normalization
+}
+
+/**
  * Generate audio and timestamps using Inworld AI TTS API
  * 
  * @param text - Text to synthesize
  * @param voiceId - Voice ID to use
- * @param modelId - Model ID (inworld-tts-1 or inworld-tts-1-max)
  * @param apiKey - Inworld API key (Base64 encoded credentials)
- * @param audioEncoding - Audio encoding format (MP3, OGG_OPUS, LINEAR16, etc.)
- * @param speakingRate - Speaking rate (0.5 to 1.5, default 1.0)
- * @param sampleRateHertz - Sample rate in Hz (default 48000)
- * @param temperature - Temperature for sampling (0.0 to 2.0, default 1.1). Higher values = more random/expressive, lower = more deterministic
+ * @param options - Optional configuration parameters
  * @returns Promise with audio buffer and timestamp data
  */
 export async function generateAudioWithInworld(
   text: string,
   voiceId: string,
-  modelId: string = 'inworld-tts-1',
   apiKey: string,
-  audioEncoding: string = 'MP3',
-  speakingRate: number = 1.0,
-  sampleRateHertz: number = 48000,
-  temperature: number = 1.1
+  options: InworldTTSOptions = {}
 ): Promise<{
   audioBuffer: Buffer
   timestampData: any
 }> {
   const apiUrl = 'https://api.inworld.ai/tts/v1/voice'
 
-  // Validate temperature range (0.0 to 2.0)
+  // Set defaults
+  const {
+    modelId = 'inworld-tts-1',
+    audioEncoding = 'MP3',
+    speakingRate = 1.0,
+    sampleRateHertz = 48000,
+    bitRate,
+    temperature = 1.1,
+    timestampType = 'WORD',
+    applyTextNormalization = 'APPLY_TEXT_NORMALIZATION_UNSPECIFIED',
+  } = options
+
+  // Validate ranges
   const validatedTemperature = Math.max(0.0, Math.min(2.0, temperature))
+  const validatedSpeakingRate = Math.max(0.5, Math.min(1.5, speakingRate))
+  const validatedSampleRate = Math.max(8000, Math.min(48000, sampleRateHertz))
 
   const requestBody: any = {
     text: text.trim(),
     voiceId: voiceId,
     modelId: modelId,
-    timestampType: 'WORD', // Request word-level timestamps
-    temperature: validatedTemperature, // Temperature for controlling randomness/expressiveness
+    timestampType: timestampType,
+    temperature: validatedTemperature,
+    applyTextNormalization: applyTextNormalization,
     audioConfig: {
       audioEncoding: audioEncoding,
-      speakingRate: speakingRate,
-      sampleRateHertz: sampleRateHertz,
+      speakingRate: validatedSpeakingRate,
+      sampleRateHertz: validatedSampleRate,
     },
+  }
+
+  // Add bitRate only for compressed formats
+  if (bitRate && (audioEncoding === 'MP3' || audioEncoding === 'OGG_OPUS')) {
+    requestBody.audioConfig.bitRate = bitRate
   }
 
   const response = await fetch(apiUrl, {
