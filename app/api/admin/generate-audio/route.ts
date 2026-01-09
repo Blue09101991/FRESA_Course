@@ -12,6 +12,7 @@ const INWORLD_API_KEY = process.env.INWORLD_API_KEY // Base64 encoded credential
 const INWORLD_MAN_VOICE_ID = process.env.INWORLD_MAN_VOICE_ID || 'Dennis' // Man's voice ID for introduction and chapter sections
 const INWORLD_WOMAN_VOICE_ID = process.env.INWORLD_WOMAN_VOICE_ID || 'Dennis' // Woman's voice ID for quiz questions (can be changed to a different voice)
 const INWORLD_MODEL_ID = process.env.INWORLD_MODEL_ID || 'inworld-tts-1' // Model: inworld-tts-1 or inworld-tts-1-max
+const INWORLD_TEMPERATURE = parseFloat(process.env.INWORLD_TEMPERATURE || '1.1') // Temperature (0.0 to 2.0, default 1.1). Higher = more random/expressive, lower = more deterministic
 
 export async function POST(request: NextRequest) {
   try {
@@ -34,7 +35,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const { text, type, voiceId, context } = await request.json() // type: 'audio' or 'timestamps' or 'both', voiceId: optional voice ID override, context: 'quiz' or 'section' or 'introduction'
+    const { text, type, voiceId, context, temperature } = await request.json() // type: 'audio' or 'timestamps' or 'both', voiceId: optional voice ID override, context: 'quiz' or 'section' or 'introduction', temperature: optional temperature override (0.0 to 2.0)
 
     if (!text || text.trim().length === 0) {
       return NextResponse.json({ error: 'Text is required' }, { status: 400 })
@@ -54,11 +55,17 @@ export async function POST(request: NextRequest) {
       selectedVoiceId = INWORLD_MAN_VOICE_ID
     }
 
+    // Use temperature from request or fallback to environment variable or default
+    const selectedTemperature = temperature !== undefined && temperature !== null 
+      ? parseFloat(temperature.toString()) 
+      : INWORLD_TEMPERATURE
+
     // Generate audio and timestamps using Inworld AI TTS API
     // Inworld provides both audio and word-level timestamps in a single API call
     console.log('🔄 Generating audio and timestamps using Inworld AI...')
     console.log('   Voice ID:', selectedVoiceId)
     console.log('   Model ID:', INWORLD_MODEL_ID)
+    console.log('   Temperature:', selectedTemperature)
     
     let audioBytes: Buffer
     let timestampsData: any
@@ -71,7 +78,8 @@ export async function POST(request: NextRequest) {
         INWORLD_API_KEY,
         'MP3', // Audio encoding: MP3, OGG_OPUS, LINEAR16, etc.
         1.0, // Speaking rate (0.5 to 1.5)
-        48000 // Sample rate in Hz
+        48000, // Sample rate in Hz
+        selectedTemperature // Temperature (0.0 to 2.0)
       )
       
       audioBytes = result.audioBuffer

@@ -64,6 +64,7 @@ export function convertInworldToOurFormat(
  * @param audioEncoding - Audio encoding format (MP3, OGG_OPUS, LINEAR16, etc.)
  * @param speakingRate - Speaking rate (0.5 to 1.5, default 1.0)
  * @param sampleRateHertz - Sample rate in Hz (default 48000)
+ * @param temperature - Temperature for sampling (0.0 to 2.0, default 1.1). Higher values = more random/expressive, lower = more deterministic
  * @returns Promise with audio buffer and timestamp data
  */
 export async function generateAudioWithInworld(
@@ -73,18 +74,23 @@ export async function generateAudioWithInworld(
   apiKey: string,
   audioEncoding: string = 'MP3',
   speakingRate: number = 1.0,
-  sampleRateHertz: number = 48000
+  sampleRateHertz: number = 48000,
+  temperature: number = 1.1
 ): Promise<{
   audioBuffer: Buffer
   timestampData: any
 }> {
   const apiUrl = 'https://api.inworld.ai/tts/v1/voice'
 
+  // Validate temperature range (0.0 to 2.0)
+  const validatedTemperature = Math.max(0.0, Math.min(2.0, temperature))
+
   const requestBody: any = {
     text: text.trim(),
     voiceId: voiceId,
     modelId: modelId,
     timestampType: 'WORD', // Request word-level timestamps
+    temperature: validatedTemperature, // Temperature for controlling randomness/expressiveness
     audioConfig: {
       audioEncoding: audioEncoding,
       speakingRate: speakingRate,
