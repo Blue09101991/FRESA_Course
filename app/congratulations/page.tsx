@@ -75,7 +75,7 @@ export default function CongratulationsPage() {
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
-              onClick={() => router.push("/chapter-1")}
+              onClick={() => router.push("/chapter/1")}
               className="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-all duration-200"
             >
               Review Chapter

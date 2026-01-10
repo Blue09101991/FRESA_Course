@@ -1513,7 +1513,7 @@ export default function ChapterEditPage() {
           {chapter && (
             <div className="flex gap-4 mt-4 flex-wrap">
               <Link
-                href={`/chapter-${chapter.number}`}
+                href={`/chapter/${chapter.number}`}
                 target="_blank"
                 className="px-4 py-2 bg-blue-500/20 border border-blue-500/30 rounded-lg text-blue-400 hover:bg-blue-500/30 transition-all text-sm"
               >

@@ -257,7 +257,7 @@ export default function AdminPage() {
                       <div className="flex gap-4 text-cyan-400 text-sm">
                         <span>{chapter._count.sections} section{chapter._count.sections !== 1 ? "s" : ""}</span>
                         <Link
-                          href={`/chapter-${chapter.number}`}
+                          href={`/chapter/${chapter.number}`}
                           target="_blank"
                           className="text-blue-400 hover:text-blue-300 underline"
                           onClick={(e) => e.stopPropagation()}

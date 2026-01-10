@@ -54,7 +54,7 @@ export default function EligibilityPage() {
     localStorage.setItem("progress", JSON.stringify(progress));
 
     // Navigate to congratulations or next section
-    router.push("/chapter-1");
+    router.push("/chapter/1");
   };
 
   return (

@@ -4,8 +4,25 @@ import { verifyTokenEdge } from '@/lib/auth-edge'
 import { UserRole } from '@prisma/client'
 
 export async function middleware(request: NextRequest) {
+  const pathname = request.nextUrl.pathname
+  
+  console.log(`[Middleware] Processing request for: ${pathname}`)
+  
+  // Redirect /chapter-{number} to /chapter/{number} for consistency
+  // This handles all chapter routes including /chapter-1, /chapter-2, etc.
+  if (pathname.startsWith('/chapter-')) {
+    const chapterMatch = pathname.match(/^\/chapter-(\d+)(\/.*)?$/)
+    if (chapterMatch) {
+      const chapterNumber = chapterMatch[1]
+      const subPath = chapterMatch[2] || ''
+      const newPath = `/chapter/${chapterNumber}${subPath}`
+      console.log(`[Middleware] Redirecting ${pathname} to ${newPath}`)
+      return NextResponse.redirect(new URL(newPath, request.url))
+    }
+  }
+  
   // Public routes that don't require authentication
-  const publicRoutes = ['/', '/introduction', '/chapter-1', '/eligibility', '/congratulations', '/login', '/signup']
+  const publicRoutes = ['/', '/introduction', '/chapter/', '/eligibility', '/congratulations', '/login', '/signup']
   const isPublicRoute = publicRoutes.some(route => request.nextUrl.pathname.startsWith(route))
 
   // Admin routes that require authentication
@@ -77,6 +94,10 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/api/admin/:path*'],
+  matcher: [
+    '/admin/:path*', 
+    '/api/admin/:path*',
+    '/chapter-:path*',
+  ],
 }
 

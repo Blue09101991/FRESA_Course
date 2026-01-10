@@ -43,6 +43,8 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  let chapterNumber: number | undefined;
+  
   try {
     const token = request.headers.get('authorization')?.replace('Bearer ', '') ||
                   request.cookies.get('auth-token')?.value
@@ -57,20 +59,57 @@ export async function POST(request: NextRequest) {
     }
 
     const { number, title, description } = await request.json()
+    chapterNumber = number;
+
+    // Validate input
+    if (!number || number < 1) {
+      return NextResponse.json(
+        { error: 'Chapter number must be at least 1' },
+        { status: 400 }
+      )
+    }
+
+    if (!title || title.trim().length === 0) {
+      return NextResponse.json(
+        { error: 'Chapter title is required' },
+        { status: 400 }
+      )
+    }
+
+    // Check if chapter number already exists
+    const existingChapter = await prisma.chapter.findUnique({
+      where: { number },
+    })
+
+    if (existingChapter) {
+      return NextResponse.json(
+        { error: `Chapter ${number} already exists. Please choose a different chapter number.` },
+        { status: 409 }
+      )
+    }
 
     const chapter = await prisma.chapter.create({
       data: {
         number,
-        title,
-        description: description || null,
+        title: title.trim(),
+        description: description?.trim() || null,
       },
     })
 
     return NextResponse.json({ chapter }, { status: 201 })
   } catch (error: any) {
     console.error('Error creating chapter:', error)
+    
+    // Handle Prisma unique constraint error
+    if (error.code === 'P2002') {
+      return NextResponse.json(
+        { error: chapterNumber ? `Chapter ${chapterNumber} already exists. Please choose a different chapter number.` : 'Chapter number already exists. Please choose a different chapter number.' },
+        { status: 409 }
+      )
+    }
+    
     return NextResponse.json(
-      { error: 'Failed to create chapter' },
+      { error: error.message || 'Failed to create chapter' },
       { status: 500 }
     )
   }

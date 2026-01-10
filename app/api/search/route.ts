@@ -106,7 +106,7 @@ export async function GET(request: NextRequest) {
         chapterNumber: ch.number,
         title: ch.title,
         description: ch.description,
-        path: ch.number === 0 ? '/introduction' : `/chapter-${ch.number}`,
+        path: ch.number === 0 ? '/introduction' : `/chapter/${ch.number}`,
       })),
       sections: sections.map(sec => ({
         type: 'section',
@@ -116,7 +116,7 @@ export async function GET(request: NextRequest) {
         chapterTitle: sec.chapter?.title,
         title: sec.title,
         text: sec.text,
-        path: sec.chapter?.number === 0 ? '/introduction' : `/chapter-${sec.chapter?.number}`,
+        path: sec.chapter?.number === 0 ? '/introduction' : `/chapter/${sec.chapter?.number}`,
         sectionId: sec.id,
       })),
       quizQuestions: quizQuestions.map(q => ({
@@ -126,7 +126,7 @@ export async function GET(request: NextRequest) {
         chapterNumber: q.chapter?.number,
         chapterTitle: q.chapter?.title,
         question: q.question,
-        path: q.chapter?.number === 0 ? '/introduction' : `/chapter-${q.chapter?.number}`,
+        path: q.chapter?.number === 0 ? '/introduction' : `/chapter/${q.chapter?.number}`,
       })),
       introduction: introduction ? {
         type: 'introduction',

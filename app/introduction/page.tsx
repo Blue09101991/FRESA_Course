@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import MrListings from "@/components/MrListings";
 import AudioPlayer from "@/components/AudioPlayer";
@@ -17,9 +17,11 @@ export default function IntroductionPage() {
   const [timestampsUrl, setTimestampsUrl] = useState("/timestamps/intro.timestamps.json");
   const [loading, setLoading] = useState(true);
   const [searchHighlight, setSearchHighlight] = useState<string>("");
+  const [allChapters, setAllChapters] = useState<any[]>([]);
 
   useEffect(() => {
     fetchIntroduction();
+    fetchAllChapters();
     
     // Check for search highlight query
     const searchQuery = sessionStorage.getItem('searchHighlight');
@@ -51,15 +53,57 @@ export default function IntroductionPage() {
     }
   };
 
-  const handleContinue = () => {
-    // Navigate immediately without delay for better performance
-    router.push("/chapter-1");
+  const fetchAllChapters = async () => {
+    try {
+      const response = await fetch("/api/chapters");
+      if (response.ok) {
+        const data = await response.json();
+        setAllChapters(data.chapters || []);
+      }
+    } catch (err) {
+      console.error("Error fetching all chapters:", err);
+    }
   };
 
-  const menuItems = [
-    { id: "intro", title: "Introduction", path: "/introduction" },
-    { id: "chapter1", title: "Chapter 1. The Real Estate Business", path: "/chapter-1" },
-  ];
+  const handleContinue = () => {
+    // Navigate immediately without delay for better performance
+    router.push("/chapter/1");
+  };
+
+  const menuItems = useMemo(() => {
+    const items: Array<{ 
+      id: string; 
+      title: string; 
+      path: string; 
+      sectionId?: string;
+      isChapter?: boolean;
+      children?: Array<{ id: string; title: string; path: string; sectionId?: string }>;
+    }> = [
+      { id: "intro", title: "Introduction", path: "/introduction" },
+    ];
+    
+    // Add all chapters with their sections
+    allChapters.forEach((chapter) => {
+      const chapterSections = chapter.sections 
+        ? chapter.sections.map((section: any, index: number) => ({
+            id: `section-${section.id}`,
+            title: `${index + 1}. ${section.title}`,
+            path: `/chapter/${chapter.number}`,
+            sectionId: section.id,
+          }))
+        : [];
+      
+      items.push({
+        id: `chapter-${chapter.id}`,
+        title: `Chapter ${chapter.number}. ${chapter.title}`,
+        path: `/chapter/${chapter.number}`,
+        isChapter: true,
+        children: chapterSections,
+      });
+    });
+    
+    return items;
+  }, [allChapters]);
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-[#0a1a2e] via-[#1e3a5f] to-[#0a1a2e] relative overflow-hidden">
@@ -96,7 +140,7 @@ export default function IntroductionPage() {
                   onComplete={() => {
                     // Audio completed, automatically navigate to Chapter 1
                     setTimeout(() => {
-                      router.push("/chapter-1");
+                      router.push("/chapter/1");
                     }, 500);
                   }}
                   highlightQuery={searchHighlight}
