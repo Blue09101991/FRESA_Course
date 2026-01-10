@@ -767,13 +767,33 @@ export default function ChapterEditPage() {
       alert("Please enter correct explanation first");
       return;
     }
-    if (!questionForm.explanation?.incorrect || questionForm.explanation.incorrect.length === 0) {
-      alert("Please enter at least one incorrect explanation");
+    // Check that we have explanations for all wrong options
+    const options = questionForm.options || [];
+    const correctAnswer = questionForm.correctAnswer || 0;
+    const incorrectExplanations = questionForm.explanation?.incorrect || [];
+    
+    // Check if all wrong options have explanations
+    const missingExplanations: number[] = [];
+    for (let i = 0; i < options.length; i++) {
+      if (i !== correctAnswer) {
+        // Ensure array is long enough
+        while (incorrectExplanations.length <= i) {
+          incorrectExplanations.push("");
+        }
+        if (!incorrectExplanations[i] || !incorrectExplanations[i].trim()) {
+          missingExplanations.push(i + 1);
+        }
+      }
+    }
+    
+    if (missingExplanations.length > 0) {
+      alert(`Please enter explanations for all incorrect answer options.\nMissing explanations for: Options ${missingExplanations.join(", ")}`);
       return;
     }
 
     try {
       setGeneratingAllAudio(true);
+      // Initialize progress with arrays sized for all options (mapped by option index)
       setQuizGenerationProgress({
         generatingQuestion: true,
         generatingOptions: [],
@@ -781,9 +801,9 @@ export default function ChapterEditPage() {
         generatingIncorrectExplanations: [],
         completed: {
           question: false,
-          options: new Array(questionForm.options.length).fill(false),
+          options: new Array(options.length).fill(false),
           correctExplanation: false,
-          incorrectExplanations: new Array(questionForm.explanation?.incorrect?.length || 0).fill(false),
+          incorrectExplanations: new Array(options.length).fill(false), // Mapped by option index
         },
       });
       
@@ -949,21 +969,33 @@ export default function ChapterEditPage() {
         }));
       }
 
-      // 3. Generate incorrect explanation audio for each option
+      // 3. Generate incorrect explanation audio for each wrong option (mapped by option index)
       const incorrectTexts = questionForm.explanation.incorrect || [];
-      const incorrectAudioUrls: string[] = [];
-      const incorrectTimestampsUrls: string[] = [];
+      // Use options and correctAnswer already declared at the top of the function
+      
+      // Initialize arrays with empty strings for all options (indexed by option index)
+      const incorrectAudioUrls: string[] = new Array(options.length).fill("");
+      const incorrectTimestampsUrls: string[] = new Array(options.length).fill("");
 
-      for (let idx = 0; idx < incorrectTexts.length; idx++) {
-        const incorrectText = incorrectTexts[idx]?.trim();
+      // Generate audio only for wrong options
+      for (let optionIdx = 0; optionIdx < options.length; optionIdx++) {
+        // Skip the correct answer
+        if (optionIdx === correctAnswer) {
+          continue;
+        }
+        
+        // Ensure array is long enough
+        while (incorrectTexts.length <= optionIdx) {
+          incorrectTexts.push("");
+        }
+        
+        const incorrectText = incorrectTexts[optionIdx]?.trim();
         if (!incorrectText) {
-          incorrectAudioUrls.push("");
-          incorrectTimestampsUrls.push("");
           setQuizGenerationProgress(prev => ({
             ...prev,
             completed: {
               ...prev.completed,
-              incorrectExplanations: prev.completed.incorrectExplanations.map((done, i) => i === idx ? true : done),
+              incorrectExplanations: prev.completed.incorrectExplanations.map((done, i) => i === optionIdx ? true : done),
             },
           }));
           continue;
@@ -972,7 +1004,7 @@ export default function ChapterEditPage() {
         // Update progress to show this incorrect explanation is being generated
         setQuizGenerationProgress(prev => ({
           ...prev,
-          generatingIncorrectExplanations: [...prev.generatingIncorrectExplanations, idx],
+          generatingIncorrectExplanations: [...prev.generatingIncorrectExplanations, optionIdx],
         }));
 
         try {
@@ -987,31 +1019,37 @@ export default function ChapterEditPage() {
 
           if (incorrectResponse.ok) {
             const incorrectData = await incorrectResponse.json();
-            incorrectAudioUrls.push(incorrectData.audioUrl);
-            incorrectTimestampsUrls.push(incorrectData.timestampsUrl);
-            results.push(`✅ Option ${idx + 1} incorrect explanation audio: ${incorrectData.audioUrl}`);
+            incorrectAudioUrls[optionIdx] = incorrectData.audioUrl;
+            incorrectTimestampsUrls[optionIdx] = incorrectData.timestampsUrl;
+            results.push(`✅ Option ${optionIdx + 1} incorrect explanation audio: ${incorrectData.audioUrl}`);
           } else {
             const error = await incorrectResponse.json();
-            incorrectAudioUrls.push("");
-            incorrectTimestampsUrls.push("");
-            results.push(`❌ Option ${idx + 1} incorrect explanation audio failed: ${error.error || 'Unknown error'}`);
+            incorrectAudioUrls[optionIdx] = "";
+            incorrectTimestampsUrls[optionIdx] = "";
+            results.push(`❌ Option ${optionIdx + 1} incorrect explanation audio failed: ${error.error || 'Unknown error'}`);
           }
         } catch (err) {
-          incorrectAudioUrls.push("");
-          incorrectTimestampsUrls.push("");
-          results.push(`❌ Option ${idx + 1} incorrect explanation audio error: ${err}`);
+          incorrectAudioUrls[optionIdx] = "";
+          incorrectTimestampsUrls[optionIdx] = "";
+          results.push(`❌ Option ${optionIdx + 1} incorrect explanation audio error: ${err}`);
         } finally {
           // Update progress to show this incorrect explanation is completed
           setQuizGenerationProgress(prev => ({
             ...prev,
-            generatingIncorrectExplanations: prev.generatingIncorrectExplanations.filter(i => i !== idx),
+            generatingIncorrectExplanations: prev.generatingIncorrectExplanations.filter(i => i !== optionIdx),
             completed: {
               ...prev.completed,
-              incorrectExplanations: prev.completed.incorrectExplanations.map((done, i) => i === idx ? true : done),
+              incorrectExplanations: prev.completed.incorrectExplanations.map((done, i) => i === optionIdx ? true : done),
             },
           }));
         }
       }
+
+      // Get the latest form state with all generated audio URLs
+      const finalQuestionAudioUrl = questionForm.questionAudioUrl;
+      const finalQuestionTimestampsUrl = questionForm.questionTimestampsUrl;
+      const finalCorrectExplanationAudioUrl = questionForm.correctExplanationAudioUrl;
+      const finalCorrectExplanationTimestampsUrl = questionForm.correctExplanationTimestampsUrl;
 
       // Update form with all incorrect audio URLs
       setQuestionForm(prev => ({
@@ -1019,6 +1057,56 @@ export default function ChapterEditPage() {
         incorrectExplanationAudioUrls: incorrectAudioUrls,
         incorrectExplanationTimestampsUrls: incorrectTimestampsUrls,
       }));
+
+      // Auto-save the question after generating all audio
+      // Get the current question ID if editing, or save as new
+      const currentQuestionId = editingQuestion;
+      
+      if (currentQuestionId) {
+        // Update existing question with all generated audio URLs
+        try {
+          const saveResponse = await fetch(`/api/admin/quiz-questions/${currentQuestionId}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              question: questionForm.question,
+              options: questionForm.options,
+              correctAnswer: questionForm.correctAnswer,
+              explanation: questionForm.explanation,
+              chapterId: chapterId === "new" ? null : chapterId,
+              quizType: questionForm.quizType,
+              order: questionForm.order,
+              // Include all audio URLs
+              questionAudioUrl: finalQuestionAudioUrl,
+              questionTimestampsUrl: finalQuestionTimestampsUrl,
+              optionAudioUrls: optionAudioUrls,
+              optionTimestampsUrls: optionTimestampsUrls,
+              correctExplanationAudioUrl: finalCorrectExplanationAudioUrl,
+              correctExplanationTimestampsUrl: finalCorrectExplanationTimestampsUrl,
+              incorrectExplanationAudioUrls: incorrectAudioUrls,
+              incorrectExplanationTimestampsUrls: incorrectTimestampsUrls,
+            }),
+          });
+
+          if (saveResponse.ok) {
+            await fetchChapter();
+            results.push(`\n✅ Question automatically saved with all audio URLs`);
+          } else {
+            const saveError = await saveResponse.json();
+            results.push(`\n⚠️ Audio generated but failed to auto-save: ${saveError.error || 'Unknown error'}`);
+            results.push(`⚠️ Please click "Save Question" to save the generated audio URLs`);
+          }
+        } catch (saveErr) {
+          console.error('Error auto-saving question:', saveErr);
+          results.push(`\n⚠️ Audio generated but failed to auto-save. Please click "Save Question" to save the generated audio URLs`);
+        }
+      } else {
+        // New question - prompt user to save
+        results.push(`\n⚠️ Please click "Save Question" to save the question with generated audio URLs`);
+      }
 
       // Show summary alert
       const successCount = results.filter(r => r.startsWith('✅')).length;
@@ -1052,33 +1140,67 @@ export default function ChapterEditPage() {
         : `/api/admin/quiz-questions`;
       const method = questionId ? "PUT" : "POST";
 
+      // Explicitly include all audio URL fields to ensure they're saved
+      const saveData = {
+        question: questionForm.question,
+        options: questionForm.options,
+        correctAnswer: questionForm.correctAnswer,
+        explanation: questionForm.explanation,
+        chapterId: chapterId === "new" ? null : chapterId,
+        quizType: questionForm.quizType,
+        order: questionForm.order,
+        // Include all audio URLs explicitly
+        audioUrl: questionForm.audioUrl || null,
+        timestampsUrl: questionForm.timestampsUrl || null,
+        questionAudioUrl: questionForm.questionAudioUrl || null,
+        questionTimestampsUrl: questionForm.questionTimestampsUrl || null,
+        optionAudioUrls: questionForm.optionAudioUrls || null,
+        optionTimestampsUrls: questionForm.optionTimestampsUrls || null,
+        explanationAudioUrl: questionForm.explanationAudioUrl || null,
+        explanationTimestampsUrl: questionForm.explanationTimestampsUrl || null,
+        correctExplanationAudioUrl: questionForm.correctExplanationAudioUrl || null,
+        correctExplanationTimestampsUrl: questionForm.correctExplanationTimestampsUrl || null,
+        incorrectExplanationAudioUrls: questionForm.incorrectExplanationAudioUrls || null,
+        incorrectExplanationTimestampsUrls: questionForm.incorrectExplanationTimestampsUrls || null,
+      };
+
+      if (process.env.NODE_ENV === 'development') {
+        console.log('💾 Saving question with audio URLs:', {
+          questionId,
+          correctExplanationAudioUrl: saveData.correctExplanationAudioUrl,
+          incorrectExplanationAudioUrls: saveData.incorrectExplanationAudioUrls,
+        });
+      }
+
       const response = await fetch(url, {
         method,
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          ...questionForm,
-          chapterId: chapterId === "new" ? null : chapterId,
-        }),
+        body: JSON.stringify(saveData),
       });
 
       if (response.ok) {
         await fetchChapter();
         setShowQuestionForm(false);
         setEditingQuestion(null);
-                setQuestionForm({
-                  question: "",
-                  options: ["", ""], // Start with minimum 2 options
-                  correctAnswer: 0,
-                  explanation: { correct: "", incorrect: [] },
-                  quizType: "chapter",
-                  order: 0,
-                });
+        setQuestionForm({
+          question: "",
+          options: ["", ""], // Start with minimum 2 options
+          correctAnswer: 0,
+          explanation: { correct: "", incorrect: [] },
+          quizType: "chapter",
+          order: 0,
+        });
+        alert("Question saved successfully!");
+      } else {
+        const error = await response.json();
+        alert(`Failed to save question: ${error.error || 'Unknown error'}`);
       }
     } catch (err) {
       console.error("Error saving question:", err);
+      alert("Failed to save question. Please try again.");
     }
   };
 
@@ -1104,8 +1226,36 @@ export default function ChapterEditPage() {
 
   const startEditQuestion = (question: QuizQuestion) => {
     setEditingQuestion(question.id);
-    setQuestionForm(question);
+    
+    // Ensure incorrect explanations array is properly sized for all options (mapped by option index)
+    const options = question.options || [];
+    const incorrectExplanations = question.explanation?.incorrect || [];
+    // Ensure array is long enough for all options (mapped by option index)
+    while (incorrectExplanations.length < options.length) {
+      incorrectExplanations.push("");
+    }
+    
+    // Ensure audio URL arrays are properly sized (mapped by option index)
+    const incorrectAudioUrls = (question.incorrectExplanationAudioUrls as string[] || []);
+    const incorrectTimestampsUrls = (question.incorrectExplanationTimestampsUrls as string[] || []);
+    while (incorrectAudioUrls.length < options.length) {
+      incorrectAudioUrls.push("");
+    }
+    while (incorrectTimestampsUrls.length < options.length) {
+      incorrectTimestampsUrls.push("");
+    }
+    
+    setQuestionForm({
+      ...question,
+      explanation: {
+        ...question.explanation,
+        incorrect: incorrectExplanations,
+      },
+      incorrectExplanationAudioUrls: incorrectAudioUrls,
+      incorrectExplanationTimestampsUrls: incorrectTimestampsUrls,
+    });
     setShowQuestionForm(true);
+    
     // Initialize progress state when editing a question
     setQuizGenerationProgress({
       generatingQuestion: false,
@@ -1116,7 +1266,7 @@ export default function ChapterEditPage() {
         question: !!question.questionAudioUrl,
         options: (question.optionAudioUrls as string[] || []).map(url => !!url),
         correctExplanation: !!question.correctExplanationAudioUrl,
-        incorrectExplanations: ((question.incorrectExplanationAudioUrls as string[] || [])).map(url => !!url),
+        incorrectExplanations: incorrectAudioUrls.map(url => !!url),
       },
     });
   };
@@ -2327,24 +2477,54 @@ export default function ChapterEditPage() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Incorrect Answer Explanations (one per line)
+                    Incorrect Answer Explanations (one for each wrong option)
                   </label>
-                  <div className="space-y-2">
-                    {(questionForm.explanation?.incorrect || []).map((incorrectText, idx) => {
-                      const isGenerating = quizGenerationProgress.generatingIncorrectExplanations.includes(idx);
-                      const isCompleted = quizGenerationProgress.completed.incorrectExplanations[idx];
+                  <div className="space-y-3">
+                    {(questionForm.options || []).map((option, optionIdx) => {
+                      // Skip the correct answer - it has its own explanation section
+                      if (optionIdx === questionForm.correctAnswer) {
+                        return null;
+                      }
+                      
+                      // Get explanation for this option index (mapped by option index, not sequential)
+                      const incorrectExplanations = questionForm.explanation?.incorrect || [];
+                      // Ensure array is long enough and get explanation for this option index
+                      while (incorrectExplanations.length <= optionIdx) {
+                        incorrectExplanations.push("");
+                      }
+                      const incorrectText = incorrectExplanations[optionIdx] || "";
+                      
+                      const isGenerating = quizGenerationProgress.generatingIncorrectExplanations.includes(optionIdx);
+                      const isCompleted = quizGenerationProgress.completed.incorrectExplanations[optionIdx];
                       const incorrectAudioUrls = (questionForm.incorrectExplanationAudioUrls || []) as string[];
                       const incorrectTimestampsUrls = (questionForm.incorrectExplanationTimestampsUrls || []) as string[];
-                      const hasAudio = incorrectAudioUrls[idx] && incorrectTimestampsUrls[idx];
+                      // Ensure arrays are long enough
+                      while (incorrectAudioUrls.length <= optionIdx) {
+                        incorrectAudioUrls.push("");
+                      }
+                      while (incorrectTimestampsUrls.length <= optionIdx) {
+                        incorrectTimestampsUrls.push("");
+                      }
+                      const hasAudio = incorrectAudioUrls[optionIdx] && incorrectTimestampsUrls[optionIdx];
                       
                       return (
-                        <div key={idx}>
+                        <div key={optionIdx} className="border border-red-500/30 rounded-lg p-3 bg-red-500/5">
+                          <div className="flex items-center gap-2 mb-2">
+                            <span className="text-sm font-medium text-red-400">
+                              Explanation for Option {optionIdx + 1} (Wrong Answer):
+                            </span>
+                            <span className="text-xs text-gray-400 italic">"{option}"</span>
+                          </div>
                           <div className="flex gap-2 items-start">
                             <textarea
                               value={incorrectText}
                               onChange={(e) => {
                                 const newIncorrect = [...(questionForm.explanation?.incorrect || [])];
-                                newIncorrect[idx] = e.target.value;
+                                // Ensure array is long enough
+                                while (newIncorrect.length <= optionIdx) {
+                                  newIncorrect.push("");
+                                }
+                                newIncorrect[optionIdx] = e.target.value;
                                 setQuestionForm({
                                   ...questionForm,
                                   explanation: {
@@ -2355,59 +2535,48 @@ export default function ChapterEditPage() {
                                 });
                               }}
                               rows={2}
-                              className="flex-1 px-4 py-2 bg-[#0a0e27]/50 border border-purple-500/30 rounded-lg text-white"
-                              placeholder={`Explanation for incorrect option ${idx + 1}...`}
+                              className="flex-1 px-4 py-2 bg-[#0a0e27]/50 border border-red-500/30 rounded-lg text-white"
+                              placeholder={`Why is option ${optionIdx + 1} incorrect?`}
                             />
                             <button
                               type="button"
-                              onClick={() => handleGenerateIncorrectExplanationAudio(idx)}
-                              disabled={generatingIncorrectExplanationAudio === idx || generatingAllAudio || !incorrectText?.trim()}
+                              onClick={() => handleGenerateIncorrectExplanationAudio(optionIdx)}
+                              disabled={generatingIncorrectExplanationAudio === optionIdx || generatingAllAudio || !incorrectText?.trim()}
                               className="px-3 py-2 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white text-sm font-semibold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
                             >
-                              {generatingIncorrectExplanationAudio === idx || isGenerating ? "🔄..." : "🎙️ Generate"}
+                              {generatingIncorrectExplanationAudio === optionIdx || isGenerating ? "🔄..." : "🎙️ Generate Audio"}
                             </button>
                           </div>
                           {/* Progress indicator for this incorrect explanation */}
-                          {(generatingIncorrectExplanationAudio === idx || generatingAllAudio || isGenerating) && (
+                          {(generatingIncorrectExplanationAudio === optionIdx || generatingAllAudio || isGenerating) && (
                             <div className="ml-2 mt-1 text-xs">
                               {isGenerating && (
                                 <span className="text-yellow-400 animate-pulse">
-                                  🔄 Generating audio for incorrect explanation {idx + 1}...
+                                  🔄 Generating audio for option {optionIdx + 1} explanation...
                                 </span>
                               )}
                               {isCompleted && !isGenerating && (
                                 <span className="text-green-400">
-                                  ✅ Incorrect explanation {idx + 1} audio generated
+                                  ✅ Option {optionIdx + 1} explanation audio generated
                                 </span>
                               )}
                             </div>
                           )}
                           {/* Show audio status if available */}
-                          {hasAudio && !isGenerating && generatingIncorrectExplanationAudio !== idx && !generatingAllAudio && (
+                          {hasAudio && !isGenerating && generatingIncorrectExplanationAudio !== optionIdx && !generatingAllAudio && (
                             <div className="ml-2 mt-1 text-xs text-green-400">
-                              ✅ Option {idx + 1} Audio: {incorrectAudioUrls[idx]}
+                              ✅ Option {optionIdx + 1} Audio: {incorrectAudioUrls[optionIdx]}
                             </div>
                           )}
                         </div>
                       );
                     })}
                   </div>
-                  <textarea
-                    value={(questionForm.explanation?.incorrect || []).join("\n")}
-                    onChange={(e) =>
-                      setQuestionForm({
-                        ...questionForm,
-                        explanation: {
-                          ...questionForm.explanation,
-                          correct: questionForm.explanation?.correct || "",
-                          incorrect: e.target.value.split("\n").filter((line) => line.trim()),
-                        },
-                      })
-                    }
-                    rows={4}
-                    className="w-full px-4 py-2 bg-[#0a0e27]/50 border border-purple-500/30 rounded-lg text-white mt-2"
-                    placeholder="One explanation per line (or use individual fields above)..."
-                  />
+                  {(questionForm.options || []).length === 0 && (
+                    <p className="text-yellow-400 text-sm mt-2">
+                      ⚠️ Add answer options above first, then explanations will appear here for each wrong option.
+                    </p>
+                  )}
                 </div>
 
                 <div>

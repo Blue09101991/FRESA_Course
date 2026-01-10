@@ -65,6 +65,21 @@ export async function GET(
         audioUrl: section.audioUrl || null,
         timestampsUrl: section.timestampsUrl || null,
       })),
+      quizQuestions: chapter.quizQuestions.map((question: any) => ({
+        ...question,
+        // Ensure all audio URLs are properly returned
+        // JSON fields (arrays) are automatically serialized by Prisma
+        questionAudioUrl: question.questionAudioUrl || null,
+        questionTimestampsUrl: question.questionTimestampsUrl || null,
+        optionAudioUrls: question.optionAudioUrls || null,
+        optionTimestampsUrls: question.optionTimestampsUrls || null,
+        explanationAudioUrl: question.explanationAudioUrl || null,
+        explanationTimestampsUrl: question.explanationTimestampsUrl || null,
+        correctExplanationAudioUrl: question.correctExplanationAudioUrl || null,
+        correctExplanationTimestampsUrl: question.correctExplanationTimestampsUrl || null,
+        incorrectExplanationAudioUrls: question.incorrectExplanationAudioUrls || null,
+        incorrectExplanationTimestampsUrls: question.incorrectExplanationTimestampsUrls || null,
+      })),
     }
 
     return NextResponse.json({ chapter: validatedChapter })

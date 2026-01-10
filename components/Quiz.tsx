@@ -405,7 +405,8 @@ export default function Quiz({ questions, onComplete, showCharacter = true, sear
     setIsCorrect(correct);
     setShowExplanation(true);
     setCurrentQuestionScore(correct ? 1 : 0);
-    setHasAutoPlayedExplanation(false); // Reset to allow auto-play of explanation
+    // Reset explanation audio state to allow auto-play
+    setHasAutoPlayedExplanation(false);
 
     if (correct) {
       setScore(prevScore => prevScore + 1);
@@ -444,16 +445,74 @@ export default function Quiz({ questions, onComplete, showCharacter = true, sear
     setAllQuestionAudioCompleted(false); // Reset completion flag
   }, [currentQuestionIndex]);
 
+  // Ensure explanation audio auto-plays when explanation is shown
+  useEffect(() => {
+    if (showExplanation) {
+      // Always reset hasAutoPlayedExplanation when explanation is first shown to ensure audio can play
+      setHasAutoPlayedExplanation(false);
+      
+      const explanationAudioUrl = getExplanationAudioUrl();
+      if (explanationAudioUrl && process.env.NODE_ENV === 'development') {
+        console.log('🎵 Explanation audio should auto-play:', {
+          hasAudio: !!explanationAudioUrl,
+          audioUrl: explanationAudioUrl,
+          isCorrect,
+          selectedAnswer,
+          showExplanation,
+        });
+      }
+    }
+  }, [showExplanation]);
+
   // Get explanation audio URL and text
   const getExplanationAudioUrl = () => {
     if (isCorrect) {
-      return currentQuestion?.correctExplanationAudioUrl || currentQuestion?.explanationAudioUrl || null;
-    } else {
-      const incorrectAudioUrls = currentQuestion?.incorrectExplanationAudioUrls;
-      if (incorrectAudioUrls && Array.isArray(incorrectAudioUrls) && incorrectAudioUrls.length > selectedAnswer!) {
-        return incorrectAudioUrls[selectedAnswer!];
+      const audioUrl = currentQuestion?.correctExplanationAudioUrl || currentQuestion?.explanationAudioUrl || null;
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🎵 Correct explanation audio:', {
+          correctExplanationAudioUrl: currentQuestion?.correctExplanationAudioUrl,
+          explanationAudioUrl: currentQuestion?.explanationAudioUrl,
+          finalUrl: audioUrl,
+        });
       }
-      return currentQuestion?.explanationAudioUrl || null;
+      return audioUrl;
+    } else {
+      // For incorrect answers, get the explanation for the selected option
+      let incorrectAudioUrls = currentQuestion?.incorrectExplanationAudioUrls;
+      
+      // Handle case where incorrectAudioUrls might be a JSON string
+      if (typeof incorrectAudioUrls === 'string') {
+        try {
+          incorrectAudioUrls = JSON.parse(incorrectAudioUrls);
+        } catch (e) {
+          console.error('Failed to parse incorrectExplanationAudioUrls:', e);
+          incorrectAudioUrls = null;
+        }
+      }
+      
+      if (incorrectAudioUrls && Array.isArray(incorrectAudioUrls) && incorrectAudioUrls.length > selectedAnswer!) {
+        const audioUrl = incorrectAudioUrls[selectedAnswer!];
+        if (process.env.NODE_ENV === 'development') {
+          console.log('🎵 Incorrect explanation audio:', {
+            selectedAnswer: selectedAnswer,
+            incorrectAudioUrls: incorrectAudioUrls,
+            audioUrlAtIndex: audioUrl,
+            arrayLength: incorrectAudioUrls.length,
+          });
+        }
+        return audioUrl || null;
+      }
+      
+      // Fallback to general explanation audio
+      const fallbackUrl = currentQuestion?.explanationAudioUrl || null;
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🎵 Using fallback explanation audio:', {
+          selectedAnswer: selectedAnswer,
+          incorrectAudioUrls: incorrectAudioUrls,
+          fallbackUrl: fallbackUrl,
+        });
+      }
+      return fallbackUrl;
     }
   };
 
@@ -469,9 +528,21 @@ export default function Quiz({ questions, onComplete, showCharacter = true, sear
     if (isCorrect) {
       return currentQuestion?.correctExplanationTimestampsUrl || currentQuestion?.explanationTimestampsUrl || null;
     } else {
-      const incorrectTimestampsUrls = currentQuestion?.incorrectExplanationTimestampsUrls;
+      // For incorrect answers, get the timestamps for the selected option
+      let incorrectTimestampsUrls = currentQuestion?.incorrectExplanationTimestampsUrls;
+      
+      // Handle case where incorrectTimestampsUrls might be a JSON string
+      if (typeof incorrectTimestampsUrls === 'string') {
+        try {
+          incorrectTimestampsUrls = JSON.parse(incorrectTimestampsUrls);
+        } catch (e) {
+          console.error('Failed to parse incorrectExplanationTimestampsUrls:', e);
+          incorrectTimestampsUrls = null;
+        }
+      }
+      
       if (incorrectTimestampsUrls && Array.isArray(incorrectTimestampsUrls) && incorrectTimestampsUrls.length > selectedAnswer!) {
-        return incorrectTimestampsUrls[selectedAnswer!];
+        return incorrectTimestampsUrls[selectedAnswer!] || null;
       }
       return currentQuestion?.explanationTimestampsUrl || null;
     }
@@ -711,52 +782,84 @@ export default function Quiz({ questions, onComplete, showCharacter = true, sear
             </div>
             
             {/* Explanation Audio Player */}
-            {getExplanationAudioUrl() && (
-              <div className="pt-4 border-t border-white/10">
-                <AudioPlayer
-                  key={`explanation-audio-${currentQuestionIndex}-${isCorrect ? 'correct' : 'incorrect'}-${selectedAnswer}`}
-                  text={getExplanationText()}
-                  audioUrl={getExplanationAudioUrl() || undefined}
-                  timestampsUrl={getExplanationTimestampsUrl() || undefined}
-                  autoPlay={!hasAutoPlayedExplanation}
-                  hideText={true}
-                  onHighlightedWord={(word, wordIndex) => {
-                    // Debug logging in development
-                    if (process.env.NODE_ENV === 'development') {
-                      console.log('🎯 Quiz explanation handleHighlightedWord:', {
-                        word,
-                        wordIndex,
-                        explanationText: getExplanationText(),
-                      });
-                    }
-                    
-                    // Highlight only the current word at the correct position in explanation text
-                    // Use the same approach as section pages - clear all highlights first, then highlight current word
-                    if (explanationRef.current) {
-                      // Remove all existing highlights first
-                      removeHighlights(explanationRef.current);
-                      // Then highlight the word at the correct position
-                      highlightWordAtPosition(explanationRef.current, wordIndex, word);
-                    } else if (process.env.NODE_ENV === 'development') {
-                      console.warn('⚠️ explanationRef.current is null');
-                    }
-                  }}
-                  onComplete={() => {
-                    // Clear highlights when explanation audio completes
-                    if (explanationRef.current) {
-                      removeHighlights(explanationRef.current);
-                    }
-                    // Mark as completed to prevent replay
-                    setHasAutoPlayedExplanation(true);
-                  }}
-                  onPlayingChange={(isPlaying) => {
-                    if (isPlaying) {
+            {(() => {
+              const explanationAudioUrl = getExplanationAudioUrl();
+              const explanationTimestampsUrl = getExplanationTimestampsUrl();
+              
+              if (process.env.NODE_ENV === 'development') {
+                console.log('🎵 Explanation audio check:', {
+                  hasAudioUrl: !!explanationAudioUrl,
+                  audioUrl: explanationAudioUrl,
+                  hasTimestampsUrl: !!explanationTimestampsUrl,
+                  isCorrect,
+                  selectedAnswer,
+                  currentQuestion: {
+                    id: currentQuestion?.id,
+                    correctExplanationAudioUrl: currentQuestion?.correctExplanationAudioUrl,
+                    incorrectExplanationAudioUrls: currentQuestion?.incorrectExplanationAudioUrls,
+                    explanationAudioUrl: currentQuestion?.explanationAudioUrl,
+                  },
+                });
+              }
+              
+              return explanationAudioUrl ? (
+                <div className="pt-4 border-t border-white/10">
+                  <AudioPlayer
+                    key={`explanation-audio-${currentQuestionIndex}-${isCorrect ? 'correct' : 'incorrect'}-${selectedAnswer}-${showExplanation}`}
+                    text={getExplanationText()}
+                    audioUrl={explanationAudioUrl}
+                    timestampsUrl={explanationTimestampsUrl || undefined}
+                    autoPlay={true}
+                    hideText={true}
+                    onHighlightedWord={(word, wordIndex) => {
+                      // Debug logging in development
+                      if (process.env.NODE_ENV === 'development') {
+                        console.log('🎯 Quiz explanation handleHighlightedWord:', {
+                          word,
+                          wordIndex,
+                          explanationText: getExplanationText(),
+                        });
+                      }
+                      
+                      // Highlight only the current word at the correct position in explanation text
+                      // Use the same approach as section pages - clear all highlights first, then highlight current word
+                      if (explanationRef.current) {
+                        // Remove all existing highlights first
+                        removeHighlights(explanationRef.current);
+                        // Then highlight the word at the correct position
+                        highlightWordAtPosition(explanationRef.current, wordIndex, word);
+                      } else if (process.env.NODE_ENV === 'development') {
+                        console.warn('⚠️ explanationRef.current is null');
+                      }
+                    }}
+                    onComplete={() => {
+                      // Clear highlights when explanation audio completes
+                      if (explanationRef.current) {
+                        removeHighlights(explanationRef.current);
+                      }
+                      // Mark as completed to prevent replay
                       setHasAutoPlayedExplanation(true);
-                    }
-                  }}
-                />
-              </div>
-            )}
+                    }}
+                    onPlayingChange={(isPlaying) => {
+                      if (isPlaying) {
+                        setHasAutoPlayedExplanation(true);
+                      }
+                    }}
+                  />
+                </div>
+              ) : (
+                <div className="pt-4 border-t border-white/10">
+                  <p className="text-yellow-400 text-sm">
+                    ⚠️ Explanation audio not available. Please generate audio in the admin panel.
+                  </p>
+                  {process.env.NODE_ENV === 'development' && (
+                    <p className="text-red-400 text-xs mt-2">
+                      Debug: No audio URL found. Check console for details.
+                    </p>
+                  )}
+                </div>
+              );
+            })()}
           </div>
         )}
 

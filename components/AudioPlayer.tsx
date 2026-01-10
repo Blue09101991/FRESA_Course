@@ -422,20 +422,23 @@ export default function AudioPlayer({
       
       {/* Text with highlighting - structured display with numbered items on separate lines */}
       {!hideText && (
-        <div className="text-white text-base md:text-lg leading-relaxed mb-4 min-h-[120px]">
-          {textBlocks.map((block, blockIndex) => {
-            // Split this block's text into words with spaces for highlighting
-            const blockWordsWithSpaces = block.text.split(/(\s+)/);
-            let blockWordIndex = block.wordStartIndex;
-            
-            return (
-              <div
-                key={blockIndex}
-                className={block.isNumberedItem ? "mt-3 mb-2" : blockIndex === 0 ? "" : "mt-2"}
-                style={{
-                  marginLeft: block.isNumberedItem ? "1rem" : "0",
-                }}
-              >
+        <div className="text-white text-base md:text-lg leading-relaxed mb-6">
+          <div className="space-y-4 break-words overflow-wrap-anywhere">
+            {textBlocks.map((block, blockIndex) => {
+              // Split this block's text into words with spaces for highlighting
+              const blockWordsWithSpaces = block.text.split(/(\s+)/);
+              let blockWordIndex = block.wordStartIndex;
+              
+              return (
+                <div
+                  key={blockIndex}
+                  className={block.isNumberedItem ? "mt-3 mb-2 pl-4" : blockIndex === 0 ? "" : "mt-2"}
+                  style={{
+                    wordWrap: "break-word",
+                    overflowWrap: "break-word",
+                    whiteSpace: "normal",
+                  }}
+                >
                 {blockWordsWithSpaces.map((segment, segmentIndex) => {
                   const isWord = segment.trim().length > 0 && !/^\s+$/.test(segment);
                   const globalWordIndex = isWord ? blockWordIndex : null;
@@ -460,14 +463,14 @@ export default function AudioPlayer({
                           wordsRef.current[globalWordIndex] = el;
                         }
                       }}
-                      className={isSpace ? "inline" : "inline-block"}
+                      className="inline"
                       style={{
                         padding: "0",
                         margin: "0",
-                        display: isSpace ? "inline" : "inline-block",
-                        minWidth: "0",
-                        width: "auto",
-                        verticalAlign: "baseline",
+                        display: "inline",
+                        whiteSpace: "normal",
+                        wordWrap: "break-word",
+                        overflowWrap: "break-word",
                         lineHeight: "inherit",
                         fontSize: "inherit",
                         fontFamily: "inherit",
@@ -499,6 +502,7 @@ export default function AudioPlayer({
               </div>
             );
           })}
+          </div>
         </div>
       )}
 

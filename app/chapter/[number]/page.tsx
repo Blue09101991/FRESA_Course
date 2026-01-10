@@ -157,25 +157,78 @@ export default function ChapterPage() {
         }
         
         if (data.chapter.quizQuestions) {
-          setQuizQuestions(data.chapter.quizQuestions.map((q: any) => ({
-            id: q.id,
-            question: q.question,
-            options: q.options,
-            correctAnswer: q.correctAnswer,
-            explanation: q.explanation,
-            audioUrl: q.audioUrl,
-            timestampsUrl: q.timestampsUrl,
-            questionAudioUrl: q.questionAudioUrl,
-            questionTimestampsUrl: q.questionTimestampsUrl,
-            optionAudioUrls: q.optionAudioUrls,
-            optionTimestampsUrls: q.optionTimestampsUrls,
-            explanationAudioUrl: q.explanationAudioUrl,
-            explanationTimestampsUrl: q.explanationTimestampsUrl,
-            correctExplanationAudioUrl: q.correctExplanationAudioUrl,
-            correctExplanationTimestampsUrl: q.correctExplanationTimestampsUrl,
-            incorrectExplanationAudioUrls: q.incorrectExplanationAudioUrls,
-            incorrectExplanationTimestampsUrls: q.incorrectExplanationTimestampsUrls,
-          })));
+          setQuizQuestions(data.chapter.quizQuestions.map((q: any) => {
+            // Ensure JSON fields are properly parsed if they're strings
+            let optionAudioUrls = q.optionAudioUrls;
+            let optionTimestampsUrls = q.optionTimestampsUrls;
+            let incorrectExplanationAudioUrls = q.incorrectExplanationAudioUrls;
+            let incorrectExplanationTimestampsUrls = q.incorrectExplanationTimestampsUrls;
+            
+            // Parse JSON strings if needed
+            if (typeof optionAudioUrls === 'string') {
+              try {
+                optionAudioUrls = JSON.parse(optionAudioUrls);
+              } catch (e) {
+                console.error('Failed to parse optionAudioUrls:', e);
+                optionAudioUrls = null;
+              }
+            }
+            if (typeof optionTimestampsUrls === 'string') {
+              try {
+                optionTimestampsUrls = JSON.parse(optionTimestampsUrls);
+              } catch (e) {
+                console.error('Failed to parse optionTimestampsUrls:', e);
+                optionTimestampsUrls = null;
+              }
+            }
+            if (typeof incorrectExplanationAudioUrls === 'string') {
+              try {
+                incorrectExplanationAudioUrls = JSON.parse(incorrectExplanationAudioUrls);
+              } catch (e) {
+                console.error('Failed to parse incorrectExplanationAudioUrls:', e);
+                incorrectExplanationAudioUrls = null;
+              }
+            }
+            if (typeof incorrectExplanationTimestampsUrls === 'string') {
+              try {
+                incorrectExplanationTimestampsUrls = JSON.parse(incorrectExplanationTimestampsUrls);
+              } catch (e) {
+                console.error('Failed to parse incorrectExplanationTimestampsUrls:', e);
+                incorrectExplanationTimestampsUrls = null;
+              }
+            }
+            
+            if (process.env.NODE_ENV === 'development') {
+              console.log('📝 Quiz question loaded:', {
+                id: q.id,
+                hasCorrectExplanationAudio: !!q.correctExplanationAudioUrl,
+                correctExplanationAudioUrl: q.correctExplanationAudioUrl,
+                incorrectExplanationAudioUrls: incorrectExplanationAudioUrls,
+                isArray: Array.isArray(incorrectExplanationAudioUrls),
+                arrayLength: Array.isArray(incorrectExplanationAudioUrls) ? incorrectExplanationAudioUrls.length : 0,
+              });
+            }
+            
+            return {
+              id: q.id,
+              question: q.question,
+              options: q.options,
+              correctAnswer: q.correctAnswer,
+              explanation: q.explanation,
+              audioUrl: q.audioUrl,
+              timestampsUrl: q.timestampsUrl,
+              questionAudioUrl: q.questionAudioUrl,
+              questionTimestampsUrl: q.questionTimestampsUrl,
+              optionAudioUrls: optionAudioUrls,
+              optionTimestampsUrls: optionTimestampsUrls,
+              explanationAudioUrl: q.explanationAudioUrl,
+              explanationTimestampsUrl: q.explanationTimestampsUrl,
+              correctExplanationAudioUrl: q.correctExplanationAudioUrl,
+              correctExplanationTimestampsUrl: q.correctExplanationTimestampsUrl,
+              incorrectExplanationAudioUrls: incorrectExplanationAudioUrls,
+              incorrectExplanationTimestampsUrls: incorrectExplanationTimestampsUrls,
+            };
+          }));
         }
       } else {
         console.warn(`Chapter ${chapterNumber} not found in database`);
@@ -387,13 +440,18 @@ export default function ChapterPage() {
           </div>
         </div>
 
-        <div className="flex-1 flex items-center justify-center">
-          <div className="w-full max-w-4xl">
-            <div className="bg-[#1e3a5f] border border-blue-500/30 rounded-2xl p-6 md:p-8 shadow-2xl animate-scale-in">
-              <>
-                <h2 className="text-xl md:text-2xl font-bold mb-6 text-white">
+        <div className="flex-1 flex items-start justify-center py-6 px-4 overflow-y-auto overflow-x-hidden">
+          <div className="w-full max-w-5xl">
+            <div className="bg-[#1e3a5f] border border-blue-500/30 rounded-2xl shadow-2xl animate-scale-in overflow-hidden flex flex-col max-h-[85vh]">
+              {/* Header - Fixed */}
+              <div className="px-6 md:px-8 pt-6 md:pt-8 pb-4 border-b border-blue-500/20 flex-shrink-0">
+                <h2 className="text-xl md:text-2xl font-bold text-white break-words">
                   {currentSectionData?.title}
                 </h2>
+              </div>
+              
+              {/* Content - Scrollable */}
+              <div className="flex-1 overflow-y-auto px-6 md:px-8 py-6 md:py-8" style={{ wordWrap: "break-word", overflowWrap: "break-word" }}>
                 {currentSectionData?.text && (
                   <AudioPlayer
                     key={currentSection}
@@ -423,7 +481,7 @@ export default function ChapterPage() {
                     ⚠️ No sections available for this chapter yet. Please add sections in the admin panel.
                   </div>
                 )}
-              </>
+              </div>
             </div>
 
             <div className="flex gap-4 mt-6">
