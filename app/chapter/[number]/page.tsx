@@ -269,6 +269,9 @@ export default function ChapterPage() {
     };
     localStorage.setItem(`chapter${chapterNumber}Progress`, JSON.stringify(progress));
     
+    // Store chapter number for congratulations page
+    sessionStorage.setItem('completedChapter', chapterNumber.toString());
+    
     const token = document.cookie
       .split("; ")
       .find((row) => row.startsWith("auth-token="))
@@ -278,7 +281,7 @@ export default function ChapterPage() {
       setQuizScore({ score, total });
       setShowRegistrationPrompt(true);
     } else {
-      router.push("/congratulations");
+      router.push(`/congratulations?chapter=${chapterNumber}`);
     }
   };
 
@@ -337,17 +340,17 @@ export default function ChapterPage() {
             total={quizScore.total}
             onRegister={() => {
               setShowRegistrationPrompt(false);
-              sessionStorage.setItem("redirectAfterLogin", "/congratulations");
+              sessionStorage.setItem("redirectAfterLogin", `/congratulations?chapter=${chapterNumber}`);
               router.push("/signup");
             }}
             onLogin={() => {
               setShowRegistrationPrompt(false);
-              sessionStorage.setItem("redirectAfterLogin", "/congratulations");
+              sessionStorage.setItem("redirectAfterLogin", `/congratulations?chapter=${chapterNumber}`);
               router.push("/login");
             }}
             onSkip={() => {
               setShowRegistrationPrompt(false);
-              router.push("/congratulations");
+              router.push(`/congratulations?chapter=${chapterNumber}`);
             }}
           />
         )}
