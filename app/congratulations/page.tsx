@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import MrListings from "@/components/MrListings";
 import StarsBackground from "@/components/StarsBackground";
 import Header from "@/components/Header";
 
-export default function CongratulationsPage() {
+function CongratulationsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [showConfetti, setShowConfetti] = useState(true);
@@ -138,6 +138,24 @@ export default function CongratulationsPage() {
         </div>
       </div>
     </main>
+  );
+}
+
+export default function CongratulationsPage() {
+  return (
+    <Suspense fallback={
+      <main className="min-h-screen bg-gradient-to-b from-[#0a1a2e] via-[#1e3a5f] to-[#0a1a2e] relative overflow-hidden flex items-center justify-center p-4">
+        <Header />
+        <StarsBackground />
+        <div className="relative z-10 text-center">
+          <div className="bg-[#1e3a5f] border border-blue-500/30 rounded-2xl p-8 md:p-12 shadow-2xl">
+            <p className="text-white text-xl">Loading...</p>
+          </div>
+        </div>
+      </main>
+    }>
+      <CongratulationsContent />
+    </Suspense>
   );
 }
 
